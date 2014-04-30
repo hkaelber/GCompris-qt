@@ -53,7 +53,8 @@ include(src/activities/planegame/planegame.pri)
 APP_FILES += \
 	$$PWD/src/activities/activities.txt \
 
-OTHER_FILES += $$APP_FILES
+OTHER_FILES += $$APP_FILES  \
+    $$PWD/android/src/net/gcompris/GComprisActivity.java
 
 # Create the resource file
 GENERATED_RESOURCE_FILE = $$OUT_PWD/gcompris.qrc
