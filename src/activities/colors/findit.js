@@ -18,8 +18,9 @@
 
 .pragma library
 .import QtQuick 2.0 as Quick
+.import "qrc:/gcompris/src/core/core.js" as Core
 
-var currentLevel = 0
+var currentLevel
 var numberOfLevel
 var items
 var dataset
@@ -29,6 +30,7 @@ var currentQuestion
 function start(items_, dataset_) {
     items = items_
     dataset = dataset_
+    currentLevel = 0
     numberOfLevel = dataset.length
     initLevel()
 }
@@ -40,14 +42,14 @@ function initLevel() {
     items.bar.level = currentLevel + 1
     items.containerModel.clear()
     currentQuestion = 0
-    dataset[currentLevel] = shuffle(dataset[currentLevel])
+    dataset[currentLevel] = Core.shuffle(dataset[currentLevel])
 
     for(var i = 0;  i < dataset[currentLevel].length; ++i) {
         items.containerModel.append(dataset[currentLevel][i])
     }
 
     // Shuffle again not to ask the question in the model order
-    dataset[currentLevel] = shuffle(dataset[currentLevel])
+    dataset[currentLevel] = Core.shuffle(dataset[currentLevel])
     initQuestion()
 }
 
@@ -89,10 +91,4 @@ function getCurrentAudioQuestion() {
 
 function lost() {
     items.bonus.bad("flower")
-}
-
-function shuffle(o) {
-    for(var j, x, i = o.length; i;
-        j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-    return o;
 }

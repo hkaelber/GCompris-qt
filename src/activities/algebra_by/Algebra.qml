@@ -19,7 +19,7 @@
 import QtQuick 2.1
 import GCompris 1.0
 
-import "qrc:/gcompris/src/core"
+import "../../core"
 import "algebra.js" as Activity
 
 ActivityBase {
@@ -100,24 +100,28 @@ ActivityBase {
 
         Score {
             id: score
-            x: parent.width * 0.2
+            x: parent.width * 0.25
             y: parent.height * 0.65
+            anchors.right: undefined
+            anchors.bottom: undefined
             currentSubLevel: 0
             numberOfSubLevels: 10
         }
     }
 
-    Item{
+    Item {
         id: otherItems
         property alias iAmReady: iAmReady
-        property alias firstOp:firstOp
-        property alias secondOp:secondOp
-        property alias numpad:numpad
+        property alias firstOp: firstOp
+        property alias secondOp: secondOp
+        property alias numpad: numpad
+        property int result
     }
 
     NumPad {
         id: numpad
         onAnswerChanged: Activity.questionsLeft()
+        maxDigit: ('' + otherItems.result).length
     }
 
     ReadyButton {
@@ -134,49 +138,38 @@ ActivityBase {
         anchors.margins: 4
         spacing: 10
 
-        Text {
+        AlgebraText {
             id: firstOp
             visible: !iAmReady.visible
-            font.pointSize: 32
-            font.bold: true
         }
 
-        Text{
+        AlgebraText {
             id: operand
             visible: firstOp.visible
-            font.pointSize: 32
-            text: "x"
-            font.bold: true
         }
 
-        Text{
+        AlgebraText {
             id: secondOp
             visible: !iAmReady.visible
-            font.pointSize: 32
-            font.bold: true
         }
 
-        Text {
+        AlgebraText {
             id: equals
             visible: firstOp.visible
-            font.pointSize: 32
-            font.bold: true
             text: "="
         }
 
-        Text {
+        AlgebraText {
             id: result
             visible: !iAmReady.visible
-            font.pointSize: 32
-            font.bold: true
             text: numpad.answer
         }
     }
     Keys.onPressed: {
-        Activity.keyEvent(event.key, true)
+        numpad.updateAnswer(event.key,true);
     }
 
     Keys.onReleased: {
-        Activity.keyEvent(event.key, false)
+        numpad.updateAnswer(event.key, false);
     }
 }

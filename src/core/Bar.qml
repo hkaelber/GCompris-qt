@@ -20,6 +20,7 @@
  */
 import QtQuick 2.2
 import GCompris 1.0
+import "qrc:/gcompris/src/core/core.js" as Core
 
 Item {
     id: bar
@@ -33,6 +34,7 @@ Item {
     property int level: 0
     signal aboutClicked
     signal helpClicked
+    signal configClicked
     signal nextLevelClicked
     signal previousLevelClicked
     signal repeatClicked
@@ -44,6 +46,14 @@ Item {
 
     function show(newContent) {
         content.value = newContent
+    }
+    
+    Connections {
+        target: DownloadManager
+        
+        onDownloadStarted: downloadImage.visible = true;
+        onDownloadFinished: downloadImage.visible = false;  
+        onError: downloadImage.visible = false;
     }
 
     Row {
@@ -103,11 +113,33 @@ Item {
             onClicked: bar.repeatClicked()
         }
         BarButton {
+            id: configButton
+            source: "qrc:/gcompris/src/core/resource/bar_config.svgz";
+            contentId: content.config
+            sourceSize.width: 66 * barZoom
+            onClicked: bar.configClicked()
+        }
+        BarButton {
             id: homeButton
             source: "qrc:/gcompris/src/core/resource/bar_home.svgz";
             contentId: ApplicationInfo.isMobile ? content.disabled : content.home
             sourceSize.width: 66 * barZoom
             onClicked: bar.homeClicked()
+        }
+        AnimatedImage {
+            id: downloadImage
+            source: "qrc:/gcompris/src/core/resource/loader.gif"
+            anchors.bottom: parent.bottom
+            visible: false
+            
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    var downloadDialog = Core.showDownloadDialog(bar, {});
+                }
+            }
         }
         Item { width: 10; height: 1 }
     }

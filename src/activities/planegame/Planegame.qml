@@ -22,7 +22,7 @@ import QtQuick 2.2
 import QtMultimedia 5.0
 import GCompris 1.0
 
-import "qrc:/gcompris/src/core"
+import "../../core"
 import "planegame.js" as Activity
 
 ActivityBase {
@@ -98,8 +98,6 @@ ActivityBase {
         Score {
             id: score
             visible: false
-            anchors.bottom: background.bottom
-            anchors.right: background.right
         }
 
         property int movePlaneTimerCounter: 0
@@ -132,9 +130,8 @@ ActivityBase {
             background: background
         }
 
-        Audio {
+        GCAudio {
             id: audio
-            onError: console.log("Plane.qml, bonus play error: " + errorString)
         }
 
     }

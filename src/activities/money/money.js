@@ -20,7 +20,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 .pragma library
-.import QtQuick 2.0 as Quick
+.import QtQml 2.2 as Qt
+.import "qrc:/gcompris/src/core/core.js" as Core
 
 var url = "qrc:/gcompris/src/activities/money/resource/"
 
@@ -612,7 +613,7 @@ function initLevel() {
     items.pocketModel.clear()
 
     var data = dataset[currentLevel]
-    var pocket = shuffle(data.pocket)
+    var pocket = Core.shuffle(data.pocket)
     for (var i in pocket)
         items.pocketModel.append(pocket[i])
 
@@ -643,8 +644,14 @@ function initLevel() {
             price += cents
         }
 
+        var priceText = Number(price).toLocaleCurrencyString(Qt.locale())
+        if(!centsMode) {
+            // Strip floating part
+            priceText = priceText.replace((/.00/), "")
+        }
+
         storeModel.push({img: getRandomObject(price),
-                         price: (centsMode ? price.toFixed(2) : price)})
+                         price: priceText})
         priceCounter += price
     }
     items.store.model = storeModel
@@ -654,10 +661,16 @@ function initLevel() {
                 qsTr("Click on the coins or paper money at the bottom of the screen to pay." +
                      " If you want to remove a coin or note, click on it on the upper screen area.")
     } else {
-        /* Set here the way to display money. Change only the money sign, and it's place, always keep %d */
-        items.instructions.text = qsTr("Tux just bought some items in your shop.\n" +
-                                       "He gives you $ %1, please give back his change.").arg(data.paid)
+        var priceText = Number(price).toLocaleCurrencyString(Qt.locale())
+        if(!centsMode) {
+            // Strip floating part
+            priceText = priceText.replace((/.00/), "")
+        }
 
+        /* The money sign is inserted based on the current locale */
+        items.instructions.text = qsTr("Tux just bought some items in your shop.\n" +
+                                       "He gives you %1, please give back his change.")
+                      .arg(priceText)
 
         var tuxMoney
         switch(data.paid) {
@@ -705,11 +718,13 @@ function checkAnswer() {
     for (var i = 0; i < items.answerModel.count; ++i)
         paid += items.answerModel.get(i).val
 
+    paid = paid.toFixed(2)
+
     if(!backMode) {
-        if(paid == priceTotal)
+        if(paid === priceTotal.toFixed(2))
             items.bonus.good("flower")
     } else {
-        if(paid == dataset[currentLevel].paid - priceTotal)
+        if(paid === (dataset[currentLevel].paid - priceTotal).toFixed(2))
             items.bonus.good("flower")
     }
 }
@@ -746,10 +761,4 @@ function previousLevel() {
         currentLevel = numberOfLevel - 1
     }
     initLevel();
-}
-
-function shuffle(o) {
-    for(var j, x, i = o.length; i;
-        j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-    return o;
 }

@@ -24,13 +24,19 @@ import QtQuick 2.1
 import GCompris 1.0
 import QtMultimedia 5.0
 
-import "qrc:/gcompris/src/core"
+import "../../core"
 import "gletters.js" as Activity
 
 ActivityBase {
     id: activity
+
+    // Overload this in your activity to change it
+    // Put you default-<locale>.json files in it
+    property string dataSetUrl: "qrc:/gcompris/src/activities/gletters/resource/"
     
     property bool uppercaseOnly: false;  // FIXME: this should go in activity settings
+    /* mode of the activity, "letter" (gletters) or "word" (wordsgame):*/
+    property string mode: "letter"
 
     onStart: focus = true
     onStop: {}
@@ -39,7 +45,7 @@ ActivityBase {
     
     pageComponent: Image {
         id: background
-        source: Activity.url + "scenery_background.png"
+        source: activity.dataSetUrl + "background.svgz"
         fillMode: Image.PreserveAspectCrop
 
         signal start
@@ -64,7 +70,7 @@ ActivityBase {
             property alias crashAudio: crashAudio
         }
 
-        onStart: { Activity.start(items, uppercaseOnly) }
+        onStart: { Activity.start(items, uppercaseOnly, mode) }
         onStop: { Activity.stop() }
 
         DialogHelp {
@@ -74,6 +80,7 @@ ActivityBase {
         
         Bar {
             id: bar
+            anchors.bottom: keyboard.top
             content: BarEnumContent { value: help | home | previous | next }
             onHelpClicked: {
                 displayDialog(dialogHelp)
@@ -90,11 +97,12 @@ ActivityBase {
         
         Score {
             id: score
-            
+
             anchors.top: parent.top
             anchors.topMargin: 10 * ApplicationInfo.ratio
             anchors.right: parent.right
             anchors.rightMargin: 10 * ApplicationInfo.ratio
+            anchors.bottom: undefined
         }
         
         VirtualKeyboard {
@@ -114,11 +122,9 @@ ActivityBase {
         
         Wordlist {
             id: wordlist
-            defaultFilename: Activity.url + "default-en.json"
-            // FIXME: this should be something like
-            // ApplicationInfo.getDataPath() + "gletters/" + "default-" + ApplicationInfo.getCurrentLocale() + ".json"
-            // once it is there.
-            filename: ApplicationInfo.getAudioFilePath("gletters/default-en.json");
+            defaultFilename: activity.dataSetUrl + "default-en.json"
+            filename: ApplicationInfo.getLocaleFilePath(activity.dataSetUrl +
+                                                       "default-$LOCALE.json");
 
             onError: console.log("Gletters: Wordlist error: " + msg);
         }
@@ -129,20 +135,14 @@ ActivityBase {
             onTriggered: Activity.dropWord();
         }
 
-        Audio {
+        GCAudio {
             id: flipAudio
             source: "qrc:/gcompris/src/core/resource/sounds/flip.wav";
-            
-            onErrorChanged: console.log("Gletters: flipAudio error: " +
-                    error + ": " + errorString + " (source: " + source + ")")
         }
 
-        Audio {
+        GCAudio {
             id: crashAudio
             source: "qrc:/gcompris/src/core/resource/sounds/crash.wav";
-            
-            onErrorChanged: console.log("Gletters: crashAudio error: " +
-                    error + ": " + errorString + " (source: " + source + ")")
         }
     }
 

@@ -24,7 +24,9 @@
 .pragma library
 .import QtQuick 2.0 as Quick
 .import GCompris 1.0 as GCompris //for ApplicationInfo
+.import "qrc:/gcompris/src/core/core.js" as Core
 
+var url = "qrc:/gcompris/src/activities/click_on_letter/resource/"
 var defaultLevelsFile = ":/gcompris/src/activities/click_on_letter/resource/levels-en.json";
 var maxLettersPerLine = 6;
 
@@ -42,6 +44,9 @@ var mode;
 
 function start(_items, _mode)
 {
+    Core.checkForVoices(_items.bar);
+    _items.nextLevelAudio.source = GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/misc/click_on_letter.ogg");
+
     items = _items;
     mode = _mode;
 
@@ -78,7 +83,9 @@ function parseLevels(json)
 function loadLevels()
 {
     var ret;    
-    var json = items.levelsFile.read(GCompris.ApplicationInfo.getAudioFilePath("click_on_letter/levels-$LOCALE.json")); // FIXME: this should be something like ApplicationInfo.getDataPath() + "click_on_letter" + "levels-" + ApplicationInfo.getCurrentLocale() + ".json" once it is there.
+    var json = items.levelsFile.read(
+                GCompris.ApplicationInfo.getLocaleFilePath(url +
+                                                           "levels-$LOCALE.json"))
     if (json == "" || !parseLevels(json)) {
         console.warn("Click_on_letter: Invalid levels file " +
                 items.levelsFile.name);
@@ -135,36 +142,29 @@ function initLevel() {
         items.trainModel.clear();
         for (var i = 0; i < answerArr.length; i++) {                
             items.trainModel.append({
-                "image": i < maxLettersPerLine ? 
-                        "qrc:/gcompris/src/activities/click_on_letter/resource/carriage-off.png":
-                        "qrc:/gcompris/src/activities/click_on_letter/resource/cloud-off.png",
                 "letter": answerArr[i],
-                "type": i < maxLettersPerLine ? "carriage" : "cloud"
             });
         }
     } else {
-        // reset all images:
-        for (var i = 0; i < items.trainModel.count; i++) {
-            items.trainModel.setProperty(i, "image", i < maxLettersPerLine ? 
-                "qrc:/gcompris/src/activities/click_on_letter/resource/carriage-off.png":
-                "qrc:/gcompris/src/activities/click_on_letter/resource/cloud-off.png");
-        }
         items.score.currentSubLevel = currentSubLevel + 1;
     }
 
     currentLetter = questions.split("")[currentSubLevel];
-    if (getSetting("fx")) {
+    if (GCompris.ApplicationSettings.isAudioEnabled &&
+        GCompris.DownloadManager.haveLocalResource(
+                GCompris.DownloadManager.getVoicesResourceForLocale(
+                        GCompris.ApplicationInfo.localeShort))) {
         items.nextLevelAudio.stop();
         items.nextLevelAudio.play();
+        items.questionItem.visible = false;
         items.letterAudio.source = GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
-                + getSoundFilenamForChar(currentLetter));
-        items.letterAudio.playDelayed(1500);
-    } //else 
-    if (!getSetting("fx") || GCompris.ApplicationInfo.isMobile) {  // FIXME once we have voices on mobile 
+                + Core.getSoundFilenamForChar(currentLetter));
+    } else {
         // no sound -> show question
         items.questionItem.visible = true;
-        items.questionItem.text = currentLetter;
     }
+    // Maybe we will display it if sound fails
+    items.questionItem.text = currentLetter;
 }
 
 function nextLevel() {
@@ -194,45 +194,10 @@ function nextSubLevel() {
 function checkAnswer(index)
 {
     var modelEntry = items.trainModel.get(index);
-    if (modelEntry.letter == currentLetter)
+    if (modelEntry.letter == currentLetter) {
         items.bonus.good("flower");
-    else {
-        items.bonus.bad("flower");
-        modelEntry.image = index < maxLettersPerLine ? 
-            "qrc:/gcompris/src/activities/click_on_letter/resource/carriage-on.png" :
-            "qrc:/gcompris/src/activities/click_on_letter/resource/cloud-on.png";
+        return true
+    } else {
+        return false
     }
-}
-
-
-//the following are probably candidates for refactoring out to core/
-
-// from soundutil.c
-/** return a string representing of a letter or a number audio file
- *  get alphabet sound file name
- *
- * the returned sound has the suffix .ogg
- *
- * \return a newly allocated string of the form U0033.ogg
- */
-function getSoundFilenamForChar(c)
-{
-    var result = "U";
-    var codeHex = c.toLowerCase().charCodeAt(0).toString(16).toUpperCase();
-    while (codeHex.length < 4) {
-        codeHex = "0" + codeHex;
-    }
-    result += codeHex + ".ogg";
-    return result;
-}
-
-/** Return settings value for passed key
- * 
- * @return: settings value for valid key, null for invalid key */
-function getSetting(key)
-{
-    if (key == "fx")
-        return false;
-    else
-        return null;
 }

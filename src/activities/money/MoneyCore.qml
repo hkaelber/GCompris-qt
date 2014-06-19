@@ -21,7 +21,7 @@
  */
 import QtQuick 2.1
 
-import "qrc:/gcompris/src/core"
+import "../../core"
 import "money.js" as Activity
 
 ActivityBase {
@@ -179,7 +179,7 @@ ActivityBase {
                             source: Activity.url + modelData.img
                             sourceSize.height:  column.itemStoreHeight
                             Text {
-                                text: modelData.price + " €"
+                                text: modelData.price
                                 font.pointSize: 20
                                 font.weight: Font.DemiBold
                                 style: Text.Outline
@@ -205,11 +205,13 @@ ActivityBase {
                 anchors.bottomMargin: 4
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
+                visible: bar.level === 1
                 Text {
                     id: instructions
                     horizontalAlignment: Text.AlignHCenter
                     width: column.width
                     wrapMode: Text.WordWrap
+                    font.pointSize: 16
                 }
             }
 
@@ -217,7 +219,7 @@ ActivityBase {
             Rectangle {
                 height: (column.itemHeight + 10) * column.nbLines
                 width: column.width
-                color: "#55333333"
+                color: "#661111AA"
                 border.color: "black"
                 border.width: 2
                 radius: 5
