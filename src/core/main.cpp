@@ -1,10 +1,30 @@
+/* GCompris - main.cpp
+ *
+ * Copyright (C) 2014 Bruno Coudoin
+ *
+ * Authors:
+ *   Bruno Coudoin <bruno.coudoin@gcompris.net>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
 #include <QtDebug>
 #include <QtGui/QGuiApplication>
 #include <QtQuick/QQuickWindow>
 #include <QtQml>
 #include <QObject>
 #include <QTranslator>
-
+#include <QCommandLineParser>
 #include <QSettings>
 
 #include "ApplicationInfo.h"
@@ -38,9 +58,19 @@ bool loadAndroidTranslation(QTranslator &translator, const QString &locale)
 int main(int argc, char *argv[])
 {
 	QGuiApplication app(argc, argv);
-	app.setOrganizationName("GCompris");
+    app.setOrganizationName("KDE");
     app.setApplicationName("GCompris");
     app.setOrganizationDomain("kde.org");
+    app.setApplicationVersion(ApplicationInfo::GCVersion());
+
+    QCommandLineParser parser;
+    parser.setApplicationDescription("GCompris is an educational software for children 2 to 10");
+    parser.addHelpOption();
+    parser.addVersionOption();
+    QCommandLineOption exportActivitiesAsSQL("export-activities-as-sql", "Export activities as SQL");
+    parser.addOption(exportActivitiesAsSQL);
+    parser.process(app);
+
 
     ApplicationInfo::init();
 	ActivityInfoTree::init();
@@ -96,6 +126,12 @@ int main(int argc, char *argv[])
 	QQmlApplicationEngine engine(QUrl("qrc:/gcompris/src/core/main.qml"));
 	QObject::connect(&engine, SIGNAL(quit()), DownloadManager::getInstance(),
 	        SLOT(shutdown()));
+
+    if(parser.isSet(exportActivitiesAsSQL)) {
+        ActivityInfoTree *menuTree(qobject_cast<ActivityInfoTree*>(ActivityInfoTree::menuTreeProvider(&engine, NULL)));
+        menuTree->exportAsSQL();
+        exit(0);
+    }
 
     QObject *topLevel = engine.rootObjects().value(0);
 

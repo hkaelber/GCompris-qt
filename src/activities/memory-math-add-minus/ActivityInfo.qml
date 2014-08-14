@@ -1,8 +1,8 @@
 import GCompris 1.0
 
 ActivityInfo {
-  name: "memory-math-add-minus/Memory-math-add-minus.qml"
-  difficulty: 1
+  name: "memory-math-add-minus/MemoryMathAddMinus.qml"
+  difficulty: 4
   icon: "memory-math-add-minus/memory-math-add-minus.svgz"
   author: "JB BUTET <ashashiwa@mgail.com>"
   demo: false

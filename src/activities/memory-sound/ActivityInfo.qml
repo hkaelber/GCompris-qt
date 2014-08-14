@@ -1,8 +1,8 @@
 import GCompris 1.0
 
 ActivityInfo {
-  name: "memory-sound/Memory-sound.qml"
-  difficulty: 1
+  name: "memory-sound/MemorySound.qml"
+  difficulty: 2
   icon: "memory-sound/memory-sound.svgz"
   author: "JB BUTET <ashashiwa@gmail.com>"
   demo: true

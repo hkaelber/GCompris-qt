@@ -35,11 +35,14 @@
     </message>
     <message>
         <location filename="../src/activities/memory-math-add/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="11" />
         <source>Practise adding up, until all the cards are gone.</source>
         <translation>Cleachd cur ri chèile gus am bi gach cairt air falbh.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-add/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="12" />
         <source>Addition</source>
         <translation>Cur ris</translation>
     </message>
@@ -90,24 +93,38 @@ Mar a gheibh thu na stràcan:
 Mur obraich sin, tadhail air www.iGaidhlig.net airson barrachd fiosrachaidh ’s taic.</translation>
     </message>
     <message>
-        <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="9" />
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="9" />
         <source>Addition and subtraction memory game</source>
         <translation>Geama cuimhne cuir ris is toirt air falbh</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="9" />
+        <source>Subtraction memory game</source>
+        <translation>Geama cuimhne toirt air falbh</translation>
+    </message>
+    <message>
         <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find two numbers which add or subtract the same, until all the cards are gone.</source>
         <translation>Thoir car air dà cairt gus an dèan na tha air an dàrna cairt na tha air a’ chairt eile ’s tu a’ cur àireamhan ri chèile no an toirt air falbh.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="11" />
-        <source>Practise subtraction, until all the cards are gone.</source>
-        <translation>Cleachd toirt air falbh gus am bi gach cairt air falbh.</translation>
+        <source>Practise substraction, until all the cards are gone.</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="12" />
+        <source>Substraction</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <source>Practise subtraction, until all the cards are gone.</source>
+        <translation type="vanished">Cleachd toirt air falbh gus am bi gach cairt air falbh.</translation>
+    </message>
+    <message>
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="12" />
         <source>Addition and subtraction</source>
         <translation>Cur ri chèile is toirt air falbh</translation>
     </message>
@@ -143,13 +160,41 @@ Sa gheama seo, ’s e an dà phàirt aig obrachadh a dh’fhalaicheas na cairtea
         <translation>Co-ghluasad</translation>
     </message>
     <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="9" />
+        <source>Align four (two players)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="10" />
+        <source>Arrange four coins in a row</source>
+        <translation>Cuir ceithir buinn ann an sreath</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="11" />
+        <source>Create a line of 4 pieces either horizontally (lying down), vertically (standing up) or diagonally.</source>
+        <translation>Cruthaich loidhne de 4 buinn air a’ chòmhnard (nan laighe) no gu h-inghearach (nan seasamh) no air an trastan.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/erase_clic/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/erase/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/football/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/clickgame/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/erase_2clic/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory/ActivityInfo.qml" line="12" />
         <source>Mouse-manipulation</source>
         <translation>Cleachdadh na luchaige</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="13" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="13" />
+        <source>Click the position in the line where you want to drop a piece. You can also use the arrow keys to move the piece left or right, and the down or space key to drop a piece.</source>
+        <translation>Briog air an ionad air an loidhne far a bheil thu airson bonn a leigeil. ’S urrainn dhut na saighdean a chleachdadh cuideachd gus am bonn a ghluasad gu clì no deas is an iuchair sìos no an spacebar gus bonn a leagail.</translation>
     </message>
     <message>
         <location filename="../src/activities/erase_clic/ActivityInfo.qml" line="13" />
@@ -314,19 +359,34 @@ Sa gheama seo, ’s e an dà phàirt aig obrachadh a dh’fhalaicheas na cairtea
         <translation>Geama cuimhne iomadachaidh</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="9" />
+        <source>Multiplication memory game against Tux</source>
+        <translation>Geama cuimhne iomadachaidh an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-mult/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find two numbers which multiply the same, until all the cards are gone.</source>
         <translation>Thoir car air dà cairt gus an dèan na tha air an dàrna cairt na tha air a’ chairt eile ’s tu ag iomadachadh.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-math-mult/ActivityInfo.qml" line="11" />
         <source>Practise multiplication, until all the cards are gone.</source>
         <translation>Cleachd iomadachadh gus am bi gach cairt air falbh.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-math-mult/ActivityInfo.qml" line="12" />
         <source>Multiplication</source>
         <translation>Iomadachadh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more then Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/template/ActivityInfo.qml" line="9" />
@@ -414,11 +474,13 @@ Mur obraich sin, tadhail air www.iGaidhlig.net airson barrachd fiosrachaidh ’s
     </message>
     <message>
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find two numbers which subtract the same, until all the cards are gone.</source>
         <translation>Thoir car air dà cairt gus an dèan na tha air an dàrna cairt na tha air a’ chairt eile ’s tu a’ toirt air falbh.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="11" />
         <source>Practise addition, subtraction, until all the cards are gone.</source>
         <translation>Cleachd cur ri chèile is toirt air falbh gus am bi a h-uile cairt air falbh.</translation>
     </message>
@@ -561,19 +623,24 @@ Mur obraich sin, tadhail air www.iGaidhlig.net airson barrachd fiosrachaidh ’s
         <translation>Geama cuimhne roinnidh</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-div/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-mult-div/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-add-minus-mult-div/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find a matching operation, until all the cards are gone.</source>
         <translation>Thoir car air dà cairt gus an obrachadh a lorg a nì seise gus am bi a h-uile cairt air falbh.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-div/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="11" />
         <source>Practise division, until all the cards are gone.</source>
         <translation>Cleachd roinneadh gus am bi gach cairt air falbh.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-div/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="12" />
         <source>Division</source>
         <translation>Roinneadh</translation>
     </message>
@@ -684,14 +751,28 @@ Ath-ghoiridean:
         <translation>Geama cuimhne iomadachaidh is roinnidh</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="9" />
+        <source>Multiplication and division memory game against Tux</source>
+        <translation>Geama cuimhne iomadachaidh is roinnidh an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-math-mult-div/ActivityInfo.qml" line="11" />
         <source>Practise multiplication, division, until all the cards are gone.</source>
         <translation>Cleachd iomadachadh is roinneadh gus am bi gach cairt air falbh.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-math-mult-div/ActivityInfo.qml" line="12" />
         <source>Multiplication, division</source>
         <translation>Iomadachadh, roinneadh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/clickgame/ActivityInfo.qml" line="9" />
@@ -744,16 +825,29 @@ Ath-ghoiridean:
         <translation>Briog air Tux an fìdhleir is èist gus na fuaimean a lorg</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="9" />
+        <source>Audio memory game against Tux</source>
+        <translation>Geama cuimhne claisneachd an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="10" />
+        <source>Play the audio memory game against Tux</source>
+        <translation>Cluich geama cuimhne claisneachd an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-sound/ActivityInfo.qml" line="11" />
         <source>Train your audio memory and remove all the violinists Tux.</source>
         <translation>Cleachd an cuimhne air fuaimean agad is thoir a h-uile Tux fìdhleir air falbh.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-sound/ActivityInfo.qml" line="12" />
         <source>Mouse manipulation, Brain.</source>
         <translation>Cleachdadh na luchaige, eanchainn.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="13" />
         <location filename="../src/activities/memory-sound/ActivityInfo.qml" line="13" />
         <source>A set of violinist Tux is shown. Each Tux has an associated sound, and each sound has a twin exactly the same. Click on a Tux to see its hidden sound, and try to match the twins. You can only activate two Tux at once, so you need to remember where a sound is, while you listen to its twin. When you turn over the twins, they both disappear.</source>
         <translation>Thèid iomadh Tux an fhìdhleir a shealltainn dhut. Tha fuaim ann a bhuineas ri gach Tux is tha càraid aig gach fuaim a tha an aon rud. Briog air Tux gus an fhuaim fhalaichte aige a nochdadh is feuch ris a sheise a lorg. Chan urrainn dhut ach dà Tux a ghnìomhachadh aig an aon àm, mar sin feumaidh tu cur nad chuimhne far a bheil fuaim fhad ’s a bhios tu a’ sireadh a chàraid. Nuair a thionndaidheas tu an càraid, thèid an dà thè a-mach à sealladh.</translation>
@@ -769,14 +863,28 @@ Ath-ghoiridean:
         <translation>Geama cuimhne leis a h-uile obrachadh</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="9" />
+        <source>All operations memory game against Tux</source>
+        <translation>Geama cuimhne leis a h-uile obrachadh an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-math-add-minus-mult-div/ActivityInfo.qml" line="11" />
         <source>Practise addition, subtraction, multiplication, division, until all the cards are gone.</source>
         <translation>Cleachd cur ri chèile, toirt air falbh, iomadachadh is roinneadh gus am bi a h-uile cairt air falbh.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-math-add-minus-mult-div/ActivityInfo.qml" line="12" />
         <source>Addition, subtraction, multiplication, division</source>
         <translation>Cur ris, toirt air falbh, iomadachadh is roinneadh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than Tux, you've won the game! :)</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/colors/ActivityInfo.qml" line="9" />
@@ -814,9 +922,25 @@ Ath-ghoiridean:
         <translation>Thoir car air na cairtean gus na càraidean a lorg</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="9" />
+        <source>Memory Game with images against Tux</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="10" />
+        <source>Flip the cards to find the matching pairs against Tux</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory/ActivityInfo.qml" line="11" />
         <source>Train your memory and remove all the cards</source>
         <translation>Cleachd do chuimhne is thoir gach cairt air falbh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="13" />
+        <source>A set of blank cards is shown. Each card has a picture on the other side, and each picture card has a twin exactly the same. Click on a card to see its hidden picture, and try to match the twins. You can only turn over two cards at once, so you need to remember where a picture is, while you look for its twin. When you turn over the twins, they both disappear. Tux teacher do the same.</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/memory/ActivityInfo.qml" line="13" />
@@ -1098,6 +1222,423 @@ O leibheil 14 a-mach, bidh am modh-ruith-gu-luath an comas gu fèin-obrachail. M
         <source>Click on the dice to show how many ice spots there are between Tux and the fish. Click the dice with the right mouse button to count backwards. When done, click on the OK button or hit the Enter key.</source>
         <translation>Briog air an dìsinn gus sealltainn co mheud clàr-deighe a tha eadar Tux is an iasg. Briog air an dìsinn leis a’ phutan deas gus cunntadh sìos. Nuair a bhios tu deiseil, briog air a’ phutan “OK” no brùth air an iuchair “Enter”.</translation>
     </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="9" />
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="9" />
+        <source>The magician hat</source>
+        <translation>An ad dhraoidheach</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="10" />
+        <source>Count how many items are under the magic hat after some have got away</source>
+        <translation>Cunnt co mheud rionnagan a bhios air am fàgail fon ad an dèidh cuid dhiubh teicheadh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="11" />
+        <source>Learn subtraction</source>
+        <translation>Ionnsaich toirt air falbh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="12" />
+        <source>Subtraction</source>
+        <translation>Toirt air falbh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="13" />
+        <source>Look at the magician, he tells the number of stars that are under his magic hat. Then, click on the hat to open it. A few stars escape. Click again on the hat to close it. You have to count how many are still under the hat. Click on the bottom right area to answer.</source>
+        <translation>Coimhead air an draoidh, innsidh e dhut co mheud rionnag a tha fon ad dhraoidheach aige. An uair sin, briog air an ad gus a thogail. Teichidh cuid dhe na rionnagan. Briog air an ad a-rithist gus a dùnadh. Feumaidh tu cunntadh co mheud rionnag a tha fon ad fhathast. Briog air an raon air a’ bhonn gu deas gus freagairt a thoirt.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="9" />
+        <source>The football game</source>
+        <translation>An geama ball-coise</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="10" />
+        <source>Kick the ball into the goal</source>
+        <translation>Breab am bàla dhan tadhal</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="11" />
+        <source>Kick the ball into the black hole on the right</source>
+        <translation>Breab am bàla dhan toll dubh air an taobh deas</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="13" />
+        <source>Point the mouse and click on the ball, to set the speed and direction of the ball. The closer you click to the center, the slower the ball moves.</source>
+        <translation>Tomh an luchag is briog air a’ bhàla gus astar is comhair a’ bhàla a shuidheachadh. Mar as fhaisge air a’ mheadhan a nì thu am briogadh ’s ann nas slaodaiche a ghluaiseas am bàla.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="5" />
+        <source>Prime numbers are numbers that are only divisible by themselves and 1. For example, 3 is a prime number, but 4 isn't (because 4 is divisible by 2). You can think of prime numbers as very small families: they only ever have two people in them! Only themselves and 1. You can't fit any other numbers into them with nothing left over. 5 is one of these lonely numbers (only 5 × 1 = 5), but you can see that 6 has 2 and 3 in its family as well (6 × 1 = 6, 2 ×3 = 6). So 6 is not a prime number. &lt;br&gt;</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="13" />
+        <source>Use the arrow keys to navigate around the board and to avoid the Troggles. Press the space bar to eat the number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="6" />
+        <source>Touch cells to move around the board and to avoid the Troggles. Press the Muncher to eat the number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="15" />
+        <source>Gnumch Primes</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="16" />
+        <source>Guide the Number Muncher to all the prime numbers.</source>
+        <translation>Stiùirich itheadair nan àireamh dha na h-uile prìomh-àireamh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="17" />
+        <source>Learn about prime numbers.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="5" />
+        <source>The multiples of a number are all the numbers that are equal to the original number times another number. For example, 24, 36, 48 and 60 are all multiples of 12. 25 is not a multiple of 12 because there isn't any number that can be multiplied by 12 to get 25. If one number is a factor of a second number, then the second number is a multiple of the first number. Again, you can think of multiples as families, and factors are the people who belong to those families. The factor 5, has parents 10, grandparents 15, great-grandparents 20, great-great-grandparents 25, and every extra step of 5 is another great- in front! But the number 5 does not belong in the 8 or 23 families. You can't fit any number of 5s into 8 or 23 with nothing left over. So '8 isn't a multiple of 5, nor is 23. Only 5, 10, 15, 20, 25 ... are multiples (or families or steps) of 5.&lt;br&gt;</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="15" />
+        <source>Gnumch Multiples</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="16" />
+        <source>Guide the Number Muncher to all the multiples of the number at the top of the screen.</source>
+        <translation>Stiùirich itheadair nan àireamh dha na h-uile iomad aig an àireamh air barr na sgrìn.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="17" />
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="17" />
+        <source>Learn about multiples and factors.</source>
+        <translation>Ionnsaich mu iomadan is factaran.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="10" />
+        <source>Count how many items are under the magic hat</source>
+        <translation>Cunnt co mheud rionnagan a tha fon ad</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="11" />
+        <source>Learn addition</source>
+        <translation>Ionnsaich cur ris</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="13" />
+        <source>Click on the hat to open or close it. Under the hat, how many stars can you see moving around? Count carefully. :) Click in the bottom-right area to input your answer.</source>
+        <translation>Briog air an ad gus a fosgladh no dùnadh. Co mheud rionnag a chì thu a’ gluasad fon ad? Cunnt iad gu cùramach. :) Briog air an raon air a’ bhonn gu deas gus freagairt a thoirt.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="9" />
+        <source>Gnumch Equality</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="10" />
+        <source>Guide the Number Muncher to the expressions that equal the number at the top of the screen.</source>
+        <translation>Stiùirich itheadair nan àireamh dha na h-eas-preiseanan a bhios co-ionnan ris an àireamh air barr na sgrìn.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="11" />
+        <source>Practice addition, multiplication, division and subtraction.</source>
+        <translation>Cleachdaich cur ris, iomadachadh, roinneadh is toirt air falbh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="13" />
+        <source>Use the arrow keys to navigate around the board and to avoid the Troggles. Press the space bar to eat a number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="13" />
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="13" />
+        <source>Touch cells to move around the board and to avoid the Troggles. Press the muncher to eat the number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="5" />
+        <source>The factors of a number are all the numbers that divide that number evenly. For example, the factors of 6 are 1, 2, 3 and 6. 4 is not a factor of 6 because 6 cannot be divided into 4 equal pieces. If one number is a multiple of a second number, then the second number is a factor of the first number. You can think of multiples as families, and factors are the people in those families. So 1, 2, 3 and 6 all fit into the 6 family, but 4 belongs to another family.&lt;br&gt;</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="15" />
+        <source>Gnumch Factors</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="16" />
+        <source>Guide the Number Muncher to all the factors of the number at the top of the screen.</source>
+        <translation>Stiùirich itheadair nan àireamh dha na h-uile factar aig an àireamh air barr na sgrìn.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="9" />
+        <source>Gnumch Inequality</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="10" />
+        <source>Guide the Number Muncher to the all the expressions that do not equal the number at the top of the screen.</source>
+        <translation>Stiùirich itheadair nan àireamh dha na h-uile eas-preisean nach ionnan ris an àireamh air barr na sgrìn.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="11" />
+        <source>Practice addition, subtraction, multiplication and division.</source>
+        <translation>Cleachdaich cur ris, toirt air falbh, iomadachadh is roinneadh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="9" />
+        <source>Numbers with pairs of dice</source>
+        <translation>Àireamhan le càraidean dìsne</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="10" />
+        <source>Count the number of dots on dice before they reach the ground</source>
+        <translation>Cunnt àireamh nan dotagan air na dìsnean mus ruig iad an làr</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="11" />
+        <source>In a limited time, count the number of dots</source>
+        <translation>Rè ùine cuingichte, cunnt àireamh nan dotagan</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="12" />
+        <source>Counting skills</source>
+        <translation>Sgilean cunntaidh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="13" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="13" />
+        <source>With the keyboard, type the number of dots you see on the falling dice.</source>
+        <translation>Sgrìobh àireamh nan dotagan a chì thu air na dìsnean a’ tuiteam leis a’ mheur-clàr</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="9" />
+        <source>Numbers With Dice</source>
+        <translation>Àireamhan le dìsnean</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="9" />
+        <source>Wordnumber memory game</source>
+        <translation>Geama cuimhne faclan nan àireamh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="10" />
+        <source>Turn the cards over to match the number with the word matching it.</source>
+        <translation>Thoir car air dà cairt gus an àireamh a lorg a bhios sgrìobhte mar fhacal air a’ chairt eile.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="11" />
+        <source>Reading numbers, memory.</source>
+        <translation>Leughadh àireamhan, cuimhne.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="12" />
+        <source>Reading</source>
+        <translation>Leughadh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding a number of number, or the word of the number.</source>
+        <translation>Chì thu cairtean, ach chan fhaic thu na tha air an taobh eile dhiubh. Falaichidh gach cairt àireamh no facal na h-àireimh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="9" />
+        <source>Control the hose-pipe</source>
+        <translation>Stiùirich an stealladair</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="10" />
+        <source>Tux needs to water the flowers, but the hose is blocked.</source>
+        <translation>Tha uisge a dhìth air Tux gus a toirt dha na flùraichean ach tha an stealladair bacte.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="11" />
+        <source>Fine motor coordination</source>
+        <translation>Co-ghluasad mionaideach</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="13" />
+        <source>Move the mouse over the red part of the hose-pipe. This will move it, bringing it, part by part, up to the flowers. Be careful, if you move off the hose, the red part will go back down.</source>
+        <translation>Gluais an luchag air barr pàirt dhearg an stealladair. Bheir seo gluasad air, a’ dol suas beag air bheag. Thoir an aire gun tèid a’ phàirt dhearg sìos a-rithist nuair a ghluaiseas tu air falbh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="9" />
+        <source>Substraction memory game against Tux</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="11" />
+        <source>Practise subtraction, until all the cards are gone. Tux do the same</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="12" />
+        <source>subtraction</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more operations than Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="9" />
+        <source>Practice addition with a target game</source>
+        <translation>Cleachdaich cur ris le geama targaide</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="10" />
+        <source>Hit the target and count your points</source>
+        <translation>Buail air an targaid is cunnt na puingean agad</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="11" />
+        <source>Throw darts at a target and count your score.</source>
+        <translation>Tilg gathan do thargaid is cunnt an sgòr agad.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="12" />
+        <source>Can move the mouse, can read numbers and count up to 15 for the first level</source>
+        <translation>Comas an luchag a ghluasad, comas leughaidh àireamhan is comas cunntaidh suas gu 15 airson a’ chiad leibheil</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="13" />
+        <source>Check the wind speed and direction, and then click on the target to launch a dart. When you all your darts are thrown, a window appears asking you to count your score. Enter the score with the keyboard then press the Enter key or the OK button.</source>
+        <translation>Thoir sùil air luaths is comhair na gaoithe is an uair sin briog air an targaid gus gath a thilgeil. Ma tha a h-uile gath agad air a thilgeil, nochdaidh uinneag a’ faighneachd dhut ach an cunnt thu an sgòr agad. Cuir an sgòr a-steach leis a’ mheur-chlàr is an uair sin brùth air an iuchair “Enter” no briog air a’ phutan “OK”.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="9" />
+        <source>Mining for gold</source>
+        <translation>Tochail òr</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="10" />
+        <source>Use the mousewheel to approach the rockwall an look for gold nuggets.</source>
+        <translation>Cleachd cuibhle na luchaige gus teannadh dhan bhalla cloiche is cnapan òir a lorg.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="11" />
+        <source>Learn to use the mousewheel to zoom in and out.</source>
+        <translation>Ionnsaich mar a chleachdas tu cuibhle na luchaige gus sùmadh a-steach is a-mach.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="12" />
+        <source>You should be familiar with moving the mouse and clicking.</source>
+        <translation>Bu chòir do ghluasad na luchaige is briogadh a bhith agad.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="13" />
+        <source>Looking at the rockwall, you can see a sparkle somewhere. Move the mouse cursor next to this sparkle and use the mousewheel to zoom in. If you zoomed in at maximum, a gold nugget will appear at the position of the sparkle. Click on the gold nugget to collect it.
+
+Having collected the nugget, use the mousewheel to zoom out again. If you zoomed out at maximum, another sparkle will appear, showing the next gold nugget to collect. Collect enough nuggets to complete the level.
+
+The truck in the lower, right corner of the screen will tell you the number of already collected nuggets and the total number of nuggets to collect in this level.
+
+To start the tutorial, click on professor Tux (available at level 1) and let him show you, what to do next.
+
+Have fun! :)</source>
+        <translation>Chì thu lainnir àiteigin air a’ bhalla cloiche. Gluais cùrsair na luchaige faisg oirre is cleachd cuibhle na luchaige gus sùmadh a-steach. Ma rinn tu an sùmadh as fhaisge, chì thu cnap òir far an robh an lainnir. Briog air a’ chnap gus a thogail.
+
+Nuair a bhios tu air an cnap a thogail, cleachd cuibhle na luchaige gus sùmadh a-mach a-rithist. Ma rinn thu an sùmadh as fharsainge, nochdaidh lainnir eile a sheallas dhut far a bheil cnap òir eile gus togail. Tog cnapan òir gu leòr gus an leibheil a choileanadh.
+
+Innsidh an truca oir deas aig bonn na sgrìn dhut co mheud cnap a thog thu gu ruige seo is na tha a dhìth gus an leibheil seo a choileanadh.
+
+Gus tòiseachadh air an oideachadh, briog air an t-ollamh Tux (ri làimh air leibheil 1) is seallaidh e dhut an ath nì a dh’fheumas tu dèanamh.
+
+Gabh tlachd! :)</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="22" />
+        <source>Thanks to the Tuxpaint team for providing the following sounds under GPL:
+- realrainbow.ogg - used when a new gold nugget appears
+- metalpaint.wav - remixed and used when a gold nugget is collected</source>
+        <translation>Taing dhan sgioba Tux Paint gus na fuaimean seo a sholar fon GPL:
+– realrainbow.ogg – cleachdar seo nuair a nochdas cnap òir ùr
+– metalpaint.wav – air ath-mheasgachadh is ga cleachdadh nuair a thogas cnap òir</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="9" />
+        <source>Addition and subtraction memory game against Tux</source>
+        <translation>Geama cuimhne cuir ris is toirt air falbh an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than Tux,  and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="9" />
+        <source>Enumeration memory game</source>
+        <translation>Geama cuimhne àireamhachd</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="10" />
+        <source>Turn the cards over to match the number with the drawn picture.</source>
+        <translation>Thoir car air dà cairt gus an àireamh a lorg a chì thu san dealbh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="11" />
+        <source>Numeration training, memory.</source>
+        <translation>Cleachdadh nan àireamhan, cuimhne.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding a number of pictures, or the written number.</source>
+        <translation>Chì thu cairtean ach chan fhaic thu na tha air an taobh eile dhiubh. Falaichidh gach cairt àireamh de dhealbhan no an àireamh sgrìobhte.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="9" />
+        <source>Addition memory game against Tux</source>
+        <translation>Geama cuimhne cuir ris an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="10" />
+        <source>Turn the cards over to find two numbers which add up the same, until all the cards are gone. Tux do the same. You have to beat it !</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an adding-up sum, or the answer to the sum.
+An adding-up sum looks like this: 2 + 2 = 4
+The numbers on one side of the equals sign (=) have to be the same as the number on the other side. So 2 (1, 2) and 2 more (3, 4) makes 4. Count aloud when you work this out, and count on your fingers, because the more ways you do something, the better you remember it. You can also use blocks, or buttons, or anything you can count. If you have lots of brothers and sisters, you can count them! Or the kids in your class at school. Sing counting songs. Count lots of things, for practice, and you'll be very good at adding-up!
+
+In this game, these cards are hiding the two parts of an adding-up sum (also called an addition sum). You need to find the two parts of the sum, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole sum. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper sum. When you do that, both those cards disappear! When you've made them all disappear, found more sums as Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="9" />
+        <source>align4 activity</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="9" />
+        <source>Division memory game against Tux</source>
+        <translation>Geama cuimhne roinnidh an aghaidh Tux</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than TUX and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
 </context>
 <context>
     <name>AlphabetSequence</name>
@@ -1214,157 +1755,192 @@ aon dath</translation>
 <context>
     <name>DialogConfig</name>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="43" />
+        <location filename="../src/core/DialogConfig.qml" line="45" />
         <source>Configuration</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="98" />
+        <location filename="../src/core/DialogConfig.qml" line="100" />
         <source>Enable audio</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="115" />
+        <location filename="../src/core/DialogConfig.qml" line="117" />
         <source>Fullscreen</source>
         <translation>Làn-sgrìn</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="132" />
+        <location filename="../src/core/DialogConfig.qml" line="134" />
         <source>Virtual Keyboard</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="235" />
+        <location filename="../src/core/DialogConfig.qml" line="151" />
+        <source>Enable automatic downloads/updates of sound files</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="185" />
+        <source>sounds</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="205" />
+        <source>Sounds</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="219" />
+        <source>Check for updates</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="220" />
+        <source>Download</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="329" />
+        <source>You selected a new locale</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="330" />
+        <source>Do you want to download the corresponding sound files now?</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="345" />
         <source>English (Great Britain)</source>
         <translation>Beurla (na Breatainne Mòire)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="236" />
+        <location filename="../src/core/DialogConfig.qml" line="346" />
         <source>English (United States)</source>
         <translation>Beurla (nan Stàitean Aonaichte)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="237" />
+        <location filename="../src/core/DialogConfig.qml" line="347" />
         <source>Bulgarian</source>
         <translation>Bulgairis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="238" />
+        <location filename="../src/core/DialogConfig.qml" line="348" />
         <source>Breton</source>
         <translation>Breatnais</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="239" />
+        <location filename="../src/core/DialogConfig.qml" line="349" />
         <source>Czech Republic</source>
         <translation>Poblachd na Seice</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="240" />
+        <location filename="../src/core/DialogConfig.qml" line="350" />
         <source>Danish</source>
         <translation>Danmhairgis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="241" />
+        <location filename="../src/core/DialogConfig.qml" line="351" />
         <source>German</source>
         <translation>Gearmailtis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="242" />
+        <location filename="../src/core/DialogConfig.qml" line="352" />
         <source>Greek</source>
         <translation>Greugais</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="243" />
+        <location filename="../src/core/DialogConfig.qml" line="353" />
         <source>Spanish</source>
         <translation>Spàinntis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="244" />
+        <location filename="../src/core/DialogConfig.qml" line="354" />
         <source>French</source>
         <translation>Fraingis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="245" />
+        <location filename="../src/core/DialogConfig.qml" line="355" />
         <source>Scottish Gaelic</source>
         <translation>Gàidhlig</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="246" />
+        <location filename="../src/core/DialogConfig.qml" line="356" />
         <source>Galician</source>
         <translation>Gailìsis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="247" />
+        <location filename="../src/core/DialogConfig.qml" line="357" />
         <source>Hungarian</source>
         <translation>Ungairis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="248" />
+        <location filename="../src/core/DialogConfig.qml" line="358" />
         <source>Lithuanian</source>
         <translation>Liotuainis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="249" />
+        <location filename="../src/core/DialogConfig.qml" line="359" />
         <source>Latvian</source>
         <translation>Laitbheis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="250" />
+        <location filename="../src/core/DialogConfig.qml" line="360" />
         <source>Dutch</source>
         <translation>Duitsis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="251" />
+        <location filename="../src/core/DialogConfig.qml" line="361" />
         <source>Norwegian Nynorsk</source>
         <translation>Nynorsk na Nirribhidh</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="252" />
+        <location filename="../src/core/DialogConfig.qml" line="362" />
         <source>Polish</source>
         <translation>Pòlainnis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="253" />
+        <location filename="../src/core/DialogConfig.qml" line="363" />
         <source>Russian</source>
         <translation>Ruisis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="254" />
+        <location filename="../src/core/DialogConfig.qml" line="364" />
         <source>Portuguese (Brazil)</source>
         <translation>Portagailis (Braisil)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="255" />
+        <location filename="../src/core/DialogConfig.qml" line="365" />
         <source>Slovak</source>
         <translation>Slòbhacais</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="256" />
+        <location filename="../src/core/DialogConfig.qml" line="366" />
         <source>Slovenian</source>
         <translation>Slòbhainis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="257" />
+        <location filename="../src/core/DialogConfig.qml" line="367" />
         <source>Montenegrin</source>
         <translation>Monadh Neagrach</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="258" />
+        <location filename="../src/core/DialogConfig.qml" line="368" />
         <source>Swedish</source>
         <translation>Suainis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="259" />
+        <location filename="../src/core/DialogConfig.qml" line="369" />
         <source>Tamil</source>
         <translation>Taimilis</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="260" />
+        <location filename="../src/core/DialogConfig.qml" line="370" />
         <source>Thai</source>
         <translation>Cànan nan Tàidh</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="261" />
+        <location filename="../src/core/DialogConfig.qml" line="371" />
         <source>Chinese (Traditional)</source>
         <translation>Sìnis (Thradaiseanta)</translation>
     </message>
@@ -1403,6 +1979,44 @@ aon dath</translation>
     </message>
 </context>
 <context>
+    <name>DownloadDialog</name>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="31" />
+        <source>Download in progress</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="67" />
+        <source>Download error</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="95" />
+        <source>Your download finished successfully. The sound files are now available.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="96" />
+        <source>Restart any currently active activity.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="98" />
+        <source>Your local sound files are up-to-date.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="105" />
+        <source>Download finished</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="122" />
+        <source>Downloading ...</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
     <name>Leftright</name>
     <message>
         <location filename="../src/activities/leftright/Leftright.qml" line="142" />
@@ -1422,6 +2036,24 @@ aon dath</translation>
         <source>Look at your position, then switch back to invisible mode to continue your moves</source>
         <translation>Thoir sùil air an ionad agad is an uairsin gearr leum air ais dhan mhodh do-fhaicsinneach
 gus leantainn air na gluasadan agad</translation>
+    </message>
+</context>
+<context>
+    <name>Mining</name>
+    <message>
+        <location filename="../src/activities/mining/Mining.qml" line="267" />
+        <source>Zoom in over the sparkle</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/mining/Mining.qml" line="269" />
+        <source>Click on the gold nugget</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/mining/Mining.qml" line="271" />
+        <source>Zoom out</source>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
@@ -1457,6 +2089,90 @@ gus leantainn air na gluasadan agad</translation>
         <location filename="../src/core/DialogAbout.qml" line="32" />
         <source>GCompris Home Page: http://gcompris.net</source>
         <translation>Duilleag-dhachaigh GCompris: http://gcompris.net</translation>
+    </message>
+</context>
+<context>
+    <name>TopPanel</name>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="51" />
+        <source>Equal to %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="53" />
+        <source>Not equal to %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="55" />
+        <source>Factor of %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="57" />
+        <source>Multiple of %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="59" />
+        <source>Primes less than %1</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>WarnMonster</name>
+    <message>
+        <location filename="../src/activities/gnumch-equality/WarnMonster.qml" line="39" />
+        <source>Be careful, a troggle !</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="47" />
+        <source>You were eaten by a Troggle.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="51" />
+        <source>You ate a wrong number.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="62" />
+        <source>1 is not a prime number.</source>
+        <translation>Chan eil 1 na prìomh-àireamh.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="72" />
+        <source>%1 is divisible by %2</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="80" />
+        <source>and</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="97" />
+        <source>Multiples of %1 include %2, </source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="98" />
+        <source>but %1 is not a multiple of %2.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="115" />
+        <source>and %1 are the divisors of %2.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="144" />
+        <source>Press &amp;lt;Return&amp;gt; or click on me to continue.</source>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
@@ -1968,6 +2684,137 @@ gus leantainn air na gluasadan agad</translation>
     </message>
 </context>
 <context>
+    <name>core</name>
+    <message>
+        <location filename="../src/core/core.js" line="204" />
+        <source>Missing sound files!</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/core.js" line="205" />
+        <source>This activity makes use of language specific sound files, that are not yet installed on your system.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/core.js" line="206" />
+        <source>For downloading the needed sound files go to the preferences dialog.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/core.js" line="218" />
+        <source>Download in progress.&lt;br/&gt;'Abort' it to quit immediately.</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>dataset</name>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="22" />
+        <source>zero</source>
+        <translation>neoni</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="23" />
+        <source>one</source>
+        <translation>a h-aon</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="24" />
+        <source>two</source>
+        <translation>a dhà</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="25" />
+        <source>three</source>
+        <translation>a trì</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="26" />
+        <source>four</source>
+        <translation>a ceithir</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="27" />
+        <source>five</source>
+        <translation>a còig</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="28" />
+        <source>six</source>
+        <translation>a sia</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="29" />
+        <source>seven</source>
+        <translation>a seachd</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="30" />
+        <source>eight</source>
+        <translation>a h-ochd</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="31" />
+        <source>nine</source>
+        <translation>a naoidh</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="32" />
+        <source>ten</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="33" />
+        <source>eleven</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="34" />
+        <source>twelve</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="35" />
+        <source>thirteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="36" />
+        <source>fourteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="37" />
+        <source>fifteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="38" />
+        <source>sixteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="39" />
+        <source>seventeen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="40" />
+        <source>heighteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="41" />
+        <source>nineteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="42" />
+        <source>twenty</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
     <name>instruments</name>
     <message>
         <location filename="../src/activities/instruments/instruments.js" line="24" />
@@ -2132,6 +2979,59 @@ gus leantainn air na gluasadan agad</translation>
     </message>
 </context>
 <context>
+    <name>main</name>
+    <message>
+        <location filename="../src/core/main.qml" line="53" />
+        <source>Welcome to GCompris!</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="54" />
+        <source>You are running GCompris for the first time.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="55" />
+        <source>You should verify that your application settings especially your language is set correctly, and that all language specific sound files are installed. You can do this in the Preferences Dialog.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="57" />
+        <source>Your current locale is '%1'</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="59" />
+        <source>Have Fun!</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>math_util</name>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="26" />
+        <location filename="../src/activities/memory/math_util.js" line="29" />
+        <source>+</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="39" />
+        <source>-</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="50" />
+        <location filename="../src/activities/memory/math_util.js" line="53" />
+        <source>×</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="63" />
+        <source>÷</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
     <name>money</name>
     <message>
         <location filename="../src/activities/money/money.js" line="661" />
@@ -2139,7 +3039,7 @@ gus leantainn air na gluasadan agad</translation>
         <translation>Briog air na buinn no air an airgead pàipeir aig bonn na sgrìn gus pàigheadh. Ma tha thu airson bonn no nòta a chur air falbh, briog air aig barr na sgrìn.</translation>
     </message>
     <message>
-        <location filename="../src/activities/money/money.js" line="671" />
+        <location filename="../src/activities/money/money.js" line="702" />
         <source>Tux just bought some items in your shop.
 He gives you %1, please give back his change.</source>
         <translation type="unfinished" />

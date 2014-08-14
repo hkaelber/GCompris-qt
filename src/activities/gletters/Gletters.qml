@@ -38,6 +38,16 @@ ActivityBase {
     /* mode of the activity, "letter" (gletters) or "word" (wordsgame):*/
     property string mode: "letter"
 
+    // Override if you want to replace texts by your image
+    function getImage(key) {
+        return ""
+    }
+
+    // Override if you want to replace texts by the domino
+    function getDominoValues(key) {
+        return []
+    }
+
     onStart: focus = true
     onStop: {}
     
@@ -47,6 +57,7 @@ ActivityBase {
         id: background
         source: activity.dataSetUrl + "background.svgz"
         fillMode: Image.PreserveAspectCrop
+        sourceSize.width: parent.width
 
         signal start
         signal stop
@@ -59,6 +70,7 @@ ActivityBase {
         QtObject {
             id: items
             property Item main: activity.main
+            property Item ourActivity: activity
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
@@ -98,11 +110,11 @@ ActivityBase {
         Score {
             id: score
 
-            anchors.top: parent.top
+            anchors.top: undefined
             anchors.topMargin: 10 * ApplicationInfo.ratio
             anchors.right: parent.right
             anchors.rightMargin: 10 * ApplicationInfo.ratio
-            anchors.bottom: undefined
+            anchors.bottom: keyboard.top
         }
         
         VirtualKeyboard {

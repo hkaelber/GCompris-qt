@@ -121,10 +121,11 @@ function showMessageDialog(parent, title, text, informativeText, icon, buttonHan
         + 'import QtQuick.Dialogs 1.2\n'
         + 'MessageDialog {\n'
         + '    visible: false\n'
-        + '    modality: Qt.ApplicationModal\n'
+        + '    modality: Qt.WindowModal\n'
         + '    title: "' + title +'"\n'
         + '    text: "' + text + '"\n'
         + '    informativeText: "' + informativeText + '"\n'
+        + '    icon: StandardIcon.Information\n'
         + ' }\n';
     //console.log("creating dialog " + qmlStr);
     
@@ -206,4 +207,21 @@ function checkForVoices(parent)
                 Dialog.StandardIcon.Information,
                 buttonHandler);
     }
+}
+
+function quit(parent)
+{
+    console.log("core.js: about to quit");
+    
+    if (GCompris.DownloadManager.downloadIsRunning()) {
+        var dialog = showDownloadDialog(parent, { 
+            text: qsTr("Download in progress.<br/>'Abort' it to quit immediately."),
+            autohide: true,
+            reportError: false,
+            reportSuccess: false,
+            backgroundButtonVisible: false
+        });
+        dialog.finished.connect(function() {Qt.quit();});
+    } else
+        Qt.quit();
 }

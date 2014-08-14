@@ -33,19 +33,37 @@ Image {
     source: isCarriage ?
                 Activity.url + "carriage.svgz":
                 Activity.url + "cloud.svgz"
-
+    z: (state == 'scaled') ? 1 : -1
     property int nbCarriage
     property bool isCarriage: index <= nbCarriage
 
+    Rectangle {
+        id: carriageBg
+        visible: isCarriage
+        width: parent.width - 8
+        height: parent.height / 1.8
+        anchors.bottom: parent.top
+        anchors.bottomMargin: - parent.height / 1.5
+        radius: height / 10
+        color: "white"
+        border.color: "black"
+        border.width: 3
+        opacity: 0.9
+
+    }
+
     Text {
         id: text
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: isCarriage ? -8 : 0
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: isCarriage ?
+                                      carriageBg.horizontalCenter :
+                                      parent.horizontalCenter
+        anchors.verticalCenter: isCarriage ?
+                                    carriageBg.verticalCenter :
+                                    parent.verticalCenter
         z: 11
 
         text: letter
-        font.pixelSize: Math.min(parent.width * 0.8, 80)
+        font.pixelSize: parent.width * 0.65
         font.bold: true
         style: Text.Outline
         styleColor: "black"

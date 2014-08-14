@@ -38,6 +38,7 @@ Item {
     signal nextLevelClicked
     signal previousLevelClicked
     signal repeatClicked
+    signal reloadClicked
     signal homeClicked
 
     function toggle() {
@@ -64,9 +65,9 @@ Item {
         Item { width: 10; height: 1 }
         BarButton {
             source: "qrc:/gcompris/src/core/resource/bar_exit.svgz";
-            contentId: ApplicationInfo.isMobile ? content.disabled : content.exit
+            contentId: content.exit
             sourceSize.width: 66 * barZoom
-            onClicked: Qt.quit();
+            onClicked: Core.quit();
         }
         BarButton {
             source: "qrc:/gcompris/src/core/resource/bar_about.svgz";
@@ -113,6 +114,13 @@ Item {
             onClicked: bar.repeatClicked()
         }
         BarButton {
+            id: reloadButton
+            source: "qrc:/gcompris/src/core/resource/bar_reload.svgz";
+            contentId: content.reload
+            sourceSize.width: 66 * barZoom
+            onClicked: bar.reloadClicked()
+        }
+        BarButton {
             id: configButton
             source: "qrc:/gcompris/src/core/resource/bar_config.svgz";
             contentId: content.config
@@ -122,10 +130,11 @@ Item {
         BarButton {
             id: homeButton
             source: "qrc:/gcompris/src/core/resource/bar_home.svgz";
-            contentId: ApplicationInfo.isMobile ? content.disabled : content.home
+            contentId: content.home
             sourceSize.width: 66 * barZoom
             onClicked: bar.homeClicked()
         }
+
         AnimatedImage {
             id: downloadImage
             source: "qrc:/gcompris/src/core/resource/loader.gif"

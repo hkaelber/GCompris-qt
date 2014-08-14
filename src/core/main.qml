@@ -34,13 +34,20 @@ Window {
     minimumWidth: 400
     minimumHeight: 400
     title: "GCompris"
+
+    onClosing: Core.quit()
         
     GCAudio {
         id: audio
         source: "qrc:/gcompris/src/core/resource/intro.ogg"
         autoPlay: false
     }
-        
+
+    function playIntroVoice(name) {
+        name = name.split("/")[0]
+        audio.append(ApplicationInfo.getAudioFilePath("voices/$LOCALE/intro/" + name + ".ogg"))
+    }
+
     Component.onCompleted: {
         console.log("enter main.qml (run #" + ApplicationSettings.exeCount + ")")
         if (ApplicationSettings.exeCount == 1) {
@@ -50,12 +57,11 @@ Window {
             buttonHandler[StandardButton.Ok] = function() {};
             dialog = Core.showMessageDialog(main, qsTr("Welcome to GCompris!"),
                     qsTr("You are running GCompris for the first time."),
-                    qsTr("You should verify that your application settings" +
-                    " especially your language is set correctly, and that all" +
-                    " language specific sound files are installed. You can do" +
-                    " this in the Preferences Dialog.<br/>Your current locale is "
-                    + "<b>" + ApplicationInfo.localeShort + "</b>"
-                    + ".<br/>Have Fun!"),
+                    qsTr("You should verify that your application settings especially your language is set correctly, and that all language specific sound files are installed. You can do this in the Preferences Dialog.") +
+                    "\n" +
+                    qsTr("Your current locale is '%1'").arg(ApplicationInfo.localeShort) +
+                    "\n" +
+                    qsTr("Have Fun!"),
                     StandardIcon.Information,
                     buttonHandler
             );
@@ -72,6 +78,10 @@ Window {
             {
                 properties.exitItem.pause()
                 if(!properties.exitItem.isDialog) {
+                    if(!properties.enterItem.isDialog) {
+                        playIntroVoice(properties.enterItem.activityInfo.name)
+                        properties.enterItem.audio = audio
+                    }
                     properties.enterItem.start()
                 }
 

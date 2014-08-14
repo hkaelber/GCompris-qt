@@ -35,11 +35,14 @@
     </message>
     <message>
         <location filename="../src/activities/memory-math-add/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="11" />
         <source>Practise adding up, until all the cards are gone.</source>
         <translation>Precvič si pričítavanie a vyzbieraj karty.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-add/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="12" />
         <source>Addition</source>
         <translation>Sčítanie</translation>
     </message>
@@ -84,24 +87,38 @@ V tejto hre, karty skrývajú dve časti súčtu (napr. na jednej karte je 2+2 a
         <translation>Manipulácia s klávesnicou</translation>
     </message>
     <message>
-        <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="9" />
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="9" />
         <source>Addition and subtraction memory game</source>
         <translation>Pamäťová hra na sčítanie a odčítanie</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="9" />
+        <source>Subtraction memory game</source>
+        <translation>Pamäťová hra na odčítavanie</translation>
+    </message>
+    <message>
         <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find two numbers which add or subtract the same, until all the cards are gone.</source>
         <translation>Otáčaj karty a hľadaj dvojice, ktorých číselný výsledok (sčítanie,odčítanie) je rovnaký. Takto vyzbieraj všetky dvojice.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="11" />
-        <source>Practise subtraction, until all the cards are gone.</source>
-        <translation>Precvič si odčítanie a vyzbieraj všetky karty.</translation>
+        <source>Practise substraction, until all the cards are gone.</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/memory-math-minus/ActivityInfo.qml" line="12" />
+        <source>Substraction</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <source>Practise subtraction, until all the cards are gone.</source>
+        <translation type="vanished">Precvič si odčítanie a vyzbieraj všetky karty.</translation>
+    </message>
+    <message>
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="12" />
         <source>Addition and subtraction</source>
         <translation>Sčítanie a odčítanie</translation>
     </message>
@@ -137,13 +154,41 @@ V tejto hre, karty skrývajú dve časti nejakej matematickej operácie. Tvojou 
         <translation>Koordinácia pohybov</translation>
     </message>
     <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="9" />
+        <source>Align four (two players)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="10" />
+        <source>Arrange four coins in a row</source>
+        <translation>Usporiadaj štyri mince do jedného radu</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="11" />
+        <source>Create a line of 4 pieces either horizontally (lying down), vertically (standing up) or diagonally.</source>
+        <translation>Vytvor rad štyroch mincí buď horizontálne (ležiaci rad, vedľa seba) alebo vertikálne (stojací rad, nad sebou) či diagonálne (šíkmo).</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/erase_clic/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/erase/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/football/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/clickgame/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/erase_2clic/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory/ActivityInfo.qml" line="12" />
         <source>Mouse-manipulation</source>
         <translation>Vedieť manipulovať s myšou</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/align4-2players/ActivityInfo.qml" line="13" />
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="13" />
+        <source>Click the position in the line where you want to drop a piece. You can also use the arrow keys to move the piece left or right, and the down or space key to drop a piece.</source>
+        <translation>Klikni kdekoľvek v riadku, kde chceš hodiť mincu. Prípadne môžeš použiť šípky klávesnice vľavo-vpravo na pohyb mince a mincu vhodíš šipkou dole alebo medzerníkom.</translation>
     </message>
     <message>
         <location filename="../src/activities/erase_clic/ActivityInfo.qml" line="13" />
@@ -308,19 +353,34 @@ V tejto hre, karty skrývajú dve časti nejakej matematickej operácie. Tvojou 
         <translation>Pamäťová hra na násobenie</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="9" />
+        <source>Multiplication memory game against Tux</source>
+        <translation>Pamäťová hra na násobenie proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-mult/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find two numbers which multiply the same, until all the cards are gone.</source>
         <translation>Otáčaj karty a hľadaj dve, ktorých číselný výsledok po násobení je rovnaký. Takto vyzbieraj všetky dvojice.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-math-mult/ActivityInfo.qml" line="11" />
         <source>Practise multiplication, until all the cards are gone.</source>
         <translation>Precvič si násobenie a vyzbieraj všetky karty.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-math-mult/ActivityInfo.qml" line="12" />
         <source>Multiplication</source>
         <translation>Násobenie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more then Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/template/ActivityInfo.qml" line="9" />
@@ -402,11 +462,13 @@ V tejto hre, karty skrývajú dve časti nejakej matematickej operácie. Tvojou 
     </message>
     <message>
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find two numbers which subtract the same, until all the cards are gone.</source>
         <translation>Otáčaj karty a hľadaj dve, ktorých číselný výsledok je rovnaký. Takto vyzbieraj všetky dvojice.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-add-minus/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="11" />
         <source>Practise addition, subtraction, until all the cards are gone.</source>
         <translation>Precvič si sčítanie a odčítanie a vyzbieraj všetky karty.</translation>
     </message>
@@ -549,19 +611,24 @@ V tejto hre, karty skrývajú dve časti nejakej matematickej operácie. Tvojou 
         <translation>Pamäťová hra na delenie</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-div/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-mult-div/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="10" />
         <location filename="../src/activities/memory-math-add-minus-mult-div/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="10" />
         <source>Turn the cards over to find a matching operation, until all the cards are gone.</source>
         <translation>Otáčaj karty a hľadaj dvojice s rovnakým číselným výsledkom. Takto vyzbieraj všetky karty.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-div/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="11" />
         <source>Practise division, until all the cards are gone.</source>
         <translation>Precvič si delenie a vyzbieraj všetky karty.</translation>
     </message>
     <message>
         <location filename="../src/activities/memory-math-div/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="12" />
         <source>Division</source>
         <translation>Delenie</translation>
     </message>
@@ -672,14 +739,28 @@ Klávesové skratky:
         <translation>Pamäťová hra na násobenie a delenie</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="9" />
+        <source>Multiplication and division memory game against Tux</source>
+        <translation>Pamäťová hra na násobenie a delenie proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-math-mult-div/ActivityInfo.qml" line="11" />
         <source>Practise multiplication, division, until all the cards are gone.</source>
         <translation>Precvič si násobenie, delenie a vyzbieraj všetky karty.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-math-mult-div/ActivityInfo.qml" line="12" />
         <source>Multiplication, division</source>
         <translation>Násobenie, delenie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-mult-div-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/clickgame/ActivityInfo.qml" line="9" />
@@ -732,16 +813,29 @@ Klávesové skratky:
         <translation>Klikni na tučniaka-hudobníka, počúvaj a hľadaj rovnaké zvuky</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="9" />
+        <source>Audio memory game against Tux</source>
+        <translation>Zvuková pamäťová hra proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="10" />
+        <source>Play the audio memory game against Tux</source>
+        <translation>Zahraj si zvukovú pamäťovú hru proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-sound/ActivityInfo.qml" line="11" />
         <source>Train your audio memory and remove all the violinists Tux.</source>
         <translation>Precvič si svoju sluchovú pamäť a odstráň všetkých tučniakov-hudobníkov.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-sound/ActivityInfo.qml" line="12" />
         <source>Mouse manipulation, Brain.</source>
         <translation>Manipulácia s myšou, Mozog.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-sound-tux/ActivityInfo.qml" line="13" />
         <location filename="../src/activities/memory-sound/ActivityInfo.qml" line="13" />
         <source>A set of violinist Tux is shown. Each Tux has an associated sound, and each sound has a twin exactly the same. Click on a Tux to see its hidden sound, and try to match the twins. You can only activate two Tux at once, so you need to remember where a sound is, while you listen to its twin. When you turn over the twins, they both disappear.</source>
         <translation>Vidíš skupinu Tuxov - huslistov. Každý Tux vydáva nejaký zvuk a každý zvuk má ešte presne rovnaké zvukové „dvojča“. Klikni na Tuxa, aby si počul jeho zvuk a snaž sa ho spárovať s rovnakým zvukom. Môžeš naraz aktivovať len dvoch Tuxov, takže si zapamätaj, kde je aký zvuk. Keď nájdeš dva rovnaké zvuky, obaja Tuxovia zmiznú.</translation>
@@ -757,14 +851,28 @@ Klávesové skratky:
         <translation>Pamäťová hra na všetky operácie</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="9" />
+        <source>All operations memory game against Tux</source>
+        <translation>Pamäťová hra na všetky operácie proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory-math-add-minus-mult-div/ActivityInfo.qml" line="11" />
         <source>Practise addition, subtraction, multiplication, division, until all the cards are gone.</source>
         <translation>Precvič si sčítanie, odčítanie, násobenie, delenie a vyzbieraj všetky karty.</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="12" />
         <location filename="../src/activities/memory-math-add-minus-mult-div/ActivityInfo.qml" line="12" />
         <source>Addition, subtraction, multiplication, division</source>
         <translation>Sčítanie, odčítanie, násobenie, delenie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-mult-div-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than Tux, you've won the game! :)</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/colors/ActivityInfo.qml" line="9" />
@@ -802,9 +910,25 @@ Klávesové skratky:
         <translation>Otáčaj karty a nájdi zhodné páry</translation>
     </message>
     <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="9" />
+        <source>Memory Game with images against Tux</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="10" />
+        <source>Flip the cards to find the matching pairs against Tux</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="11" />
         <location filename="../src/activities/memory/ActivityInfo.qml" line="11" />
         <source>Train your memory and remove all the cards</source>
         <translation>Precvič si svoju pamäť a vyzbieraj všetky karty</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-tux/ActivityInfo.qml" line="13" />
+        <source>A set of blank cards is shown. Each card has a picture on the other side, and each picture card has a twin exactly the same. Click on a card to see its hidden picture, and try to match the twins. You can only turn over two cards at once, so you need to remember where a picture is, while you look for its twin. When you turn over the twins, they both disappear. Tux teacher do the same.</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <location filename="../src/activities/memory/ActivityInfo.qml" line="13" />
@@ -1088,6 +1212,423 @@ Na úrovni 14 a vyšších je režim rýchleho behu aktivovaný automaticky. Ak 
         <source>Click on the dice to show how many ice spots there are between Tux and the fish. Click the dice with the right mouse button to count backwards. When done, click on the OK button or hit the Enter key.</source>
         <translation>Klikni na kocku, aby si videl, koľko kusov ľadu je medzi Tuxom a rybou. Potom klikaním na kocku pravým tlačidlom myši uberáš kúsky. Keď budeš hotový, klikni na tlačidlo OK alebo stlač kláves Enter.</translation>
     </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="9" />
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="9" />
+        <source>The magician hat</source>
+        <translation>Čarodejníkov klobúk</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="10" />
+        <source>Count how many items are under the magic hat after some have got away</source>
+        <translation>Spočítaj koľko vecí je pod čarovným klobúkom po tom, ako boli nejaké odobraté</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="11" />
+        <source>Learn subtraction</source>
+        <translation>Učme sa odčítať</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="12" />
+        <source>Subtraction</source>
+        <translation>Odčítanie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-minus/ActivityInfo.qml" line="13" />
+        <source>Look at the magician, he tells the number of stars that are under his magic hat. Then, click on the hat to open it. A few stars escape. Click again on the hat to close it. You have to count how many are still under the hat. Click on the bottom right area to answer.</source>
+        <translation>Pozri sa na čarodejníka. Hovorí, koľko hviezdičiek je pod jeho čarovným klobúkom. Potom klikni na klobúk, ktorý sa odkryje a niekoľko hviezdičiek uletí. Klikni opäť na klobúk. Zvyšné hviezdičky sa zakryjú. Koľko ich je? Odpoveď naklikaj v tabuľke vpravo dole.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="9" />
+        <source>The football game</source>
+        <translation>Futbalová hra</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="10" />
+        <source>Kick the ball into the goal</source>
+        <translation>Kopni loptu do bránky</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="11" />
+        <source>Kick the ball into the black hole on the right</source>
+        <translation>Kopnúť loptu do čierneho otvoru vpravo</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/football/ActivityInfo.qml" line="13" />
+        <source>Point the mouse and click on the ball, to set the speed and direction of the ball. The closer you click to the center, the slower the ball moves.</source>
+        <translation>Ukážte myškou na loptu a kliknite, čím určíte jej rýchlosť a smer. O čo bližšie ku stredu lopty kliknete, o to sa bude lopta pomalšie pohybovať.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="5" />
+        <source>Prime numbers are numbers that are only divisible by themselves and 1. For example, 3 is a prime number, but 4 isn't (because 4 is divisible by 2). You can think of prime numbers as very small families: they only ever have two people in them! Only themselves and 1. You can't fit any other numbers into them with nothing left over. 5 is one of these lonely numbers (only 5 × 1 = 5), but you can see that 6 has 2 and 3 in its family as well (6 × 1 = 6, 2 ×3 = 6). So 6 is not a prime number. &lt;br&gt;</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="13" />
+        <source>Use the arrow keys to navigate around the board and to avoid the Troggles. Press the space bar to eat the number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="6" />
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="6" />
+        <source>Touch cells to move around the board and to avoid the Troggles. Press the Muncher to eat the number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="15" />
+        <source>Gnumch Primes</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="16" />
+        <source>Guide the Number Muncher to all the prime numbers.</source>
+        <translation>Doveď Čísložrúta na všetky prvočísla, ktoré sú menšie ako číslo uvedené v hornej časti obrazovky.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-primes/ActivityInfo.qml" line="17" />
+        <source>Learn about prime numbers.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="5" />
+        <source>The multiples of a number are all the numbers that are equal to the original number times another number. For example, 24, 36, 48 and 60 are all multiples of 12. 25 is not a multiple of 12 because there isn't any number that can be multiplied by 12 to get 25. If one number is a factor of a second number, then the second number is a multiple of the first number. Again, you can think of multiples as families, and factors are the people who belong to those families. The factor 5, has parents 10, grandparents 15, great-grandparents 20, great-great-grandparents 25, and every extra step of 5 is another great- in front! But the number 5 does not belong in the 8 or 23 families. You can't fit any number of 5s into 8 or 23 with nothing left over. So '8 isn't a multiple of 5, nor is 23. Only 5, 10, 15, 20, 25 ... are multiples (or families or steps) of 5.&lt;br&gt;</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="15" />
+        <source>Gnumch Multiples</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="16" />
+        <source>Guide the Number Muncher to all the multiples of the number at the top of the screen.</source>
+        <translation>Doveď Čísložrúta na všetky násobky čísla uvedeného v hornej časti obrazovky.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-multiples/ActivityInfo.qml" line="17" />
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="17" />
+        <source>Learn about multiples and factors.</source>
+        <translation>Nauč sa o násobkoch a deliteľoch.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="10" />
+        <source>Count how many items are under the magic hat</source>
+        <translation>Spočítaj koľko hviezdičiek je pod čarovným klobúkom</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="11" />
+        <source>Learn addition</source>
+        <translation>Učme sa sčítanie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/magic-hat-plus/ActivityInfo.qml" line="13" />
+        <source>Click on the hat to open or close it. Under the hat, how many stars can you see moving around? Count carefully. :) Click in the bottom-right area to input your answer.</source>
+        <translation>Klikni na klobúk, aby si ho odokryl a zakryl. Koľko hviezdičiek si videl pod klobúkom? Počítaj pozorne. :) Odpoveď vyplň v tabuľke vpravo dole.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="9" />
+        <source>Gnumch Equality</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="10" />
+        <source>Guide the Number Muncher to the expressions that equal the number at the top of the screen.</source>
+        <translation>Doveď Čísložrúta na výraz, ktorý sa rovná číslu uvedenému v hornej časti obrazovky.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="11" />
+        <source>Practice addition, multiplication, division and subtraction.</source>
+        <translation>Precvič si sčítanie, násobenie, delenie a odčítanie.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="13" />
+        <source>Use the arrow keys to navigate around the board and to avoid the Troggles. Press the space bar to eat a number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/ActivityInfo.qml" line="13" />
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="13" />
+        <source>Touch cells to move around the board and to avoid the Troggles. Press the muncher to eat the number</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="5" />
+        <source>The factors of a number are all the numbers that divide that number evenly. For example, the factors of 6 are 1, 2, 3 and 6. 4 is not a factor of 6 because 6 cannot be divided into 4 equal pieces. If one number is a multiple of a second number, then the second number is a factor of the first number. You can think of multiples as families, and factors are the people in those families. So 1, 2, 3 and 6 all fit into the 6 family, but 4 belongs to another family.&lt;br&gt;</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="15" />
+        <source>Gnumch Factors</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-factors/ActivityInfo.qml" line="16" />
+        <source>Guide the Number Muncher to all the factors of the number at the top of the screen.</source>
+        <translation>Doveď Čísložrúta na všetky delitele čísla uvedeného v hornej časti obrazovky.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="9" />
+        <source>Gnumch Inequality</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="10" />
+        <source>Guide the Number Muncher to the all the expressions that do not equal the number at the top of the screen.</source>
+        <translation>Doveď Čísložrúta na výrazy, ktoré sa nerovnajú číslu uvedenému v hornej časti obrazovky.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-inequality/ActivityInfo.qml" line="11" />
+        <source>Practice addition, subtraction, multiplication and division.</source>
+        <translation>Precvič si sčítanie, odčítanie, násobenie a delenie.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="9" />
+        <source>Numbers with pairs of dice</source>
+        <translation>Čísla s dvomi kockami</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="10" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="10" />
+        <source>Count the number of dots on dice before they reach the ground</source>
+        <translation>Spočítaj bodky na kocke skôr než dopadne na zem</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="11" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="11" />
+        <source>In a limited time, count the number of dots</source>
+        <translation>V obmedzenom čase spočítaj počet bodiek</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="12" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="12" />
+        <source>Counting skills</source>
+        <translation>Schopnosť počítať</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers2/ActivityInfo.qml" line="13" />
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="13" />
+        <source>With the keyboard, type the number of dots you see on the falling dice.</source>
+        <translation>Stlač na klávesnici číslo zodpovedajúce počtu bodiek na padajúcej kocke.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/smallnumbers/ActivityInfo.qml" line="9" />
+        <source>Numbers With Dice</source>
+        <translation>Čísla s kockami</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="9" />
+        <source>Wordnumber memory game</source>
+        <translation>Pamäťová hra so sčítavaním slov</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="10" />
+        <source>Turn the cards over to match the number with the word matching it.</source>
+        <translation>Otáčaj karty tak, aby číslo zodpovedalo slovu.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="11" />
+        <source>Reading numbers, memory.</source>
+        <translation>Čítanie čísel, pamäťová hra.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="12" />
+        <source>Reading</source>
+        <translation>Čítanie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding a number of number, or the word of the number.</source>
+        <translation>Vidíš nejaké karty, ale nevidíš, čo sa skrýva na ich obrátenej strane. Každá karta má napísané číslo, alebo slovo, označujúce nejaké číslo.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="9" />
+        <source>Control the hose-pipe</source>
+        <translation>Ovládanie polievacej hadice</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="10" />
+        <source>Tux needs to water the flowers, but the hose is blocked.</source>
+        <translation>Tučniak potrebuje poliať kvety, ale hadica je upchatá.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="11" />
+        <source>Fine motor coordination</source>
+        <translation>Jemná koordinácia pohybov</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/followline/ActivityInfo.qml" line="13" />
+        <source>Move the mouse over the red part of the hose-pipe. This will move it, bringing it, part by part, up to the flowers. Be careful, if you move off the hose, the red part will go back down.</source>
+        <translation>Prejdi myškou nad červenú časť polievacej hadice. Túto treba posúvať a pomaličky presunúť ku kvetom. Musíš byť opatrný, lebo keď vyjdeš myškou mimo hadice, červená časť sa vráti späť.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="9" />
+        <source>Substraction memory game against Tux</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="11" />
+        <source>Practise subtraction, until all the cards are gone. Tux do the same</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="12" />
+        <source>subtraction</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-minus-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more operations than Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="9" />
+        <source>Practice addition with a target game</source>
+        <translation>Precvičovanie sčítania pomocou terčovej hry</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="10" />
+        <source>Hit the target and count your points</source>
+        <translation>Zasiahni terč a spočítaj svoje body</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="11" />
+        <source>Throw darts at a target and count your score.</source>
+        <translation>Hoď šípky do terča a spočítaj si svoje skóre.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="12" />
+        <source>Can move the mouse, can read numbers and count up to 15 for the first level</source>
+        <translation>Schopnosť pohybovať myšou, čítať čísla a sčítavať čísla do 15 v prvej úrovni</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/target/ActivityInfo.qml" line="13" />
+        <source>Check the wind speed and direction, and then click on the target to launch a dart. When you all your darts are thrown, a window appears asking you to count your score. Enter the score with the keyboard then press the Enter key or the OK button.</source>
+        <translation>Najskôr skontroluj silu a smer vetra, potom kliknutím vypusť šípku na cieľ. Až vypustíš všetky svoje šípky, objaví sa okno, ktoré ťa požiada o spočítanie tvojho skóre. Zadaj skóre pomocou klávesnice a potom stlač kláves Enter alebo klikni na ikonu OK.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="9" />
+        <source>Mining for gold</source>
+        <translation>Dolovanie zlata</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="10" />
+        <source>Use the mousewheel to approach the rockwall an look for gold nuggets.</source>
+        <translation>Použi koliesko myši pre pohyb ku kamennej stene a hľadaj zlaté zrnká.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="11" />
+        <source>Learn to use the mousewheel to zoom in and out.</source>
+        <translation>Naučme sa používať koliesko myši na zväčšovanie a zmenšovanie.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="12" />
+        <source>You should be familiar with moving the mouse and clicking.</source>
+        <translation>Mal by si ovládať pohyb myši a klikanie. </translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="13" />
+        <source>Looking at the rockwall, you can see a sparkle somewhere. Move the mouse cursor next to this sparkle and use the mousewheel to zoom in. If you zoomed in at maximum, a gold nugget will appear at the position of the sparkle. Click on the gold nugget to collect it.
+
+Having collected the nugget, use the mousewheel to zoom out again. If you zoomed out at maximum, another sparkle will appear, showing the next gold nugget to collect. Collect enough nuggets to complete the level.
+
+The truck in the lower, right corner of the screen will tell you the number of already collected nuggets and the total number of nuggets to collect in this level.
+
+To start the tutorial, click on professor Tux (available at level 1) and let him show you, what to do next.
+
+Have fun! :)</source>
+        <translation>Pri pohľade na kamennú stenu uvidíš sem-tam iskrenie. Choď kurzorom do blízkosti iskričiek a použi koliesko myši na zväčšenie. Pri maximálnom zväčšení sa na mieste záblesku objaví zlatá hrudka. Kliknutím na túto hrudku si ju zoberieš.
+
+Potom s použitím kolieska myši sa vráť k pôvodnej veľkosti. Pri maximálnom zmenšení sa objaví ďalšie iskrenie, a môžeš podobne pokračovať v zbieraní zlatých hrudiek, až kým ich nebude dosť na dokončenie danej úrovne.
+
+Nákladné auto v pravom dolnom rohu obrazovky ti povie počet nazbieraných hrudiek a ich celkový počet, ktorý je treba získať na danej úrovni.
+
+Pre naštartovanie pomocníka klikni na profesora Tuxa (je viditeľný úrovni 1) a on ti poradí, čo a ako ďalej.
+
+Príjemnú zábavu! :)</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/mining/ActivityInfo.qml" line="22" />
+        <source>Thanks to the Tuxpaint team for providing the following sounds under GPL:
+- realrainbow.ogg - used when a new gold nugget appears
+- metalpaint.wav - remixed and used when a gold nugget is collected</source>
+        <translation>Vdaka tímu Tuxpaint za poskytnutie nasledujúcich zvukov po licenciou GPL:
+- realrainbow.ogg - použije sa, keď sa objaví nová zlatá hrudka
+- metalpaint.wav - počuješ ho, keď si zoberieš zlatú hrudku</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="9" />
+        <source>Addition and subtraction memory game against Tux</source>
+        <translation>Pamäťová hra na sčítanie a odčítanie proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-minus-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than Tux,  and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="9" />
+        <source>Enumeration memory game</source>
+        <translation>Pamäťová hra na spočitávanie</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="10" />
+        <source>Turn the cards over to match the number with the drawn picture.</source>
+        <translation>Otáčaj karty tak, aby číslo zodpovedalo nakreslenému obrázku.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="11" />
+        <source>Numeration training, memory.</source>
+        <translation>Trénovanie počítania spamäti.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-enumerate/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding a number of pictures, or the written number.</source>
+        <translation>Vidíš nejaké karty, ale nevidíš, čo sa skrýva na ich obrátenej strane. Každá karta skrýva nejaký počet obrázkov, alebo je na nej napísané číslo.</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="9" />
+        <source>Addition memory game against Tux</source>
+        <translation>Pamäťová hra so sčítavaním proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="10" />
+        <source>Turn the cards over to find two numbers which add up the same, until all the cards are gone. Tux do the same. You have to beat it !</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-add-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an adding-up sum, or the answer to the sum.
+An adding-up sum looks like this: 2 + 2 = 4
+The numbers on one side of the equals sign (=) have to be the same as the number on the other side. So 2 (1, 2) and 2 more (3, 4) makes 4. Count aloud when you work this out, and count on your fingers, because the more ways you do something, the better you remember it. You can also use blocks, or buttons, or anything you can count. If you have lots of brothers and sisters, you can count them! Or the kids in your class at school. Sing counting songs. Count lots of things, for practice, and you'll be very good at adding-up!
+
+In this game, these cards are hiding the two parts of an adding-up sum (also called an addition sum). You need to find the two parts of the sum, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole sum. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper sum. When you do that, both those cards disappear! When you've made them all disappear, found more sums as Tux and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/align4/ActivityInfo.qml" line="9" />
+        <source>align4 activity</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="9" />
+        <source>Division memory game against Tux</source>
+        <translation>Pamäťová hra na delenie proti tučniakovi</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-math-div-tux/ActivityInfo.qml" line="13" />
+        <source>You can see some cards, but you can't see what's on the other side of them. Each card is hiding an operation, or the answer to it.
+
+In this game, these cards are hiding the two parts of an operation. You need to find the two parts of the operation, and bring them together again. Click on a card to see what number it's hiding, then try to find the other card that goes with it, to make a whole operation. You can only turn over two cards in one go, so you need to remember where the numbers are hiding, then you can match them when you find their other half. You're doing the job of the equals sign, and the numbers need you to put them together and make a proper equality. When you do that, both those cards disappear! When you've made them all disappear, found more than TUX and you've won the game! :)</source>
+        <translation type="unfinished" />
+    </message>
 </context>
 <context>
     <name>AlphabetSequence</name>
@@ -1203,157 +1744,192 @@ to make the ball go in a straight line.</source>
 <context>
     <name>DialogConfig</name>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="43" />
+        <location filename="../src/core/DialogConfig.qml" line="45" />
         <source>Configuration</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="98" />
+        <location filename="../src/core/DialogConfig.qml" line="100" />
         <source>Enable audio</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="115" />
+        <location filename="../src/core/DialogConfig.qml" line="117" />
         <source>Fullscreen</source>
         <translation>Celá obrazovka</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="132" />
+        <location filename="../src/core/DialogConfig.qml" line="134" />
         <source>Virtual Keyboard</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="235" />
+        <location filename="../src/core/DialogConfig.qml" line="151" />
+        <source>Enable automatic downloads/updates of sound files</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="185" />
+        <source>sounds</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="205" />
+        <source>Sounds</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="219" />
+        <source>Check for updates</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="220" />
+        <source>Download</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="329" />
+        <source>You selected a new locale</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="330" />
+        <source>Do you want to download the corresponding sound files now?</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DialogConfig.qml" line="345" />
         <source>English (Great Britain)</source>
         <translation>anglický (Veľká Británia)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="236" />
+        <location filename="../src/core/DialogConfig.qml" line="346" />
         <source>English (United States)</source>
         <translation>anglický (Spojené štáty)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="237" />
+        <location filename="../src/core/DialogConfig.qml" line="347" />
         <source>Bulgarian</source>
         <translation>bulharský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="238" />
+        <location filename="../src/core/DialogConfig.qml" line="348" />
         <source>Breton</source>
         <translation>bretónsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="239" />
+        <location filename="../src/core/DialogConfig.qml" line="349" />
         <source>Czech Republic</source>
         <translation>česky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="240" />
+        <location filename="../src/core/DialogConfig.qml" line="350" />
         <source>Danish</source>
         <translation>dánsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="241" />
+        <location filename="../src/core/DialogConfig.qml" line="351" />
         <source>German</source>
         <translation>nemecký</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="242" />
+        <location filename="../src/core/DialogConfig.qml" line="352" />
         <source>Greek</source>
         <translation>grécky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="243" />
+        <location filename="../src/core/DialogConfig.qml" line="353" />
         <source>Spanish</source>
         <translation>španielsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="244" />
+        <location filename="../src/core/DialogConfig.qml" line="354" />
         <source>French</source>
         <translation>francúzsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="245" />
+        <location filename="../src/core/DialogConfig.qml" line="355" />
         <source>Scottish Gaelic</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="246" />
+        <location filename="../src/core/DialogConfig.qml" line="356" />
         <source>Galician</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="247" />
+        <location filename="../src/core/DialogConfig.qml" line="357" />
         <source>Hungarian</source>
         <translation>Maďarsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="248" />
+        <location filename="../src/core/DialogConfig.qml" line="358" />
         <source>Lithuanian</source>
         <translation>litovský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="249" />
+        <location filename="../src/core/DialogConfig.qml" line="359" />
         <source>Latvian</source>
         <translation>lotyšský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="250" />
+        <location filename="../src/core/DialogConfig.qml" line="360" />
         <source>Dutch</source>
         <translation>holandský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="251" />
+        <location filename="../src/core/DialogConfig.qml" line="361" />
         <source>Norwegian Nynorsk</source>
         <translation>nórsky (Nynorsk)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="252" />
+        <location filename="../src/core/DialogConfig.qml" line="362" />
         <source>Polish</source>
         <translation>poľský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="253" />
+        <location filename="../src/core/DialogConfig.qml" line="363" />
         <source>Russian</source>
         <translation>ruský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="254" />
+        <location filename="../src/core/DialogConfig.qml" line="364" />
         <source>Portuguese (Brazil)</source>
         <translation>portugalský (Brazília)</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="255" />
+        <location filename="../src/core/DialogConfig.qml" line="365" />
         <source>Slovak</source>
         <translation>slovenský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="256" />
+        <location filename="../src/core/DialogConfig.qml" line="366" />
         <source>Slovenian</source>
         <translation>slovinský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="257" />
+        <location filename="../src/core/DialogConfig.qml" line="367" />
         <source>Montenegrin</source>
         <translation>čiernohorský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="258" />
+        <location filename="../src/core/DialogConfig.qml" line="368" />
         <source>Swedish</source>
         <translation>švédsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="259" />
+        <location filename="../src/core/DialogConfig.qml" line="369" />
         <source>Tamil</source>
         <translation>Tamilsky</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="260" />
+        <location filename="../src/core/DialogConfig.qml" line="370" />
         <source>Thai</source>
         <translation>thajský</translation>
     </message>
     <message>
-        <location filename="../src/core/DialogConfig.qml" line="261" />
+        <location filename="../src/core/DialogConfig.qml" line="371" />
         <source>Chinese (Traditional)</source>
         <translation>čínsky (tradičný)</translation>
     </message>
@@ -1392,6 +1968,44 @@ to make the ball go in a straight line.</source>
     </message>
 </context>
 <context>
+    <name>DownloadDialog</name>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="31" />
+        <source>Download in progress</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="67" />
+        <source>Download error</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="95" />
+        <source>Your download finished successfully. The sound files are now available.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="96" />
+        <source>Restart any currently active activity.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="98" />
+        <source>Your local sound files are up-to-date.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="105" />
+        <source>Download finished</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/DownloadDialog.qml" line="122" />
+        <source>Downloading ...</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
     <name>Leftright</name>
     <message>
         <location filename="../src/activities/leftright/Leftright.qml" line="142" />
@@ -1410,6 +2024,24 @@ to make the ball go in a straight line.</source>
         <location filename="../src/activities/maze/Maze.qml" line="348" />
         <source>Look at your position, then switch back to invisible mode to continue your moves</source>
         <translation>Pozri sa na svoju polohu a potom sa opäť prepni do neviditeľného módu a pokračuj v presunoch.</translation>
+    </message>
+</context>
+<context>
+    <name>Mining</name>
+    <message>
+        <location filename="../src/activities/mining/Mining.qml" line="267" />
+        <source>Zoom in over the sparkle</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/mining/Mining.qml" line="269" />
+        <source>Click on the gold nugget</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/mining/Mining.qml" line="271" />
+        <source>Zoom out</source>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
@@ -1447,6 +2079,90 @@ Michal Kaukič</translation>
         <location filename="../src/core/DialogAbout.qml" line="32" />
         <source>GCompris Home Page: http://gcompris.net</source>
         <translation>Domovská stránka GComprisu: http://gcompris.net</translation>
+    </message>
+</context>
+<context>
+    <name>TopPanel</name>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="51" />
+        <source>Equal to %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="53" />
+        <source>Not equal to %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="55" />
+        <source>Factor of %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="57" />
+        <source>Multiple of %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/TopPanel.qml" line="59" />
+        <source>Primes less than %1</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>WarnMonster</name>
+    <message>
+        <location filename="../src/activities/gnumch-equality/WarnMonster.qml" line="39" />
+        <source>Be careful, a troggle !</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="47" />
+        <source>You were eaten by a Troggle.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="51" />
+        <source>You ate a wrong number.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="62" />
+        <source>1 is not a prime number.</source>
+        <translation>1 nie je prvočíslo</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="72" />
+        <source>%1 is divisible by %2</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="80" />
+        <source>and</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="97" />
+        <source>Multiples of %1 include %2, </source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="98" />
+        <source>but %1 is not a multiple of %2.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="115" />
+        <source>and %1 are the divisors of %2.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/gnumch-equality/Warning.qml" line="144" />
+        <source>Press &amp;lt;Return&amp;gt; or click on me to continue.</source>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
@@ -1958,6 +2674,137 @@ Michal Kaukič</translation>
     </message>
 </context>
 <context>
+    <name>core</name>
+    <message>
+        <location filename="../src/core/core.js" line="204" />
+        <source>Missing sound files!</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/core.js" line="205" />
+        <source>This activity makes use of language specific sound files, that are not yet installed on your system.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/core.js" line="206" />
+        <source>For downloading the needed sound files go to the preferences dialog.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/core.js" line="218" />
+        <source>Download in progress.&lt;br/&gt;'Abort' it to quit immediately.</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>dataset</name>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="22" />
+        <source>zero</source>
+        <translation>nula</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="23" />
+        <source>one</source>
+        <translation>jeden</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="24" />
+        <source>two</source>
+        <translation>dva</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="25" />
+        <source>three</source>
+        <translation>tri</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="26" />
+        <source>four</source>
+        <translation>štyri</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="27" />
+        <source>five</source>
+        <translation>päť</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="28" />
+        <source>six</source>
+        <translation>šesť</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="29" />
+        <source>seven</source>
+        <translation>sedem</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="30" />
+        <source>eight</source>
+        <translation>osem</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="31" />
+        <source>nine</source>
+        <translation>deväť</translation>
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="32" />
+        <source>ten</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="33" />
+        <source>eleven</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="34" />
+        <source>twelve</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="35" />
+        <source>thirteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="36" />
+        <source>fourteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="37" />
+        <source>fifteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="38" />
+        <source>sixteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="39" />
+        <source>seventeen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="40" />
+        <source>heighteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="41" />
+        <source>nineteen</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory-wordnumber/dataset.js" line="42" />
+        <source>twenty</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
     <name>instruments</name>
     <message>
         <location filename="../src/activities/instruments/instruments.js" line="24" />
@@ -2122,6 +2969,59 @@ Michal Kaukič</translation>
     </message>
 </context>
 <context>
+    <name>main</name>
+    <message>
+        <location filename="../src/core/main.qml" line="53" />
+        <source>Welcome to GCompris!</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="54" />
+        <source>You are running GCompris for the first time.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="55" />
+        <source>You should verify that your application settings especially your language is set correctly, and that all language specific sound files are installed. You can do this in the Preferences Dialog.</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="57" />
+        <source>Your current locale is '%1'</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/core/main.qml" line="59" />
+        <source>Have Fun!</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>math_util</name>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="26" />
+        <location filename="../src/activities/memory/math_util.js" line="29" />
+        <source>+</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="39" />
+        <source>-</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="50" />
+        <location filename="../src/activities/memory/math_util.js" line="53" />
+        <source>×</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../src/activities/memory/math_util.js" line="63" />
+        <source>÷</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
     <name>money</name>
     <message>
         <location filename="../src/activities/money/money.js" line="661" />
@@ -2129,7 +3029,7 @@ Michal Kaukič</translation>
         <translation>Zaplať kliknutím na mince alebo papierové peniaze v spodnej časti obrazovky. Ak chceš odstrániť mincu alebo bankovku, klikni na ňu v hornej časti obrazovky.</translation>
     </message>
     <message>
-        <location filename="../src/activities/money/money.js" line="671" />
+        <location filename="../src/activities/money/money.js" line="702" />
         <source>Tux just bought some items in your shop.
 He gives you %1, please give back his change.</source>
         <translation type="unfinished" />

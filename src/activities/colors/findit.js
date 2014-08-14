@@ -20,6 +20,8 @@
 .import QtQuick 2.0 as Quick
 .import "qrc:/gcompris/src/core/core.js" as Core
 
+var url = "qrc:/gcompris/src/activities/colors/resource/"
+
 var currentLevel
 var numberOfLevel
 var items
@@ -27,9 +29,11 @@ var dataset
 
 var currentQuestion
 
-function start(items_, dataset_) {
+function start(items_, dataset_, mode_) {
+    if (mode_ == "Colors")
+        Core.checkForVoices(items_.background);
     items = items_
-    dataset = dataset_
+    dataset = dataset_.get()
     currentLevel = 0
     numberOfLevel = dataset.length
     initLevel()
@@ -87,8 +91,4 @@ function getCurrentTextQuestion() {
 
 function getCurrentAudioQuestion() {
     return dataset[currentLevel][currentQuestion].audio
-}
-
-function lost() {
-    items.bonus.bad("flower")
 }
