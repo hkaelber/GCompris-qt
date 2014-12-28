@@ -88,10 +88,8 @@ Image {
         var dist = Math.sqrt(Math.pow(arrowCenterX - centerX, 2) +
                              Math.pow(arrowCenterY - centerY, 2))
         dist *= zoom / ApplicationInfo.ratio
-        console.log("dist", dist)
         var score = 0
         for(var i = targetModel.count - 1; i >= 0; --i) {
-            console.log("i=", i, targetModel.get(i).size)
             if(dist < targetModel.get(i).size) {
                 score = targetModel.get(i).score
                 break
@@ -151,7 +149,7 @@ Image {
             border.width: 1 * ApplicationInfo.ratio
             border.color: "black"
             
-            Text {
+            GCText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 text: score

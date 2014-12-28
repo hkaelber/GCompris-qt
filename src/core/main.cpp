@@ -25,6 +25,8 @@
 #include <QObject>
 #include <QTranslator>
 #include <QCommandLineParser>
+#include <QCursor>
+#include <QPixmap>
 #include <QSettings>
 
 #include "ApplicationInfo.h"
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
 {
 	QGuiApplication app(argc, argv);
     app.setOrganizationName("KDE");
-    app.setApplicationName("GCompris");
+    app.setApplicationName(GCOMPRIS_APPLICATION_NAME);
     app.setOrganizationDomain("kde.org");
     app.setApplicationVersion(ApplicationInfo::GCVersion());
 
@@ -69,7 +71,13 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
     QCommandLineOption exportActivitiesAsSQL("export-activities-as-sql", "Export activities as SQL");
     parser.addOption(exportActivitiesAsSQL);
-    parser.process(app);
+	QCommandLineOption clDefaultCursor(QStringList() << "c" << "cursor",
+									   "run GCompris with the default system cursor.");
+	parser.addOption(clDefaultCursor);
+	QCommandLineOption clNoCursor(QStringList() << "C" << "nocursor",
+									   "run GCompris without cursor (touch screen mode).");
+	parser.addOption(clNoCursor);
+	parser.process(app);
 
 
     ApplicationInfo::init();
@@ -78,6 +86,10 @@ int main(int argc, char *argv[])
 	File::init();
 	DownloadManager::init();
 
+    // Must be done after ApplicationSettings is constructed because we get an
+    // async callback from the payment system
+    ApplicationSettings::getInstance()->checkPayment();
+
     // Load configuration
     QString locale;
     // Getting fullscreen mode from config if exist, else true is default value
@@ -85,7 +97,7 @@ int main(int argc, char *argv[])
     {
         // Local scope for config
         QSettings config(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
-                         "/gcompris/GCompris.conf",
+                         "/gcompris/" + GCOMPRIS_APPLICATION_NAME + ".conf",
                          QSettings::IniFormat);
         // Get locale
         if(config.contains("General/locale")) {
@@ -94,6 +106,24 @@ int main(int argc, char *argv[])
         } else {
             locale = "en_US.UTF-8";
         }
+
+		// Set the cursor image
+		bool defaultCursor = false;
+		if(config.contains("General/defaultCursor")) {
+			defaultCursor = config.value("General/defaultCursor").toBool();
+		}
+		if(!defaultCursor && !parser.isSet(clDefaultCursor))
+			QGuiApplication::setOverrideCursor(
+						QCursor(QPixmap(":/gcompris/src/core/resource/cursor.png"),
+								0, 0));
+
+		// Hide the cursor
+		bool noCursor = false;
+		if(config.contains("General/noCursor")) {
+			noCursor = config.value("General/noCursor").toBool();
+		}
+		if(noCursor || parser.isSet(clNoCursor))
+			QGuiApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
     }
 
     // Load translation
@@ -106,7 +136,8 @@ int main(int argc, char *argv[])
     if(!loadAndroidTranslation(translator, locale))
         loadAndroidTranslation(translator, ApplicationInfo::localeShort(locale));
 #else
-    if(!translator.load("gcompris_" + locale, QCoreApplication::applicationDirPath() + "/translations/")) {
+    
+    if(!translator.load("gcompris_" + locale, QString("%1/%2/translations").arg(QCoreApplication::applicationDirPath(), GCOMPRIS_DATA_FOLDER))) {
         qDebug() << "Unable to load translation for locale " <<
                     locale << ", use en_US by default";
     }

@@ -19,7 +19,6 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.2
-import QtQuick.Controls 1.1
 import "../../core"
 import GCompris 1.0
 import "qrc:/gcompris/src/core/core.js" as Core
@@ -29,7 +28,16 @@ ActivityBase {
     focus: true
     activityInfo: ActivityInfoTree.rootMenu
 
-    onHome: pageView.depth === 1 ? Core.quit(menuActivity) : pageView.pop()
+    onHome: {
+        if(pageView.depth === 1) {
+            Core.quit(menuActivity);
+        }
+        else {
+            pageView.pop();
+            // Restore focus that has been taken by the loaded activity
+            focus = true;
+        }
+    }
 
     onDisplayDialog: pageView.push(dialog)
 
@@ -37,7 +45,7 @@ ActivityBase {
     property variant sections: [
         {
             icon: menuActivity.url + "all.svgz",
-            tag: "all"
+            tag: "favorite"
         },
         {
             icon: menuActivity.url + "computer.svgz",
@@ -75,6 +83,7 @@ ActivityBase {
     property string currentTag: sections[0].tag
 
     pageComponent: Image {
+        id: background
         source: menuActivity.url + "background.svgz"
         sourceSize.width: parent.width
         fillMode: Image.PreserveAspectCrop
@@ -101,29 +110,49 @@ ActivityBase {
         property int sectionCellWidth: sectionIconWidth * 1.1
         property int sectionCellHeight: sectionIconHeight * 1.1
 
+        property var currentActiveGrid: activitiesGrid
+        property bool keyboardMode: false
+        Keys.onPressed: {
+            if (event.modifiers === Qt.ControlModifier &&
+                    event.key === Qt.Key_S) {
+                // Ctrl+S toggle show / hide section
+                ApplicationSettings.sectionVisible = !ApplicationSettings.sectionVisible
+            }
+        }
+        Keys.onReleased: {
+            keyboardMode = true
+            event.accepted = false
+        }
+        Keys.onTabPressed: currentActiveGrid = ((currentActiveGrid == activitiesGrid) ?
+                                                    section : activitiesGrid);
+        Keys.onEnterPressed: currentActiveGrid.currentItem.selectCurrentItem();
+        Keys.onReturnPressed: currentActiveGrid.currentItem.selectCurrentItem();
+        Keys.onRightPressed: currentActiveGrid.moveCurrentIndexRight();
+        Keys.onLeftPressed: currentActiveGrid.moveCurrentIndexLeft();
+        Keys.onDownPressed: currentActiveGrid.moveCurrentIndexDown();
+        Keys.onUpPressed: currentActiveGrid.moveCurrentIndexUp();
+
         GridView {
             id: section
             model: sections
             width: horizontal ? main.width : sectionCellWidth
             height: horizontal ? sectionCellHeight : main.height - bar.height
-            x: 4
-            y: 4
+            x: ApplicationSettings.sectionVisible ? section.initialX : -sectionCellWidth
+            y: ApplicationSettings.sectionVisible ? section.initialY : -sectionCellHeight
             cellWidth: sectionCellWidth
             cellHeight: sectionCellHeight
             interactive: false
+            keyNavigationWraps: true
+
+            property int initialX: 4
+            property int initialY: 4
+
             Component {
                 id: sectionDelegate
-                Image {
+                Item {
                     id: backgroundSection
                     width: sectionCellWidth
                     height: sectionCellHeight
-                    source: GridView.isCurrentItem ?
-                                "qrc:/gcompris/src/core/resource/button.svgz" : ""
-                    Rectangle {
-                        anchors.fill: parent
-                        color: backgroundSection.GridView.isCurrentItem ?
-                                   "#99FFFFFF" : "#00000000"
-                    }
 
                     Image {
                         source: modelData.icon
@@ -131,6 +160,7 @@ ActivityBase {
                         anchors.margins: 5
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
+
                     ParticleSystemStar {
                         id: particles
                         anchors.fill: backgroundSection
@@ -139,53 +169,74 @@ ActivityBase {
                     MouseArea {
                         anchors.fill: backgroundSection
                         onClicked: {
-                            particles.emitter.burst(10)
-                            ActivityInfoTree.filterByTag(modelData.tag)
-                            menuActivity.currentTag = modelData.tag
+                            selectCurrentItem()
                         }
+                    }
+
+                    function selectCurrentItem() {
+                        particles.emitter.burst(10)
+                        ActivityInfoTree.filterByTag(modelData.tag)
+                        menuActivity.currentTag = modelData.tag
+                        section.currentIndex = index
                     }
                 }
             }
             delegate: sectionDelegate
-            focus: true
+            highlight: Item {
+                width: sectionCellWidth
+                height: sectionCellHeight
+
+                Rectangle {
+                    anchors.fill: parent
+                    color:  "#99FFFFFF"
+                }
+                Image {
+                    source: "qrc:/gcompris/src/core/resource/button.svgz"
+                    anchors.fill: parent
+                }
+                Behavior on x { SpringAnimation { spring: 2; damping: 0.2 } }
+                Behavior on y { SpringAnimation { spring: 2; damping: 0.2 } }
+            }
         }
 
         // Activities
         property int iconWidth: 190 * ApplicationInfo.ratio
         property int iconHeight: 190 * ApplicationInfo.ratio
-        property int cellWidth2:
-            horizontal ? iconWidth+(main.width%iconWidth)/Math.round(main.width/iconWidth) :
-                         iconWidth+((main.width - section.width)%iconWidth)/Math.round((main.width - section.width)/iconWidth)
-        property int cellHeight2: iconHeight * 1.35
+        property int activityCellWidth:
+            horizontal ? background.width / Math.floor(background.width / iconWidth) :
+                         (background.width - section.width) / Math.floor((background.width - section.width) / iconWidth)
+        property int activityCellHeight: iconHeight * 1.5
 
         GridView {
+            id: activitiesGrid
             anchors {
                 top: horizontal ? section.bottom : parent.top
-                bottom: bar.top
+                bottom: parent.bottom
                 left: horizontal ? parent.left : section.right
                 margins: 4
             }
-            width: main.width
-            cellWidth: cellWidth2
-            cellHeight: cellHeight2
-            focus: true
+            width: background.width
+            cellWidth: activityCellWidth
+            cellHeight: activityCellHeight
             clip: true
             model: ActivityInfoTree.menuTree
+            property int spacing: 10
+
             delegate: Item {
-                width: iconWidth+(main.width%iconWidth)/Math.round(main.width/iconWidth)
-                height: iconHeight
+                id: delegateItem
+                width: activityCellWidth - activitiesGrid.spacing
+                height: activityCellHeight - activitiesGrid.spacing
                 Rectangle {
-                    id: background
-                    width: cellWidth2 - 10
-                    height: cellHeight2 - 10
+                    id: activityBackground
+                    width: activityCellWidth - activitiesGrid.spacing
+                    height: activityCellHeight - activitiesGrid.spacing
                     anchors.horizontalCenter: parent.horizontalCenter
-                    opacity: 0.6
-                    border.width: 2
-                    border.color: "black"
+                    color: "white"
+                    opacity: 0.5
                 }
                 Image {
                     source: "qrc:/gcompris/src/activities/" + icon;
-                    anchors.top: background.top
+                    anchors.top: activityBackground.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     sourceSize.height: iconHeight
                     anchors.margins: 5
@@ -196,11 +247,22 @@ ActivityBase {
                         sourceSize.width: iconWidth * 0.15
                         x: 5
                     }
-                    Text {
+                    Image {
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter
+                            top: parent.top
+                            rightMargin: 4
+                        }
+                        source: demo || !ApplicationSettings.isDemoMode
+                                ? "" :
+                                  "qrc:/gcompris/src/core/resource/cancel.svgz"
+                        sourceSize.width: 30 * ApplicationInfo.ratio
+                    }
+                    GCText {
                         anchors.top: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
                         horizontalAlignment: Text.AlignHCenter
-                        width: background.width
+                        width: activityBackground.width
                         fontSizeMode: Text.Fit
                         minimumPointSize: 7
                         font.pointSize: 14
@@ -212,18 +274,47 @@ ActivityBase {
                 }
                 ParticleSystemStar {
                     id: particles
-                    anchors.fill: background
+                    anchors.fill: activityBackground
                 }
                 MouseArea {
-                    anchors.fill: background
-                    onClicked: {
-                        particles.emitter.burst(50)
-                        ActivityInfoTree.currentActivity = ActivityInfoTree.menuTree[index]
-                        activityLoader.source = "qrc:/gcompris/src/activities/" +
-                                ActivityInfoTree.menuTree[index].name
-                        if (activityLoader.status == Loader.Ready) loadActivity()
+                    anchors.fill: activityBackground
+                    onClicked: selectCurrentItem()
+                }
+                Image {
+                    source: menuActivity.url + (favorite ? "all.svgz" : "all_disabled.svg");
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                        rightMargin: 4 * ApplicationInfo.ratio
+                    }
+                    sourceSize.width: iconWidth * 0.25
+                    visible: ApplicationSettings.sectionVisible
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: favorite = !favorite
                     }
                 }
+
+                function selectCurrentItem() {
+                    particles.emitter.burst(50)
+                    ActivityInfoTree.currentActivity = ActivityInfoTree.menuTree[index]
+                    activityLoader.setSource("qrc:/gcompris/src/activities/" + ActivityInfoTree.menuTree[index].name,
+                                             {
+                                                 'audioVoices': audioVoices,
+                                                 'audioEffects': audioEffects
+                                             })
+                    if (activityLoader.status == Loader.Ready) loadActivity()
+                }
+            }
+            highlight: Rectangle {
+                width: activityCellWidth - activitiesGrid.spacing
+                height: activityCellHeight - activitiesGrid.spacing
+                color:  "#AAFFFFFF"
+                border.width: 3
+                border.color: "black"
+                visible: background.keyboardMode
+                Behavior on x { SpringAnimation { spring: 2; damping: 0.2 } }
+                Behavior on y { SpringAnimation { spring: 2; damping: 0.2 } }
             }
         }
 

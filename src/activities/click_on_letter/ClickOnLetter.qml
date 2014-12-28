@@ -22,7 +22,6 @@
  */
 
 import QtQuick 2.1
-import QtMultimedia 5.0
 import QtGraphicalEffects 1.0
 import GCompris 1.0
 import "../../core"
@@ -36,15 +35,18 @@ ActivityBase {
     /* mode of the activity, either "lowercase" (click_on_letter)
      * or "uppercase" (click_on_letter_up): */
     property string mode: "lowercase"
-    
+
+
     pageComponent: Image {
         id: background
         source: Activity.url + "background.svgz"
         sourceSize.width: parent.width
         fillMode: Image.PreserveAspectCrop
+        focus: true
+
         signal start
         signal stop
-        focus: true
+        signal voiceError
         
         Component.onCompleted: {
             activity.start.connect(start)
@@ -55,15 +57,23 @@ ActivityBase {
             id: items
             property alias bar: bar
             property alias trainModel: trainModel
-            property alias nextLevelAudio: nextLevelAudio
-            property alias levelsFile: levelsFile
-            property alias letterAudio: letterAudio 
+            property GCAudio audioVoices: activity.audioVoices
+            property alias parser: parser
             property alias questionItem: questionItem
+            property alias repeatItem: repeatItem
             property alias score: score
             property alias bonus: bonus
         }
         
-        onStart: Activity.start(items, mode); 
+        onVoiceError: {
+            questionItem.visible = true
+            repeatItem.visible = false
+        }
+
+        onStart: {
+            activity.audioVoices.error.connect(voiceError)
+            Activity.start(items, mode);
+        }
         
         onStop: Activity.stop()
 
@@ -74,22 +84,13 @@ ActivityBase {
 
         Bar {
             id: bar
-            
-            // anchor in top right corner:
-            anchors.bottom: undefined 
-            anchors.top: parent.top
-            x: parent.width - width
-            anchors.topMargin: height + 10
-            
-            content: BarEnumContent { value: help | home | repeat | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelpLeftRight)
             }
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: home()
-            onRepeatClicked: if (ApplicationSettings.isAudioEnabled)
-                                letterAudio.playLetterDelayed(Activity.currentLetter, 0);
         }
 
         Score {
@@ -108,13 +109,25 @@ ActivityBase {
             Component.onCompleted: win.connect(Activity.nextSubLevel)
         }
         
+        BarButton {
+            id: repeatItem
+            source: "qrc:/gcompris/src/core/resource/bar_repeat.svgz";
+            sourceSize.width: 80 * ApplicationInfo.ratio
+            anchors {
+                top: parent.top
+                right: parent.right
+                margins: 10
+            }
+            onClicked: Activity.playLetter(Activity.currentLetter);
+        }
+
         Image {
             id: railway
             source: Activity.url + "railway.svgz"
             fillMode: Image.PreserveAspectCrop
-            anchors.bottom: parent.bottom
+            anchors.bottom: bar.top
             anchors.left: parent.left
-            width: parent.width
+            anchors.right: parent.right
             height: 15 * ApplicationInfo.ratio
             sourceSize.width: parent.width
             anchors.bottomMargin: 13 * ApplicationInfo.ratio
@@ -144,7 +157,7 @@ ActivityBase {
                 radius: 10
             }
 
-            Text {
+            GCText {
                 id: questionText
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -224,50 +237,11 @@ ActivityBase {
             }
         }
         
-        File {
-            id: levelsFile
-            name: ""
-                
-            onError: console.log("Click_on_letter: levelsFile error: " + msg);
+        JsonParser {
+            id: parser
+
+            onError: console.error("Click_on_letter: Error parsing JSON: " + msg);
         }
 
-        GCAudio {
-            id: nextLevelAudio
-            source: ApplicationInfo.getAudioFilePath("voices/$LOCALE/misc/click_on_letter.ogg")
-            onError: letterAudio.play()
-            // When this sound is complete, play the letter
-            onDone: letterAudio.playLetterDelayed(Activity.currentLetter, 100);
-        }
-
-        GCAudio {
-            id: letterAudio
-            onError: questionItem.visible = true
-
-            function playLetterDelayed(letter, ms) {
-                console.log("Player letter " + letter);
-                if (letterAudioTimer.running)
-                    letterAudioTimer.stop();
-                letterAudio.source = ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
-                        + Core.getSoundFilenamForChar(letter));
-                if (ms != 0) {
-                    letterAudioTimer.interval = ms;
-                    letterAudioTimer.start();
-                } else {
-                    if (letterAudio.playbackState != Audio.StoppedState)
-                        letterAudio.stop();
-                    letterAudio.play();
-                }
-            }
-        }
-        
-        Timer {
-            id: letterAudioTimer
-            repeat: false        
-            onTriggered: {
-                if (letterAudio.playbackState != Audio.StoppedState)
-                    letterAudio.stop();
-                letterAudio.play();
-            }
-        }
     }
 }

@@ -25,6 +25,8 @@
 .import GCompris 1.0 as GCompris //for ApplicationInfo
 .import "qrc:/gcompris/src/core/core.js" as Core
 
+var url = "qrc:/gcompris/src/activities/planegame/"
+
 var max_velocity = 500 * GCompris.ApplicationInfo.ratio
 var currentLevel
 var numberOfLevel
@@ -39,7 +41,7 @@ var rightPressed
 var items
 var dataset
 
-var cloudComponent = Qt.createComponent("qrc:/gcompris/src/activities/planegame/Cloud.qml");
+var cloudComponent = Qt.createComponent(url + "Cloud.qml");
 var clouds = new Array;
 var cloudsErased = new Array;
 
@@ -296,15 +298,14 @@ function handleCollisionsWithCloud() {
 
                     if(currentSubLevel === numberOfSubLevels) {
                         /* Try the next level */
-                        nextLevel()
-                        playSound("qrc:/gcompris/src/core/resource/sounds/bonus.wav")
+                        items.bonus.good("flower")
                     } else {
                         items.score.message = dataset[currentLevel].data[currentSubLevel]
                     }
                 } else {
                     /* Touched the wrong cloud */
                     if(!cloud.touched)
-                        playSound("qrc:/gcompris/src/core/resource/sounds/crash.wav")
+                        items.audioEffects.play("qrc:/gcompris/src/core/resource/sounds/crash.wav")
                     cloud.touch()
                 }
                 break;
@@ -320,15 +321,13 @@ function handleCollisionsWithCloud() {
     }
 }
 
-function playSound(sound) {
-    items.audio.source = sound
-    items.audio.play()
-}
-
 function playLetterSound(number) {
-    items.audio.source =
+    if(number < 10)
+        items.audioVoices.play(
             GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
-                            + Core.getSoundFilenamForChar(number))
+                                                      + Core.getSoundFilenamForChar(number)))
+    else
+        items.audioVoices.play(GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
+                               + number + ".ogg"))
 
-    items.audio.play()
 }

@@ -20,9 +20,6 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.1
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Styles 1.0
-import QtMultimedia 5.0
 
 import "../../core"
 import "clickgame.js" as Activity
@@ -33,16 +30,6 @@ ActivityBase {
 
     onStart: {}
     onStop: {}
-
-    GCAudio {
-        id: audio
-        source: "qrc:/gcompris/src/activities/clickgame/resource/bubble.wav"
-    }
-
-    Timer {
-        interval: 5000; running: true; repeat: true
-        onTriggered: audio.play()
-    }
 
     pageComponent: Image {
         id: background
@@ -57,8 +44,17 @@ ActivityBase {
             activity.start.connect(start)
             activity.stop.connect(stop)
         }
-        onStart: { Activity.start(main, background, bar, bonus) }
-        onStop: { Activity.stop() }
+        onStart: { Activity.start(activity, background, bar, bonus) }
+        onStop: {
+            Activity.stop()
+            timer.stop()
+        }
+
+        Timer {
+            id: timer
+            interval: 5000; running: true; repeat: true
+            onTriggered: activity.audioEffects.play("qrc:/gcompris/src/activities/clickgame/resource/bubble.wav")
+        }
 
         DialogHelp {
             id: dialogHelpLeftRight
@@ -67,7 +63,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelpLeftRight)
             }

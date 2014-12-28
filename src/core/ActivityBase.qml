@@ -19,8 +19,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.2
-import QtQuick.Controls 1.1
 import GCompris 1.0
+import "qrc:/gcompris/src/core/core.js" as Core
 
 Item {
     id: page
@@ -28,9 +28,11 @@ Item {
     property Component pageComponent
     property QtObject menu
     property QtObject activityInfo
-    // The global audio item, append to it to play your sounds after the
+    // The global audio item, append to it to play your voices after the
     // intro music
-    property GCAudio audio
+    property GCAudio audioVoices
+    // The global audio effect, use it to play sound effects
+    property GCAudio audioEffects
     property bool isLocked: true
     signal home
     signal start
@@ -47,13 +49,24 @@ Item {
     Keys.onPressed: {
         if (event.modifiers === Qt.ControlModifier &&
                 event.key === Qt.Key_Q) {
-            Qt.quit()
+            // Ctrl+Q exit the application
+            Core.quit(page);
         } else if (event.modifiers === Qt.ControlModifier &&
                 event.key === Qt.Key_B) {
-            bar.toggle()
+            // Ctrl+B toggle the bar
+            ApplicationSettings.isBarHidden = !ApplicationSettings.isBarHidden;
         } else if (event.modifiers === Qt.ControlModifier &&
                 event.key === Qt.Key_F) {
+            // Ctrl+F toggle fullscreen
             ApplicationSettings.isFullscreen = !ApplicationSettings.isFullscreen
+        } else if (event.modifiers === Qt.ControlModifier &&
+                   event.key === Qt.Key_M) {
+            // Ctrl+M toggle sound
+            ApplicationSettings.isAudioEffectsEnabled = !ApplicationSettings.isAudioEffectsEnabled
+        } else if (event.modifiers === Qt.ControlModifier &&
+                   event.key === Qt.Key_W) {
+            // Ctrl+W exit the current activity
+            home()
         }
     }
     Keys.onReleased: {
@@ -67,5 +80,12 @@ Item {
         id: activity
         sourceComponent: pageComponent
         anchors.fill: parent
+    }
+
+    Loader {
+        id: demoPageLoader
+        sourceComponent: BuyMeOverlay {}
+        anchors.fill: parent
+        active: !activityInfo.demo && ApplicationSettings.isDemoMode
     }
 }

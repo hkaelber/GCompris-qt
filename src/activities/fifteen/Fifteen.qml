@@ -41,6 +41,8 @@ ActivityBase {
         signal start
         signal stop
 
+        Keys.onPressed: Activity.processPressedKey(event)
+
         Component.onCompleted: {
             activity.start.connect(start)
             activity.stop.connect(stop)
@@ -50,6 +52,7 @@ ActivityBase {
         QtObject {
             id: items
             property Item main: activity.main
+            property GCAudio audioEffects: activity.audioEffects
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
@@ -64,18 +67,19 @@ ActivityBase {
         Image {
             source: Activity.url + "goldframe.svg"
             sourceSize.width: Math.min(background.width * 0.9,
-                                       (background.height - bar.height) * 0.9)
+                                       background.height * 0.9)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: - bar.height
         }
 
         Grid {
+            id: puzzleArea
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: - bar.height
             columns: 4
             spacing: 0
+
+            property alias trans: trans
 
             ListModel {
                 id: fifteenModel
@@ -83,6 +87,7 @@ ActivityBase {
 
 
             move: Transition {
+                id: trans
                 NumberAnimation {
                     properties: "x, y"
                     easing.type: Easing.InOutQuad
@@ -94,9 +99,10 @@ ActivityBase {
                 model: fifteenModel
                 delegate: Item {
                     width: Math.min(background.width * 0.2,
-                                    (background.height - bar.height) * 0.2)
+                                    background.height * 0.2)
                     height: width
                     clip: true
+                    property int val: value
 
                     Image {
                         id: image
@@ -109,7 +115,7 @@ ActivityBase {
                         }
                     }
 
-                    Text {
+                    GCText {
                         id: text
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
@@ -127,14 +133,27 @@ ActivityBase {
                         color: "#80000000"
                         source: text
                     }
+                }
+            }
+        }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            Activity.onClick(value)
-                            if(Activity.checkAnswer())
-                                bonus.good('flower')
-                        }
+        MultiPointTouchArea {
+            x: puzzleArea.x
+            y: puzzleArea.y
+            width: puzzleArea.width
+            height: puzzleArea.height
+            onPressed: checkTouchPoint(touchPoints)
+
+            function checkTouchPoint(touchPoints) {
+                for(var i in touchPoints) {
+                    var touch = touchPoints[i]
+                    var block = puzzleArea.childAt(touch.x, touch.y)
+                    if(!puzzleArea.trans.running && block) {
+                        Activity.onClick(block.val)
+                        if(Activity.checkAnswer())
+                            bonus.good('flower')
+                        else
+                            activity.audioEffects.play("qrc:/gcompris/src/core/resource/sounds/flip.wav")
                     }
                 }
             }
@@ -147,7 +166,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -158,6 +177,7 @@ ActivityBase {
 
         Bonus {
             id: bonus
+            audioEffects: activity.audioEffects
             Component.onCompleted: win.connect(Activity.nextLevel)
         }
     }

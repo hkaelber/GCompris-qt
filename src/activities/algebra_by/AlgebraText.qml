@@ -18,6 +18,8 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
 
+import "../../core"
+
 Item {
 
     width: text.width
@@ -25,7 +27,7 @@ Item {
 
     property alias text: text.text
 
-    Text {
+    GCText {
         id: text
         font.pointSize: 32
         font.bold: true

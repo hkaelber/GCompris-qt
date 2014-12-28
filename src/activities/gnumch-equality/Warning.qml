@@ -20,9 +20,9 @@
 *   along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.2
-import QtQuick.Controls 1.1
 import GCompris 1.0
 
+import "../../core"
 import "gnumch-equality.js" as Activity
 
 Rectangle {
@@ -81,20 +81,9 @@ Rectangle {
 
         } else if (activity.type == "factors") {
             // First we find the multiples of the wrong number.
-            var multiples = []
-            var mul = 0
-            do {
-                mul++
-                if ((mul / num1) % 1 == 0)
-                    multiples.push(mul)
-            } while(multiples.length <= 3)
+            var multiples = "" + num1*2 + ", " + num1*3 + ", " + num1*4
 
-            var solutions = multiples[1]
-            for (var mul = 2; mul < multiples.length; ++mul) {
-                solutions += ", " + multiples[mul]
-            }
-
-            fault += qsTr("Multiples of %1 include %2, ").arg(num1).arg(solutions)
+            fault += qsTr("Multiples of %1 include %2, ").arg(num1).arg(multiples)
             fault += qsTr("but %1 is not a multiple of %2.").arg(Activity.getGoal()).arg(num1)
         } else if (activity.type == "multiples") {
             // First we find divisors of the wrong number.
@@ -136,7 +125,7 @@ Rectangle {
 
     }
 
-    Text {
+    GCText {
         id: warning
         anchors.fill: parent
         horizontalAlignment: Text.AlignHCenter

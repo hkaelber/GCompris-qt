@@ -20,22 +20,17 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.1
-import QtMultimedia 5.0
 import "findit.js" as Activity
 import "../../core"
 import GCompris 1.0
 
 Image {
     id: item
-    property Item main
+    property GCAudio audioVoices
     property Item bar
     property string audioSrc
     property string question
-
-    GCAudio {
-        id: audio
-        source: audioSrc
-    }
+    property bool playAudioOnError: false
 
     MouseArea {
         anchors.fill: parent
@@ -44,8 +39,8 @@ Image {
                 particles.emitter.burst(40)
                 Activity.nextQuestion()
             } else {
-                if(audioSrc) {
-                    audio.play()
+                if(audioSrc && item.playAudioOnError) {
+                    item.audioVoices.play(audioSrc)
                 }
                 crossAnim.start()
             }

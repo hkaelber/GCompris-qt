@@ -43,7 +43,6 @@ Rectangle {
 
     visible: false
     title: qsTr("Configuration")
-    property QtObject activityInfo: ActivityInfoTree.currentActivity
 
     Row {
         spacing: 2
@@ -57,18 +56,17 @@ Rectangle {
             Rectangle {
                 color: "#e6e6e6"
                 radius: 6.0
-                width: parent.width
+                width: dialogConfig.width - 30
                 height: title.height * 1.2
                 border.color: "black"
                 border.width: 2
 
-                Text {
+                GCText {
                     id: title
                     text: dialogConfig.title
                     width: dialogConfig.width - 30
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Helvetica"
                     color: "black"
                     font.pointSize: 24
                     font.weight: Font.DemiBold
@@ -96,12 +94,77 @@ Rectangle {
                         spacing: 10
                         width: parent.width
                         // Put configuration here
+                        Row {
+                            id: demoModeBox
+                            width: parent.width
+                            spacing: 10
+
+                            property bool checked: !ApplicationSettings.isDemoMode
+
+                            Image {
+                                    sourceSize.height: 50 * ApplicationInfo.ratio
+                                    source:
+                                        demoModeBox.checked ? "qrc:/gcompris/src/core/resource/apply.svgz" :
+                                                              "qrc:/gcompris/src/core/resource/cancel.svgz"
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        //onClicked: ApplicationSettings.isDemoMode ? console.log("call buying api") : ""
+                                        onClicked: ApplicationSettings.isDemoMode = !ApplicationSettings.isDemoMode
+                                    }
+                            }
+
+                            Button {
+                                width: parent.parent.width - 50 * ApplicationInfo.ratio - 10 * 2
+                                height: parent.height
+                                enabled: ApplicationSettings.isDemoMode
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: demoModeBox.checked ? qsTr("You have the full version") :
+                                                            qsTr("Buy the full version").toUpperCase()
+                                style: ButtonStyle {
+                                    background: Rectangle {
+                                        implicitWidth: 100
+                                        implicitHeight: 25
+                                        border.width: control.activeFocus ? 4 : 2
+                                        border.color: "black"
+                                        radius: 10
+                                        gradient: Gradient {
+                                            GradientStop { position: 0 ; color: control.pressed ? "#87ff5c" :
+                                                                                                  ApplicationSettings.isDemoMode ? "#ffe85c" : "#EEEEEE"}
+                                            GradientStop { position: 1 ; color: control.pressed ? "#44ff00" :
+                                                                                                  ApplicationSettings.isDemoMode ? "#f8d600" : "#AAAAAA"}
+                                        }
+                                    }
+                                    label: GCText {
+                                        text: control.text
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                        wrapMode: Text.WordWrap
+                                    }
+                                }
+
+                                onClicked: {
+                                    ApplicationSettings.isDemoMode = !ApplicationSettings.isDemoMode
+                                    console.log("call buying api")
+                                }
+                            }
+                        }
+
                         GCDialogCheckBox {
-                            id: enableAudioBox
-                            text: qsTr("Enable audio")
-                            checked: isAudioEnabled
+                            id: enableAudioVoicesBox
+                            text: qsTr("Enable audio voices")
+                            checked: isAudioVoicesEnabled
                             onCheckedChanged: {
-                                isAudioEnabled = checked;
+                                isAudioVoicesEnabled = checked;
+                            }
+                        }
+
+                        GCDialogCheckBox {
+                            id: enableAudioEffectsBox
+                            text: qsTr("Enable audio effects")
+                            checked: isAudioEffectsEnabled
+                            onCheckedChanged: {
+                                isAudioEffectsEnabled = checked;
                             }
                         }
 
@@ -122,7 +185,7 @@ Rectangle {
                                 isVirtualKeyboard = checked;
                             }
                         }
-                        
+
                         GCDialogCheckBox {
                             id: enableAutomaticDownloadsBox
                             checked: isAutomaticDownloadsEnabled
@@ -132,59 +195,92 @@ Rectangle {
                             }
                         }
 
-                        ComboBox {
-                            id: languageBox
-                            style: GCComboBoxStyle {}
-                            model: languages
-                            width: 200 * ApplicationInfo.ratio
-                            
-                            onCurrentIndexChanged: voicesRow.localeChanged();
+                        GCDialogCheckBox {
+                            id: sectionVisibleBox
+                            checked: sectionVisible
+                            text: qsTr("The activity section menu is visible")
+                            onCheckedChanged: {
+                                sectionVisible = checked;
+                            }
                         }
-                        
+
+                        Row {
+                            spacing: 5
+                            ComboBox {
+                                id: fontBox
+                                style: GCComboBoxStyle {}
+                                model: fonts
+                                width: 250 * ApplicationInfo.ratio
+                            }
+                            GCText {
+                                text: qsTr("Font selector")
+                                font.pointSize: 16
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+
+                        Row {
+                            spacing: 5
+                            ComboBox {
+                                id: languageBox
+                                style: GCComboBoxStyle {}
+                                model: languages
+                                width: 250 * ApplicationInfo.ratio
+
+                                onCurrentIndexChanged: voicesRow.localeChanged();
+                            }
+                            GCText {
+                                text: qsTr("Language selector")
+                                font.pointSize: 16
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+
                         Row {
                             id: voicesRow
-                            height: voicesImage.height
+                            height: enableAudioVoicesBox.height
                             width: parent.width
                             spacing: 5 * ApplicationInfo.ratio
-                            
+
                             property bool haveLocalResource: false
-                            
+
                             function localeChanged() {
                                 var localeShort = languages.get(languageBox.currentIndex).locale.substr(0, 2);
                                 var language = languages.get(languageBox.currentIndex).text;
-                                voicesText.text = language + " " + qsTr("sounds");
+                                voicesText.text = language;
                                 voicesRow.haveLocalResource = DownloadManager.haveLocalResource(
                                         DownloadManager.getVoicesResourceForLocale(localeShort));
                             }
-                            
+
                             Connections {
                                 target: DownloadManager
-                                
+
                                 onDownloadFinished: voicesRow.localeChanged()
                             }
-                            
+
                             Item {
                                 id: rowSpacer
                                 width: 20 * ApplicationInfo.ratio
                                 height: parent.height
                             }
-                        
-                            Text {
+
+                            GCText {
                                 id: voicesText
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: qsTr("Sounds")
                             }
-                            
+
                             Image {
                                 id: voicesImage
+                                anchors.verticalCenter: parent.verticalCenter
                                 sourceSize.height: 30 * ApplicationInfo.ratio
                                 source: voicesRow.haveLocalResource ? "qrc:/gcompris/src/core/resource/apply.svgz" :
                                     "qrc:/gcompris/src/core/resource/cancel.svgz"
                             }
-                            
+
                             Button {
                                 id: voicesButton
-                                height: parent.height * ApplicationInfo.ratio
+                                height: parent.height
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: voicesRow.haveLocalResource ? qsTr("Check for updates") :
                                     qsTr("Download")
@@ -203,8 +299,9 @@ Rectangle {
 
                         Row {
                             width: parent.width
+                            spacing: 5 * ApplicationInfo.ratio
 
-                            Text {
+                            GCText {
                                 text: qsTr("Difficulty filter:")
                                 verticalAlignment: Text.AlignVCenter
                                 font.pointSize: 16
@@ -331,7 +428,7 @@ Rectangle {
     // The cancel button
     Image {
         id: cancel
-        source: "qrc:/gcompris/src/core/resource/cancel.svgz";
+        source: "qrc:/gcompris/src/core/resource/apply.svgz";
         fillMode: Image.PreserveAspectFit
         anchors.right: parent.right
         anchors.top: parent.top
@@ -366,16 +463,21 @@ Rectangle {
             }
         }
     }
- 
-    property bool isAudioEnabled: ApplicationSettings.isAudioEnabled
+
+    property bool isAudioVoicesEnabled: ApplicationSettings.isAudioVoicesEnabled
+    property bool isAudioEffectsEnabled: ApplicationSettings.isAudioEffectsEnabled
     property bool isFullscreen: ApplicationSettings.isFullscreen
     property bool isVirtualKeyboard: ApplicationSettings.isVirtualKeyboard
     property bool isAutomaticDownloadsEnabled: ApplicationSettings.isAutomaticDownloadsEnabled
+    property bool sectionVisible: ApplicationSettings.sectionVisible
 
     onStart: {
         // Synchronize settings with data
-        isAudioEnabled = ApplicationSettings.isAudioEnabled
-        enableAudioBox.checked = isAudioEnabled
+        isAudioVoicesEnabled = ApplicationSettings.isAudioVoicesEnabled
+        enableAudioVoicesBox.checked = isAudioVoicesEnabled
+
+        isAudioEffectsEnabled = ApplicationSettings.isAudioEffectsEnabled
+        enableAudioEffectsBox.checked = isAudioEffectsEnabled
 
         isFullscreen = ApplicationSettings.isFullscreen
         enableFullscreenBox.checked = isFullscreen
@@ -386,6 +488,9 @@ Rectangle {
         isAutomaticDownloadsEnabled = ApplicationSettings.isAutomaticDownloadsEnabled
         enableAutomaticDownloadsBox.checked = isAutomaticDownloadsEnabled
 
+        sectionVisible = ApplicationSettings.sectionVisible
+        sectionVisibleBox.checked = sectionVisible
+
         // Set locale
         for(var i = 0 ; i < languages.count ; i ++) {
             if(languages.get(i).locale == ApplicationSettings.locale) {
@@ -393,13 +498,27 @@ Rectangle {
                 break;
             }
         }
+
+        // Set font
+        for(var i = 0 ; i < fonts.count ; i ++) {
+            if(fonts.get(i).text == ApplicationSettings.font) {
+                fontBox.currentIndex = i;
+                break;
+            }
+        }
     }
 
     function save() {
-        ApplicationSettings.isAudioEnabled = isAudioEnabled
+        ApplicationSettings.isAudioVoicesEnabled = isAudioVoicesEnabled
+        ApplicationSettings.isAudioEffectsEnabled = isAudioEffectsEnabled
         ApplicationSettings.isFullscreen = isFullscreen
         ApplicationSettings.isVirtualKeyboard = isVirtualKeyboard
         ApplicationSettings.isAutomaticDownloadsEnabled = isAutomaticDownloadsEnabled
+        ApplicationSettings.sectionVisible = sectionVisible
+
+        ApplicationSettings.isEmbeddedFont = fonts.get(fontBox.currentIndex).isLocalResource;
+        ApplicationSettings.font = fonts.get(fontBox.currentIndex).text
+
         if (ApplicationSettings.locale != languages.get(languageBox.currentIndex).locale) {
             ApplicationSettings.locale = languages.get(languageBox.currentIndex).locale
             if (!DownloadManager.haveLocalResource(
@@ -433,39 +552,86 @@ Rectangle {
 
         // This is done this way for having the translations
         Component.onCompleted: {
-            languages.append( { "text": qsTr("English (Great Britain)"), "locale": "en_GB.UTF-8" })
-            languages.append( { "text": qsTr("English (United States)"), "locale": "en_US.UTF-8" } )
-            languages.append( { "text": qsTr("Bulgarian"), "locale": "bg_BG.UTF-8" } )
-            languages.append( { "text": qsTr("Breton"), "locale": "br_FR.UTF-8" } )
-            languages.append( { "text": qsTr("Czech Republic"), "locale": "cs_CZ.UTF-8" } )
-            languages.append( { "text": qsTr("Danish"), "locale": "da_DK.UTF-8" } )
-            languages.append( { "text": qsTr("German"), "locale": "de_DE.UTF-8" } )
-            languages.append( { "text": qsTr("Greek"), "locale": "el_GR.UTF-8" } )
-            languages.append( { "text": qsTr("Spanish"), "locale": "es_ES.UTF-8" } )
-            languages.append( { "text": qsTr("French"), "locale": "fr_FR.UTF-8" } )
-            languages.append( { "text": qsTr("Scottish Gaelic"), "locale": "gd_GB.UTF-8" } )
-            languages.append( { "text": qsTr("Galician"), "locale": "gl_ES.UTF-8" } )
-            languages.append( { "text": qsTr("Hungarian"), "locale": "hu_HU.UTF-8" } )
-            languages.append( { "text": qsTr("Lithuanian"), "locale": "lt_LT.UTF-8" } )
-            languages.append( { "text": qsTr("Latvian"), "locale": "lv_LV.UTF-8" } )
-            languages.append( { "text": qsTr("Dutch"), "locale": "nl_NL.UTF-8" } )
-            languages.append( { "text": qsTr("Norwegian Nynorsk"), "locale": "nn_NO.UTF-8" } )
-            languages.append( { "text": qsTr("Polish"), "locale": "pl_PL.UTF-8" } )
-            languages.append( { "text": qsTr("Russian"), "locale": "ru_RU.UTF-8" } )
-            languages.append( { "text": qsTr("Portuguese (Brazil)"), "locale": "pt_BR.UTF-8" } )
-            languages.append( { "text": qsTr("Slovak"), "locale": "sk_SK.UTF-8" } )
-            languages.append( { "text": qsTr("Slovenian"), "locale": "sl_SI.UTF-8" } )
-            languages.append( { "text": qsTr("Montenegrin"), "locale": "sr_ME.UTF-8" } )
-            languages.append( { "text": qsTr("Swedish"), "locale": "sv_FI.UTF-8" } )
-            languages.append( { "text": qsTr("Tamil"), "locale": "ta_IN.UTF-8" } )
-            languages.append( { "text": qsTr("Thai"), "locale": "th_TH.UTF-8" } )
-            languages.append( { "text": qsTr("Chinese (Traditional)"), "locale": "zh_TW.UTF-8" } )
+            languages.append( { "text": "UK English", "locale": "en_GB.UTF-8" })
+            languages.append( { "text": "American English", "locale": "en_US.UTF-8" } )
+            languages.append( { "text": "български", "locale": "bg_BG.UTF-8" } )
+            languages.append( { "text": "Brezhoneg", "locale": "br_FR.UTF-8" } )
+            languages.append( { "text": "Česká republika", "locale": "cs_CZ.UTF-8" } )
+            languages.append( { "text": "Dansk", "locale": "da_DK.UTF-8" } )
+            languages.append( { "text": "Deutsch", "locale": "de_DE.UTF-8" } )
+            languages.append( { "text": "Ελληνικά", "locale": "el_GR.UTF-8" } )
+            languages.append( { "text": "Español", "locale": "es_ES.UTF-8" } )
+            languages.append( { "text": "Français", "locale": "fr_FR.UTF-8" } )
+            languages.append( { "text": "Gàidhlig", "locale": "gd_GB.UTF-8" } )
+            languages.append( { "text": "Galego", "locale": "gl_ES.UTF-8" } )
+            languages.append( { "text": "Magyar", "locale": "hu_HU.UTF-8" } )
+            languages.append( { "text": "Lietuvių", "locale": "lt_LT.UTF-8" } )
+            languages.append( { "text": "Latviešu", "locale": "lv_LV.UTF-8" } )
+            languages.append( { "text": "Nederlands", "locale": "nl_NL.UTF-8" } )
+            languages.append( { "text": "Norsk (nynorsk)", "locale": "nn_NO.UTF-8" } )
+            languages.append( { "text": "Polski", "locale": "pl_PL.UTF-8" } )
+            languages.append( { "text": "Русский", "locale": "ru_RU.UTF-8" } )
+            languages.append( { "text": "Português do Brasil", "locale": "pt_BR.UTF-8" } )
+            languages.append( { "text": "Slovenský", "locale": "sk_SK.UTF-8" } )
+            languages.append( { "text": "Slovenski", "locale": "sl_SI.UTF-8" } )
+            languages.append( { "text": "црногорски jeзик", "locale": "sr_ME.UTF-8" } )
+            languages.append( { "text": "Svenska", "locale": "sv_FI.UTF-8" } )
+            languages.append( { "text": "தமிழ்", "locale": "ta_IN.UTF-8" } )
+            languages.append( { "text": "ไทย", "locale": "th_TH.UTF-8" } )
+            languages.append( { "text": "український", "locale": "uk.UTF-8" } )
+            languages.append( { "text": "中文（简体）", "locale": "zh_CN.UTF-8" } )
+            languages.append( { "text": "繁體中文", "locale": "zh_TW.UTF-8" } )
+        }
+    }
+
+    ListModel {
+        id: fonts
+        Component.onCompleted: {
+            var systemFonts = Qt.fontFamilies();
+            var rccFonts = ApplicationInfo.getFontsFromRcc();
+
+            // Remove explicitly all *symbol* and *ding* fonts
+            var excludedFonts = ApplicationInfo.getSystemExcludedFonts();
+            excludedFonts.push("ding");
+            excludedFonts.push("symbol");
+
+            for(var i = 0 ; i < systemFonts.length ; ++ i) {
+                var isExcluded = false;
+                // Remove symbol fonts
+                for(var j = 0 ; j < excludedFonts.length ; ++ j) {
+                    if(systemFonts[i].toLowerCase().indexOf(excludedFonts[j].toLowerCase()) != -1) {
+                        isExcluded = true;
+                        break;
+                    }
+                }
+
+                // Remove fonts from rcc (if you have a default font from rcc, Qt will add it to systemFonts)
+                for(var j = 0 ; j < rccFonts.length ; ++ j) {
+                    if(rccFonts[j].toLowerCase().indexOf(systemFonts[i].toLowerCase()) != -1) {
+                        isExcluded = true;
+                        break;
+                    }
+                }
+
+                // Finally, we know if we add this font or not
+                if(!isExcluded) {
+                    fonts.append({ "text": systemFonts[i], "isLocalResource": false });
+                }
+            }
+            for(var i = 0 ; i < rccFonts.length ; ++ i) {
+                // Append fonts from resources
+                fonts.append({ "text": rccFonts[i], "isLocalResource": true });
+            }
         }
     }
 
     function hasConfigChanged() {
         return (ApplicationSettings.locale != languages.get(languageBox.currentIndex).locale ||
-                (ApplicationSettings.isAudioEnabled != isAudioEnabled) ||
+                (ApplicationSettings.sectionVisible != sectionVisible) ||
+                (ApplicationSettings.font != fonts.get(fontBox.currentIndex).text) ||
+                (ApplicationSettings.isEmbeddedFont != fonts.get(fontBox.currentIndex).isLocalResource) ||
+                (ApplicationSettings.isAudioVoicesEnabled != isAudioVoicesEnabled) ||
+                (ApplicationSettings.isAudioEffectsEnabled != isAudioEffectsEnabled) ||
                 (ApplicationSettings.isFullscreen != isFullscreen) ||
                 (ApplicationSettings.isVirtualKeyboard != isVirtualKeyboard) ||
                 (ApplicationSettings.isAutomaticDownloadsEnabled != isAutomaticDownloadsEnabled)

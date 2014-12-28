@@ -22,6 +22,8 @@
 import QtQuick 2.2
 import GCompris 1.0
 
+import "../../core"
+
 Rectangle {
     property var text : warningText
 
@@ -34,10 +36,10 @@ Rectangle {
     anchors.horizontalCenter: topPanel.horizontalCenter
     anchors.verticalCenter: topPanel.verticalCenter
 
-    Text {
+    GCText {
         id: warningText
         text: qsTr("Be careful, a troggle !")
-        font.pointSize: ApplicationInfo.ratio * 25
+        font.pointSize: 24
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter

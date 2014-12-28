@@ -67,6 +67,7 @@ class ApplicationInfo : public QObject
 	Q_PROPERTY(qreal sliderGapWidth READ sliderGapWidth NOTIFY ratioChanged)
     Q_PROPERTY(QString localeShort READ localeShort)
     Q_PROPERTY(QString GCVersion READ GCVersion CONSTANT)
+    Q_PROPERTY(QString QTVersion READ QTVersion CONSTANT)
 
 public:
 
@@ -121,6 +122,7 @@ public:
         return localeShort( ApplicationSettings::getInstance()->locale() );
     }
     static QString GCVersion() { return VERSION; }
+    static QString QTVersion() { return qVersion(); }
 
 protected slots:
 	void notifyPortraitMode();
@@ -128,6 +130,8 @@ protected slots:
 	QString getResourceDataPath();
     Q_INVOKABLE QString getAudioFilePath(const QString &file);
     Q_INVOKABLE QString getLocaleFilePath(const QString &file);
+    Q_INVOKABLE QStringList getSystemExcludedFonts();
+    Q_INVOKABLE QStringList getFontsFromRcc();
     Q_INVOKABLE void notifyFullscreenChanged();
 
 
@@ -153,6 +157,10 @@ private:
 	qreal m_ratio;
 	qreal m_hMargin;
 	qreal m_sliderHandleHeight, m_sliderHandleWidth, m_sliderGapWidth;
+
+    // Symbols fonts that user can't see
+    QStringList m_excludedFonts;
+    QStringList m_fontsFromRcc;
 
     static QQuickWindow *m_window;
 };

@@ -22,7 +22,6 @@
 
 import QtQuick 2.1
 import GCompris 1.0
-import QtMultimedia 5.0
 
 import "../../core"
 import "traffic.js" as Activity
@@ -53,6 +52,7 @@ ActivityBase {
         QtObject {
             id: items
             property Item main: activity.main
+            property GCAudio audioEffects: activity.audioEffects
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
@@ -107,7 +107,7 @@ ActivityBase {
         
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next | reload}
+            content: BarEnumContent { value: help | home | level | reload}
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -119,6 +119,7 @@ ActivityBase {
 
         Bonus {
             id: bonus
+            audioEffects: activity.audioEffects
             Component.onCompleted: win.connect(Activity.nextSubLevel)
         }
         

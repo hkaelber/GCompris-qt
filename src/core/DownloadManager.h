@@ -22,6 +22,7 @@
 #ifndef DOWNLOADMANAGER_H_
 #define DOWNLOADMANAGER_H_
 
+#include <QCryptographicHash>
 #include <QFile>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -74,6 +75,8 @@ private:
     QUrl getUrlForFilename(const QString& filename) const;
     QString getAbsoluteResourcePath(const QString& path) const;
     QString getRelativeResourcePath(const QString& path) const;
+    QString tempFilenameForFilename(const QString &filename) const;
+    QString filenameForTempFilename(const QString &tempFilename) const;
 
     bool checkDownloadRestriction() const;
     DownloadJob* getJobByReply(QNetworkReply *r);
@@ -95,7 +98,7 @@ private slots:
 public:
     // public interface:
     enum DownloadFinishedCode {
-        Success = 0,  // download executed succesfully
+        Success = 0,  // download executed successfully
         Error   = 1,  // download error
         NoChange = 2  // local files are up-to-date, no download was needed
     };
@@ -110,6 +113,7 @@ public:
     Q_INVOKABLE QString getVoicesResourceForLocale(const QString& locale) const;
     Q_INVOKABLE bool haveLocalResource(const QString& path) const;
     Q_INVOKABLE bool downloadIsRunning() const;
+    Q_INVOKABLE bool areVoicesRegistered() const;  // checks whether voices for the currently active locale are registered
 
 public slots:
     Q_INVOKABLE bool updateResource(const QString& path);
@@ -127,6 +131,7 @@ signals:
     void downloadStarted(const QString& resource);
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void downloadFinished(int code); // note: when using DownloadFinishedCode instead of int the code will not be passed to the QML layer
+    void voicesRegistered(); // emitted when voices for current locale have been registered
 };
 
 #endif /* DOWNLOADMANAGER_H_ */

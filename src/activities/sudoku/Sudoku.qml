@@ -21,8 +21,9 @@
 import QtQuick 2.2
 import GCompris 1.0
 
-import "qrc:/gcompris/src/core"
+import "../../core"
 import "sudoku.js" as Activity
+import "."
 
 ActivityBase {
     id: activity
@@ -55,6 +56,7 @@ ActivityBase {
             property alias bar: bar
             property alias bonus: bonus
             property alias score: score
+            property GCAudio audioEffects: activity.audioEffects
             property alias availablePiecesModel: availablePieces
             property alias columns: sudoColumn.columns
             property alias rows: sudoColumn.rows
@@ -71,7 +73,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next | reload }
+            content: BarEnumContent { value: help | home | level | reload }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -83,11 +85,13 @@ ActivityBase {
 
         Bonus {
             id: bonus
+            z: 1002
             Component.onCompleted: win.connect(Activity.incrementLevel)
         }
 
         Score {
             id: score
+            z: 1003
             anchors.bottom: background.bottom
             anchors.right: background.right
         }
@@ -98,6 +102,7 @@ ActivityBase {
 
         SudokuListWidget {
             id: availablePieces
+            audioEffects: activity.audioEffects
         }
 
         ListModel {

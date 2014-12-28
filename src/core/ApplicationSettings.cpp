@@ -52,16 +52,20 @@
 #include <QDebug>
 
 #define GC_DEFAULT_LOCALE "en_US.UTF-8"
+#define GC_DEFAULT_FONT "Andika-R.ttf"
 
 static const QString GENERAL_GROUP_KEY = "General";
 static const QString ADMIN_GROUP_KEY = "Admin";
 static const QString INTERNAL_GROUP_KEY = "Internal";
+static const QString FAVORITE_GROUP_KEY = "Favorite";
 
 static const QString FULLSCREEN_KEY = "fullscreen";
-static const QString ENABLE_AUDIO_KEY = "enableSounds";
-static const QString ENABLE_EFFECTS_KEY = "enableEffects";
+static const QString ENABLE_AUDIO_VOICES_KEY = "enableAudioVoices";
+static const QString ENABLE_AUDIO_EFFECTS_KEY = "enableAudioEffects";
 static const QString VIRTUALKEYBOARD_KEY = "virtualKeyboard";
 static const QString LOCALE_KEY = "locale";
+static const QString FONT_KEY = "font";
+static const QString IS_CURRENT_FONT_EMBEDDED = "isCurrentFontEmbedded";
 static const QString ENABLE_AUTOMATIC_DOWNLOADS = "enableAutomaticDownloads";
 
 static const QString DOWNLOAD_SERVER_URL_KEY = "downloadServerUrl";
@@ -71,28 +75,47 @@ static const QString EXE_COUNT_KEY = "exeCount";
 static const QString FILTER_LEVEL_MIN = "filterLevelMin";
 static const QString FILTER_LEVEL_MAX = "filterLevelMax";
 
+static const QString DEFAULT_CURSOR = "defaultCursor";
+static const QString NO_CURSOR = "noCursor";
+static const QString DEMO_KEY = "demo";
+static const QString SECTION_VISIBLE = "sectionVisible";
+
 ApplicationSettings *ApplicationSettings::m_instance = NULL;
 
 ApplicationSettings::ApplicationSettings(QObject *parent): QObject(parent),
-     m_config(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/gcompris/GCompris.conf", QSettings::IniFormat)
+	 m_config(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
+			  "/gcompris/" + GCOMPRIS_APPLICATION_NAME + ".conf", QSettings::IniFormat)
 
 {
     // initialize from settings file or default
 
     // general group
     m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_isEffectEnabled = m_config.value(ENABLE_EFFECTS_KEY, true).toBool();
+	m_isAudioEffectsEnabled = m_config.value(ENABLE_AUDIO_EFFECTS_KEY, true).toBool();
     m_isFullscreen = m_config.value(FULLSCREEN_KEY, true).toBool();
-    m_isAudioEnabled = m_config.value(ENABLE_AUDIO_KEY, true).toBool();
+	m_isAudioVoicesEnabled = m_config.value(ENABLE_AUDIO_VOICES_KEY, true).toBool();
     m_isVirtualKeyboard = m_config.value(VIRTUALKEYBOARD_KEY,
             ApplicationInfo::getInstance()->isMobile()).toBool();
     m_locale = m_config.value(LOCALE_KEY,
             QLocale::system() == QLocale::c() ? GC_DEFAULT_LOCALE : QString(QLocale::system().name() + ".UTF-8")).toString();
-    m_isAutomaticDownloadsEnabled = m_config.value(ENABLE_AUTOMATIC_DOWNLOADS,
+    m_font = m_config.value(FONT_KEY, GC_DEFAULT_FONT).toString();
+    m_isEmbeddedFont = m_config.value(IS_CURRENT_FONT_EMBEDDED, true).toBool();
+
+// The default demo mode based on the platform
+#if defined(WITH_ACTIVATION_CODE)
+	m_isDemoMode = m_config.value(DEMO_KEY, true).toBool();
+#else
+	m_isDemoMode = m_config.value(DEMO_KEY, false).toBool();
+#endif
+
+	m_sectionVisible = m_config.value(SECTION_VISIBLE, true).toBool();
+	m_isAutomaticDownloadsEnabled = m_config.value(ENABLE_AUTOMATIC_DOWNLOADS,
             !ApplicationInfo::getInstance()->isMobile()).toBool();
     m_filterLevelMin = m_config.value(FILTER_LEVEL_MIN, 1).toUInt();
     m_filterLevelMax = m_config.value(FILTER_LEVEL_MAX, 6).toUInt();
-    m_config.sync();  // make sure all defaults are written back
+	m_defaultCursor = m_config.value(DEFAULT_CURSOR, false).toBool();
+	m_noCursor = m_config.value(NO_CURSOR, false).toBool();
+	m_config.sync();  // make sure all defaults are written back
     m_config.endGroup();
 
     // admin group
@@ -105,15 +128,23 @@ ApplicationSettings::ApplicationSettings(QObject *parent): QObject(parent),
     m_exeCount = m_config.value(EXE_COUNT_KEY, 0).toUInt();
     m_config.endGroup();
 
-    connect(this, SIGNAL(audioEnabledChanged()), this, SLOT(notifyAudioEnabledChanged()));
-    connect(this, SIGNAL(fullscreenChanged()), this, SLOT(notifyFullscreenChanged()));
+    // no group
+    m_isBarHidden = false;
+
+	connect(this, SIGNAL(audioVoicesEnabledChanged()), this, SLOT(notifyAudioVoicesEnabledChanged()));
+	connect(this, SIGNAL(audioEffectsEnabledChanged()), this, SLOT(notifyAudioEffectsEnabledChanged()));
+	connect(this, SIGNAL(fullscreenChanged()), this, SLOT(notifyFullscreenChanged()));
     connect(this, SIGNAL(localeChanged()), this, SLOT(notifyLocaleChanged()));
+    connect(this, SIGNAL(fontChanged()), this, SLOT(notifyFontChanged()));
     connect(this, SIGNAL(virtualKeyboardChanged()), this, SLOT(notifyVirtualKeyboardChanged()));
     connect(this, SIGNAL(automaticDownloadsEnabledChanged()), this, SLOT(notifyAutomaticDownloadsEnabledChanged()));
     connect(this, SIGNAL(filterLevelMinChanged()), this, SLOT(notifyFilterLevelMinChanged()));
     connect(this, SIGNAL(filterLevelMaxChanged()), this, SLOT(notifyFilterLevelMaxChanged()));
-    connect(this, SIGNAL(downloadServerUrlChanged()), this, SLOT(notifyDownloadServerUrlChanged()));
+	connect(this, SIGNAL(sectionVisibleChanged()), this, SLOT(notifySectionVisibleChanged()));
+	connect(this, SIGNAL(demoModeChanged()), this, SLOT(notifyDemoModeChanged()));
+	connect(this, SIGNAL(downloadServerUrlChanged()), this, SLOT(notifyDownloadServerUrlChanged()));
     connect(this, SIGNAL(exeCountChanged()), this, SLOT(notifyExeCountChanged()));
+    connect(this, SIGNAL(barHiddenChanged()), this, SLOT(notifyBarHiddenChanged()));
 }
 
 ApplicationSettings::~ApplicationSettings()
@@ -121,23 +152,29 @@ ApplicationSettings::~ApplicationSettings()
     // make sure settings file is up2date:
     // general group
     m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(ENABLE_AUDIO_KEY, m_isAudioEnabled);
+	m_config.setValue(ENABLE_AUDIO_VOICES_KEY, m_isAudioVoicesEnabled);
     m_config.setValue(LOCALE_KEY, m_locale);
+    m_config.setValue(FONT_KEY, m_font);
+    m_config.setValue(IS_CURRENT_FONT_EMBEDDED, m_isEmbeddedFont);
     m_config.setValue(FULLSCREEN_KEY, m_isFullscreen);
     m_config.setValue(VIRTUALKEYBOARD_KEY, m_isVirtualKeyboard);
     m_config.setValue(ENABLE_AUTOMATIC_DOWNLOADS, m_isAutomaticDownloadsEnabled);
     m_config.setValue(FILTER_LEVEL_MIN, m_filterLevelMin);
-    m_config.setValue(FILTER_LEVEL_MAX, m_filterLevelMax);
-    m_config.endGroup();
+	m_config.setValue(FILTER_LEVEL_MAX, m_filterLevelMax);
+	m_config.setValue(DEMO_KEY, m_isDemoMode);
+	m_config.setValue(SECTION_VISIBLE, m_sectionVisible);
+	m_config.setValue(DEFAULT_CURSOR, m_defaultCursor);
+	m_config.setValue(NO_CURSOR, m_noCursor);
+	m_config.endGroup();
 
     // admin group
     m_config.beginGroup(ADMIN_GROUP_KEY);
     m_config.setValue(DOWNLOAD_SERVER_URL_KEY, m_downloadServerUrl);
     m_config.endGroup();
 
-    // admin group
-    m_config.beginGroup(ADMIN_GROUP_KEY);
-    m_config.setValue(DOWNLOAD_SERVER_URL_KEY, m_downloadServerUrl);
+    // internal group
+    m_config.beginGroup(INTERNAL_GROUP_KEY);
+    m_config.setValue(EXE_COUNT_KEY, m_exeCount);
     m_config.endGroup();
 
     m_config.sync();
@@ -145,93 +182,114 @@ ApplicationSettings::~ApplicationSettings()
     m_instance = NULL;
 }
 
-void ApplicationSettings::notifyAudioEnabledChanged()
+void ApplicationSettings::notifyAudioVoicesEnabledChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(ENABLE_AUDIO_KEY, m_isAudioEnabled);
-    m_config.endGroup();
-    qDebug() << "notifyAudio: " << m_isAudioEnabled;
-    m_config.sync();
+    updateValueInConfig(GENERAL_GROUP_KEY, ENABLE_AUDIO_VOICES_KEY, m_isAudioVoicesEnabled);
+	qDebug() << "notifyAudioVoices: " << m_isAudioVoicesEnabled;
+}
+
+void ApplicationSettings::notifyAudioEffectsEnabledChanged()
+{
+    updateValueInConfig(GENERAL_GROUP_KEY, ENABLE_AUDIO_EFFECTS_KEY, m_isAudioEffectsEnabled);
+	qDebug() << "notifyAudioEffects: " << m_isAudioEffectsEnabled;
 }
 
 void ApplicationSettings::notifyLocaleChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(LOCALE_KEY, m_locale);
-    m_config.endGroup();
+    updateValueInConfig(GENERAL_GROUP_KEY, LOCALE_KEY, m_locale);
     qDebug() << "new locale: " << m_locale;
-    m_config.sync();
+}
+
+void ApplicationSettings::notifyFontChanged()
+{
+    updateValueInConfig(GENERAL_GROUP_KEY, FONT_KEY, m_font);
+    qDebug() << "new font: " << m_font;
+}
+
+void ApplicationSettings::notifyEmbeddedFontChanged()
+{
+    updateValueInConfig(GENERAL_GROUP_KEY, IS_CURRENT_FONT_EMBEDDED, m_isEmbeddedFont);
+    qDebug() << "new font is embedded: " << m_isEmbeddedFont;
 }
 
 void ApplicationSettings::notifyFullscreenChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(FULLSCREEN_KEY, m_isFullscreen);
-    m_config.endGroup();
+    updateValueInConfig(GENERAL_GROUP_KEY, FULLSCREEN_KEY, m_isFullscreen);
     qDebug() << "fullscreen set to: " << m_isFullscreen;
-    m_config.sync();
 }
 
 void ApplicationSettings::notifyVirtualKeyboardChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(VIRTUALKEYBOARD_KEY, m_isVirtualKeyboard);
-    m_config.endGroup();
+    updateValueInConfig(GENERAL_GROUP_KEY, VIRTUALKEYBOARD_KEY, m_isVirtualKeyboard);
     qDebug() << "virtualkeyboard set to: " << m_isVirtualKeyboard;
-    m_config.sync();
 }
 
 void ApplicationSettings::notifyAutomaticDownloadsEnabledChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(ENABLE_AUTOMATIC_DOWNLOADS, m_isAutomaticDownloadsEnabled);
-    m_config.endGroup();
+    updateValueInConfig(GENERAL_GROUP_KEY, ENABLE_AUTOMATIC_DOWNLOADS, m_isAutomaticDownloadsEnabled);
     qDebug() << "enableAutomaticDownloads set to: " << m_isAutomaticDownloadsEnabled;
-    m_config.sync();
 }
 
 void ApplicationSettings::notifyFilterLevelMinChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(FILTER_LEVEL_MIN, m_filterLevelMin);
-    m_config.endGroup();
+    updateValueInConfig(GENERAL_GROUP_KEY, FILTER_LEVEL_MIN, m_filterLevelMin);
     qDebug() << "filterLevelMin set to: " << m_filterLevelMin;
-    m_config.sync();
 }
 
 void ApplicationSettings::notifyFilterLevelMaxChanged()
 {
-    // Save in config
-    m_config.beginGroup(GENERAL_GROUP_KEY);
-    m_config.setValue(FILTER_LEVEL_MAX, m_filterLevelMax);
-    m_config.endGroup();
+    updateValueInConfig(GENERAL_GROUP_KEY, FILTER_LEVEL_MAX, m_filterLevelMax);
     qDebug() << "filterLevelMax set to: " << m_filterLevelMax;
-    m_config.sync();
+}
+
+void ApplicationSettings::notifyDemoModeChanged()
+{
+	updateValueInConfig(GENERAL_GROUP_KEY, DEMO_KEY, m_isDemoMode);
+	qDebug() << "notifyDemoMode: " << m_isDemoMode;
+}
+
+void ApplicationSettings::notifySectionVisibleChanged()
+{
+	updateValueInConfig(GENERAL_GROUP_KEY, SECTION_VISIBLE, m_sectionVisible);
+	qDebug() << "notifySectionVisible: " << m_sectionVisible;
 }
 
 void ApplicationSettings::notifyDownloadServerUrlChanged()
 {
-    // Save in config
-    m_config.beginGroup(ADMIN_GROUP_KEY);
-    m_config.setValue(DOWNLOAD_SERVER_URL_KEY, m_downloadServerUrl);
-    m_config.endGroup();
+    updateValueInConfig(ADMIN_GROUP_KEY, DOWNLOAD_SERVER_URL_KEY, m_downloadServerUrl);
     qDebug() << "downloadServerUrl set to: " << m_downloadServerUrl;
-    m_config.sync();
 }
 
 void ApplicationSettings::notifyExeCountChanged()
 {
-    // Save in config
-    m_config.beginGroup(INTERNAL_GROUP_KEY);
-    m_config.setValue(EXE_COUNT_KEY, m_exeCount);
-    m_config.endGroup();
+    updateValueInConfig(INTERNAL_GROUP_KEY, EXE_COUNT_KEY, m_exeCount);
     qDebug() << "exeCount set to: " << m_exeCount;
+}
+
+void ApplicationSettings::notifyBarHiddenChanged()
+{
+    qDebug() << "is bar hidden: " << m_isBarHidden;
+}
+
+void ApplicationSettings::setFavorite(const QString &activity, bool favorite)
+{
+	updateValueInConfig(FAVORITE_GROUP_KEY, activity, favorite);
+}
+
+bool ApplicationSettings::isFavorite(const QString &activity)
+{
+	m_config.beginGroup(FAVORITE_GROUP_KEY);
+	bool favorite = m_config.value(activity, false).toBool();
+	m_config.endGroup();
+	return favorite;
+}
+
+template<class T> void ApplicationSettings::updateValueInConfig(const QString& group,
+                                              const QString& key, const T& value)
+{
+    m_config.beginGroup(group);
+    m_config.setValue(key, value);
+    m_config.endGroup();
     m_config.sync();
 }
 
@@ -247,6 +305,6 @@ QObject *ApplicationSettings::systeminfoProvider(QQmlEngine *engine,
 
 void ApplicationSettings::init()
 {
-    qmlRegisterSingletonType<ApplicationSettings>("GCompris", 1, 0,
-                                                  "ApplicationSettings", systeminfoProvider);
+	qmlRegisterSingletonType<ApplicationSettings>("GCompris", 1, 0,
+												  "ApplicationSettings", systeminfoProvider);
 }

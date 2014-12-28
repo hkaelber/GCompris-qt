@@ -53,6 +53,7 @@ ActivityBase {
             property alias score: score
             property alias balloon: balloon
             property alias timer:timer
+            property GCAudio audioEffects: activity.audioEffects
         }
 
         onStart: Activity.start(coreItems, otherItems, operand)
@@ -71,7 +72,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelpLeftRight)
             }
@@ -88,7 +89,6 @@ ActivityBase {
         Balloon {
             id: balloon
             onTimeout: bonus.bad("smiley")
-            onReady: console.log("ready")
         }
 
         Bonus {
@@ -122,7 +122,7 @@ ActivityBase {
     NumPad {
         id: numpad
         onAnswerChanged: Activity.questionsLeft()
-        maxDigit: ('' + otherItems.result).length
+        maxDigit: ('' + otherItems.result).length + 1
     }
 
     ReadyButton {

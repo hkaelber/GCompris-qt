@@ -22,7 +22,6 @@
  */
 import QtQuick 2.1
 import GCompris 1.0
-import QtMultimedia 5.0
 
 import "../../core"
 import "reversecount.js" as Activity
@@ -51,6 +50,7 @@ ActivityBase {
         QtObject {
             id: items
             property Item main: activity.main
+            property GCAudio audioEffects: activity.audioEffects
             property alias background: background
             property alias backgroundImg: backgroundImg
             property alias bar: bar
@@ -64,6 +64,8 @@ ActivityBase {
         onStart: { Activity.start(items) }
         onStop: { Activity.stop() }
 
+        Keys.onEnterPressed: Activity.moveTux()
+        Keys.onReturnPressed: Activity.moveTux()
 
         onWidthChanged: {
             if(Activity.fishIndex > 0) {
@@ -92,10 +94,10 @@ ActivityBase {
             model: Activity.iceBlocksLayout
 
             Image {
-                x: modelData[0] * activity.width / 5
-                y: modelData[1] * (activity.height- activity.height/5) / 5
-                width: activity.width / 5
-                height: activity.height / 5
+                x: modelData[0] * background.width / 5
+                y: modelData[1] * (background.height- background.height/5) / 5
+                width: background.width / 5
+                height: background.height / 5
                 source: Activity.url + "iceblock.svgz"
             }
         }
@@ -103,14 +105,14 @@ ActivityBase {
 
         Tux {
             id: tux
-            sourceSize.width: Math.min(activity.width / 6, activity.height / 6)
+            sourceSize.width: Math.min(background.width / 6, background.height / 6)
             z: 11
         }
 
 
         Image {
             id: fishToReach
-            sourceSize.width: Math.min(activity.width / 6, activity.height / 6)
+            sourceSize.width: Math.min(background.width / 6, background.height / 6)
             z: 10
 
             function showParticles() {
@@ -132,7 +134,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -144,24 +146,27 @@ ActivityBase {
         Image {
             id: clock
             anchors {
-                left: bar.right
-                bottom: bar.bottom
-                bottomMargin: 10
+                right: parent.right
+                bottom: parent.bottom
+                margins: 10
             }
             sourceSize.width: 66 * bar.barZoom
         }
 
 
-        Bonus {
-            id: bonus
-            Component.onCompleted: win.connect(Activity.nextLevel)
-        }
-
-
         ChooseDiceBar {
             id: chooseDiceBar
-            x: activity.width / 5 + 20
-            y: (activity.height - activity.height/5) * 3 / 5
+            x: background.width / 5 + 20
+            y: (background.height - background.height/5) * 3 / 5
+            audioEffects: activity.audioEffects
+        }
+
+        Bonus {
+            id: bonus
+            audioEffects: activity.audioEffects
+            winSound: "qrc:/gcompris/src/activities/ballcatch/resource/tuxok.wav"
+            looseSound: "qrc:/gcompris/src/activities/ballcatch/resource/youcannot.wav"
+            Component.onCompleted: win.connect(Activity.nextLevel)
         }
     }
 

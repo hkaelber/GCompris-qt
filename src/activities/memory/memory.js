@@ -95,7 +95,8 @@ function initLevel() {
                 sound: sounds ? sounds[shuffleIds[ix]][j] : "",
                 text: texts ? texts[shuffleIds[ix]][j] : "",
                 matchCode: ix,
-                back: url + "backcard.png"
+                back: url + "backcard.png",
+                emptyCard: url + "emptycard.png"
             } )
         }
     }
@@ -213,8 +214,12 @@ function cardClicked(cardItem) {
             } else {
                 youWon()
             }
-        } else if(items.withTux && items.tuxTurn) {
-            tuxPlay()
+        } else {
+            if(items.withTux && items.tuxTurn) {
+                tuxPlay()
+            } else {
+                items.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/win.wav')
+            }
         }
 
     } else {

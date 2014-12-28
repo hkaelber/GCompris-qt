@@ -18,7 +18,6 @@
  along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.1
-import QtMultimedia 5.0
 import "ballcatch.js" as Activity
 import GCompris 1.0
 
@@ -54,12 +53,10 @@ Image {
             // We are done with the ballon move
             if(Activity.gameWon) {
                 // This is a win
-                background.playSound("tuxok")
                 bonus.good("tux")
             }
             else {
                 // This is a loose
-                background.playSound("youcannot")
                 bonus.bad("tux")
             }
         }
@@ -69,7 +66,7 @@ Image {
         if(Activity.gameWon) {
             finishX = x
         }
-        else if(Activity.leftPressed) {
+        else if(Activity.items.leftPressed) {
             finishX = tux.x + tux.width * 2
         }
         else {

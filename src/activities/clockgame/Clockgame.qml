@@ -20,6 +20,7 @@
 *   along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.1
+import QtGraphicalEffects 1.0
 import GCompris 1.0
 
 import "../../core"
@@ -47,7 +48,6 @@ ActivityBase {
         // Add here the QML items you need to access in javascript
         QtObject {
             id: items
-            property Item main: activity.main
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
@@ -70,11 +70,11 @@ ActivityBase {
 
         Score {
             anchors {
-                top: parent.top
-                topMargin: 10 * ApplicationInfo.ratio
+                bottom: parent.bottom
+                bottomMargin: 10 * ApplicationInfo.ratio
                 right: parent.right
                 rightMargin: 10 * ApplicationInfo.ratio
-                bottom: undefined
+                top: undefined
                 left: undefined
             }
             numberOfSubLevels: items.numberOfTry
@@ -82,24 +82,39 @@ ActivityBase {
         }
 
         /* Target text */
-        Text {
-            text: qsTr("Set the watch to:") + " " +
-                  Activity.get2CharValue(
-                      items.targetH) + ":" + Activity.get2CharValue(
-                      items.targetM) + ":" + Activity.get2CharValue(
-                      items.targetS)
-            font.pointSize: 18
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            width: parent.width / 3
-            style: Text.Outline
-            styleColor: "white"
+        Rectangle {
+            id: questionItemBackground
+            color: "#C0b7b353"
+            border.color: "black"
+            border.width: 2
+            radius: 10
             z: 10
             anchors {
-                right: background.right
-                bottom: background.bottom
-                rightMargin: 20
-                bottomMargin: 20
+                horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                margins: 10
+            }
+            height: questionItem.height + anchors.margins * 2
+            width: questionItem.width + anchors.margins * 2
+            Behavior on height { PropertyAnimation { duration: 100 } }
+
+            GCText {
+                id: questionItem
+                text: qsTr("Set the watch to:") + " " +
+                      Activity.get2CharValue(
+                          items.targetH) + ":" + Activity.get2CharValue(
+                          items.targetM) + ":" + Activity.get2CharValue(
+                          items.targetS)
+                font.pointSize: 18
+                font.weight: Font.DemiBold
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top: parent.top
+                    margins: 10
+                }
             }
         }
 
@@ -111,7 +126,7 @@ ActivityBase {
             fillMode: Image.PreserveAspectFit
             sourceSize.height: parent.height
 
-            property int radius: Math.min(main.width * 1.4, main.height)
+            property int radius: Math.min(background.width * 1.4, background.height)
 
             /* The yellow zones */
             Image {
@@ -139,7 +154,7 @@ ActivityBase {
             /* The minutes */
             Repeater {
                 model: 60
-                Text {
+                GCText {
                     text: index + 1
                     font {
                         pixelSize: Math.max(
@@ -188,7 +203,7 @@ ActivityBase {
             /* The hours */
             Repeater {
                 model: 12
-                Text {
+                GCText {
                     text: index + 1
                     font {
                         pixelSize: Math.max(clock.radius / 30, 1)
@@ -233,7 +248,7 @@ ActivityBase {
             }
 
             /* Help text */
-            Text {
+            GCText {
                 id: helper
                 text: Activity.get2CharValue(
                           items.currentH) + ":" + Activity.get2CharValue(
@@ -388,7 +403,7 @@ ActivityBase {
                     if (items.currentH === items.targetH
                             && items.currentM === items.targetM
                             && items.currentS === items.targetS) {
-                        items.bonus.good("tux")
+                        items.bonus.good("gnu")
                     }
                 }
 
@@ -434,7 +449,7 @@ ActivityBase {
         Bar {
             id: bar
             content: BarEnumContent {
-                value: help | home | previous | next
+                value: help | home | level
             }
             onHelpClicked: {
                 displayDialog(dialogHelp)

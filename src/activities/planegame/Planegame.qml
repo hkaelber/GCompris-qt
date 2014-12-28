@@ -19,7 +19,6 @@
 */
 
 import QtQuick 2.2
-import QtMultimedia 5.0
 import GCompris 1.0
 
 import "../../core"
@@ -56,7 +55,7 @@ ActivityBase {
         anchors.fill: parent
         signal start
         signal stop
-        source: "qrc:/gcompris/src/activities/planegame/resource/background.svgz"
+        source: Activity.url + "resource/background.svg"
         sourceSize.width: parent.width
 
         Component.onCompleted: {
@@ -70,12 +69,23 @@ ActivityBase {
             property alias bonus: bonus
             property alias score: score
             property alias plane: plane
-            property alias audio: audio
+            property GCAudio audioVoices: activity.audioVoices
+            property GCAudio audioEffects: activity.audioEffects
             property alias movePlaneTimer: movePlaneTimer
             property alias cloudCreation: cloudCreation
         }
         onStart: Activity.start(items, dataset)
         onStop: Activity.stop();
+
+        MultiPointTouchArea {
+            anchors.fill: parent
+            touchPoints: [ TouchPoint { id: point1 } ]
+
+            onReleased: {
+                plane.x = point1.x - plane.width / 2
+                plane.y = point1.y - plane.height / 2
+            }
+        }
 
         DialogHelp {
             id: dialogHelp
@@ -84,7 +94,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: displayDialog(dialogHelp)
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
@@ -93,12 +103,14 @@ ActivityBase {
 
         Bonus {
             id: bonus
+            audioEffects: activity.audioEffects
             Component.onCompleted: win.connect(Activity.nextLevel)
         }
 
         Score {
             id: score
             visible: false
+            pointSize: 24
         }
 
         property int movePlaneTimerCounter: 0
@@ -129,10 +141,6 @@ ActivityBase {
         Plane {
             id: plane
             background: background
-        }
-
-        GCAudio {
-            id: audio
         }
 
     }

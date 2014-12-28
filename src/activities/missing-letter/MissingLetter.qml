@@ -59,6 +59,7 @@ ActivityBase
             property alias questionText: questionText
             property alias answers: answers
             property alias currentQuestionNumberText : currentQuestionNumberText
+            property GCAudio audioVoices: activity.audioVoices
         }
 
         onStart: { Activity.start(items) }
@@ -87,7 +88,10 @@ ActivityBase
                     textLabel: modelData
                     isCorrectAnswer: modelData === Activity.getCorrectAnswer()
                     onCorrectlyPressed: Activity.answerPressed(modelData)
-                    onPressed: if(modelData === Activity.getCorrectAnswer()) Activity.showAnswer()
+                    onPressed: {
+                        Activity.playLetter(modelData)
+                        if(modelData === Activity.getCorrectAnswer()) Activity.showAnswer()
+                    }
                 }
             }
         }
@@ -98,7 +102,7 @@ ActivityBase
             id: holder
             width: Math.max(questionImage.width * 1.1, questionImage.height * 1.1)
             height: questionTextBg.y + questionTextBg.height
-            x: (activity.width - width - 130 * ApplicationInfo.ratio) / 2 +
+            x: (background.width - width - 130 * ApplicationInfo.ratio) / 2 +
                130 * ApplicationInfo.ratio
             y: 20
             color: "black"
@@ -122,8 +126,8 @@ ActivityBase
                 id: questionImage
                 anchors.horizontalCenter: holder.horizontalCenter
                 anchors.top: spacer.bottom
-                width: Math.min((activity.width - 120 * ApplicationInfo.ratio) * 0.7,
-                                (activity.height - 100 * ApplicationInfo.ratio) * 0.7)
+                width: Math.min((background.width - 120 * ApplicationInfo.ratio) * 0.7,
+                                (background.height - 100 * ApplicationInfo.ratio) * 0.7)
                 height: width
             }
 
@@ -144,8 +148,7 @@ ActivityBase
                 }
             }
 
-            Text
-            {
+            GCText {
                 id: questionText
                 anchors {
                     horizontalCenter: questionTextBg.horizontalCenter
@@ -198,8 +201,7 @@ ActivityBase
                 GradientStop { position: 1.0; color: "#f8d600" }
             }
 
-            Text
-            {
+            GCText {
                 id: currentQuestionNumberText
                 anchors.centerIn: parent
                 font.pointSize: 24
@@ -217,7 +219,7 @@ ActivityBase
         Bar
         {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: displayDialog(dialogHelp)
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()

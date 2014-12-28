@@ -33,6 +33,7 @@ ActivityBase {
     Keys.onRightPressed: Activity.rightClickPressed()
 
     pageComponent: Image {
+        id: background
         source: "qrc:/gcompris/src/activities/leftright/resource/back.svgz"
         sourceSize.width: parent.width
         focus: true
@@ -44,6 +45,7 @@ ActivityBase {
             id: items
             property alias bar: bar
             property alias bonus: bonus
+            property GCAudio audioEffects: activity.audioEffects
             property alias imageAnimOff: imageAnimOff
             property alias leftButton: leftButton
             property alias rightButton: rightButton
@@ -58,7 +60,7 @@ ActivityBase {
 
         Item {
             id: topBorder
-            height: activity.height * 0.1
+            height: background.height * 0.08
         }
 
         Image {
@@ -66,8 +68,8 @@ ActivityBase {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: topBorder.bottom
             fillMode: Image.PreserveAspectFit
-            sourceSize.width: Math.min(activity.width,
-                                       (main.height - bar.height - leftButton.height) * 1.3)
+            sourceSize.width: Math.min(background.width,
+                                       (background.height - leftButton.height - bar.height) * 1.3)
             source: "qrc:/gcompris/src/activities/leftright/resource/blackboard.svgz"
 
             Image {
@@ -136,21 +138,23 @@ ActivityBase {
             AnswerButton {
                 id: leftButton
                 width: blackBoard.width * 0.45
-                height: activity.height * 0.15
+                height: background.height * 0.15
                 anchors.left: blackBoard.left
                 anchors.top: blackBoard.bottom
                 anchors.margins: 10
                 textLabel: qsTr("Left hand")
+                audioEffects: activity.audioEffects
                 onCorrectlyPressed: Activity.leftClick();
             }
 
             AnswerButton {
                 id: rightButton
                 width: blackBoard.width * 0.45
-                height: activity.height * 0.15
+                height: background.height * 0.15
                 anchors.right: blackBoard.right
                 anchors.top: blackBoard.bottom
                 anchors.margins: 10
+                audioEffects: activity.audioEffects
                 textLabel: qsTr("Right hand")
                 onCorrectlyPressed: Activity.rightClick();
             }
@@ -163,7 +167,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelpLeftRight)
             }
@@ -174,6 +178,7 @@ ActivityBase {
 
         Bonus {
             id: bonus
+            audioEffects: activity.audioEffects
         }
     }
 }

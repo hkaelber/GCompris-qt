@@ -3,14 +3,15 @@ import GCompris 1.0
 ActivityInfo {
   name: "football/Football.qml"
   difficulty: 1
-  icon: "football/football.svgz"
+  icon: "football/football.svg"
   author: "Bruno Coudoin <bruno.coudoin@gcompris.net>"
   demo: false
   title: qsTr("The football game")
   description: qsTr("Kick the ball into the goal")
-  goal: qsTr("Kick the ball into the black hole on the right")
-  prerequisite: qsTr("Mouse-manipulation")
-  manual: qsTr("Point the mouse and click on the ball, to set the speed and direction of the ball. The closer you click to the center, the slower the ball moves.")
+//  intro: "Drag a line from the ball to set the speed and direction of your kick."
+  goal: qsTr("Kick the ball behind the goal keeper on the right")
+  prerequisite: ""
+  manual: qsTr("Drag a line from the ball, to set its speed and direction.")
   credit: ""
-  section: "/fun"
+  section: "fun"
 }

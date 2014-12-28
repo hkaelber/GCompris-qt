@@ -35,15 +35,22 @@ QString File::name() const
     return m_name;
 }
 
-void File::setName(const QString &str)
+QString File::sanitizeUrl(const QString &str)
 {
     QString target(str);
 
     // make sure we strip off invalid URL schemes:
-    if (target.startsWith("file://"))
+    if (target.startsWith(QLatin1String("file://")))
         target.remove(0, 7);
-    else if (target.startsWith("qrc:/"))
+    else if (target.startsWith(QLatin1String("qrc:/")))
         target.remove(0, 3);
+
+    return target;
+}
+
+void File::setName(const QString &str)
+{
+    QString target = sanitizeUrl(str);
 
     if (target != m_name) {
         m_name = target;
@@ -110,4 +117,9 @@ bool File::write(const QString& data, const QString& name)
 void File::init()
 {
     qmlRegisterType<File>("GCompris", 1, 0, "File");
+}
+
+bool File::exists(const QString& path)
+{
+    return QFile::exists(sanitizeUrl(path));
 }

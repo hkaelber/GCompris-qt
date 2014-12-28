@@ -24,20 +24,31 @@ import GCompris 1.0
 
 Item {
     id: gcaudio
-    property bool muted: !ApplicationSettings.isAudioEnabled
+    property bool muted
 
     property alias source: audio.source
     property alias errorString: audio.errorString
-    property bool autoPlay
+    property var playbackState: (audio.error == Audio.NoError) ? 
+                                    audio.playbackState : Audio.StoppedState;
     property var files: []
 
     signal error
     signal done
 
-    function play() {
+    // @param file is optional
+    // @return true or false if file does not exist or audio is muted
+    function play(file) {
+
+        if(!fileId.exists(file) || muted)
+            return false
+
+        if(file)
+            source = file
+
         if(!muted) {
             audio.play()
         }
+        return true
     }
 
     function stop() {
@@ -45,30 +56,75 @@ Item {
             audio.stop()
     }
 
+    // @return true or false if file does not exist or audio is muted
     function append(file) {
-        if(audio.playbackState == Audio.StoppedState) {
+        if(!fileId.exists(file) || muted)
+            return false
+
+        if(audio.playbackState !== Audio.PlayingState
+           || audio.status === Audio.EndOfMedia
+           || audio.status === Audio.NoMedia
+           || audio.status === Audio.InvalidMedia) {
+            // Setting the source to "" on Linux fix a case where the sound is no more played
+            source = ""
             source = file
-            play()
+            audio.play()
         } else {
             files.push(file)
         }
+        return true
+    }
 
+    // Add the given duration in ms before the play of the next file
+    function silence(duration_ms) {
+        silenceTimer.interval = duration_ms
+    }
+
+    function clearQueue() {
+        while(files.length > 0) {
+            files.pop();
+        }
+    }
+
+    function _playNextFile() {
+        var nextFile = files.shift()
+        if(!nextFile || 0 === nextFile.length) {
+            audio.source = ""
+            gcaudio.done()
+        } else {
+            audio.source = ""
+            audio.source = nextFile
+            if(!muted)
+                audio.play()
+        }
     }
 
     Audio {
         id: audio
-        autoPlay: gcaudio.autoPlay && !gcaudio.muted
         onError: {
-            console.log("error while playing: " + source + ": " + errorString)
-            gcaudio.error()
+            // This file cannot be played, remove it from the source asap
+            source = ""
+            if(files.length)
+                silenceTimer.start()
+            else
+                gcaudio.error()
         }
         onStopped: {
-            var nextFile = files.shift()
-            if(nextFile) {
-                source = nextFile
-                play()
-            } else
-                gcaudio.done()
+            if(files.length)
+                silenceTimer.start()
         }
+    }
+
+    Timer {
+        id: silenceTimer
+        repeat: false
+        onTriggered: {
+            interval = 0
+            _playNextFile()
+        }
+    }
+
+    File {
+        id: fileId
     }
 }

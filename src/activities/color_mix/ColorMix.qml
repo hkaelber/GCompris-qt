@@ -65,8 +65,8 @@ ActivityBase {
             property alias currentColor2: color2.currentStep
             property alias currentColor3: color3.currentStep
             property int margins: 20
-            property int chooserHeight: Math.min(activity.height * 0.2,
-                                                 activity.width * 0.2)
+            property int chooserHeight: Math.min(background.height * 0.2,
+                                                 background.width * 0.2)
         }
 
         onStart: {
@@ -92,7 +92,7 @@ ActivityBase {
                                      items.targetColor3)
         }
 
-        Text {
+        GCText {
             text: qsTr("Match the color")
             font.pointSize: 18
             horizontalAlignment: Text.AlignRight
@@ -105,7 +105,7 @@ ActivityBase {
             }
         }
 
-        Text {
+        GCText {
             id: helpMessage
             text: ""
             font.pointSize: 16
@@ -126,7 +126,7 @@ ActivityBase {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: target.bottom
-                topMargin: (activity.height - items.chooserHeight * 4) / 2
+                topMargin: (background.height - items.chooserHeight * 4) / 2
             }
             border.color: "black"
             border.width: 2
@@ -221,7 +221,7 @@ ActivityBase {
                 helpMessage.text = message
 
                 if (message === "") {
-                    bonus.good("tux")
+                    bonus.good("gnu")
                     helpMessage.text = ""
                 }
             }
@@ -235,7 +235,7 @@ ActivityBase {
         Bar {
             id: bar
             content: BarEnumContent {
-                value: help | home | previous | next
+                value: help | home | level
             }
             onHelpClicked: {
                 displayDialog(dialogHelp)

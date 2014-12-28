@@ -85,13 +85,12 @@ var backgroundImages = [
 ]
 
 var blockImages = [
-    url + "transparent_square.svgz",
-    url + "transparent_square_yellow.svgz",
-    url + "transparent_square_green.svgz"
+    url + "transparent_square.svg",
+    url + "transparent_square_yellow.svg",
+    url + "transparent_square_green.svg"
 ]
 
 var currentLevel
-var currentSubLevel
 var currentImage
 var main
 var items
@@ -102,16 +101,16 @@ var createdBlocks
 var killedBlocks
 
 var nbLevel = 6
-var nbSubLevel = 8
-var imgIndex = 0
+var imgIndex
 
 function start(main_, items_, type_) {
     main = main_
     items = items_
     type = type_
     currentLevel = 0
-    currentSubLevel = 0
+    items_.currentSubLevel = 0
     currentImage = 0
+    imgIndex = 0
     initLevel()
 }
 
@@ -138,7 +137,11 @@ function initLevel() {
 
         for(var x = 0;  x < nbx; ++x) {
             for(var y = 0;  y < nby; ++y) {
-                data = {'nx': nbx, 'ny': nby, 'a':x, 'b':y, 'op': 1.0,'MAIN':main,'BAR':items.bar, 'img': blockImages[imgIndex % blockImages.length]}
+                data = {
+                    'nx': nbx, 'ny': nby, 'a': x, 'b': y,
+                    'op': 1.0, 'MAIN': main, 'BAR': items.bar,
+                    'img': blockImages[imgIndex % blockImages.length]
+                }
                 items.blocks.append(data)
                 createdBlocks++
             }
@@ -153,8 +156,8 @@ function nextLevel() {
 }
 
 function nextSubLevel() {
-    if( ++currentSubLevel >= nbSubLevel) {
-        currentSubLevel = 0
+    if( ++items.currentSubLevel >= items.nbSubLevel) {
+        items.currentSubLevel = 0
         nextLevel()
     }
     initLevel();

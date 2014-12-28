@@ -141,7 +141,7 @@ ActivityBase {
         Grid {
             id: grid
             anchors.top: parent.top
-            anchors.topMargin: (parent.height - height - items.bar.height) / 2
+            anchors.topMargin: (parent.height - height) / 2
             anchors.horizontalCenter: parent.horizontalCenter
             rows: items.nbCell
             columns: items.nbCell
@@ -172,6 +172,7 @@ ActivityBase {
                         z: lighton === 1 ? 11 : 10
                         sourceSize.height: items.cellSize
                         onClicked: {
+                            activity.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/scroll.wav')
                             Activity.switchLight(index)
                         }
                         Behavior on opacity {
@@ -190,6 +191,7 @@ ActivityBase {
                         z: lighton === 1 ? 10 : 11
                         sourceSize.height: items.cellSize
                         onClicked: {
+                            activity.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/scroll.wav')
                             Activity.switchLight(index)
                         }
                         Behavior on opacity {
@@ -211,7 +213,7 @@ ActivityBase {
         Bar {
             id: bar
             content: BarEnumContent {
-                value: help | home | previous | next
+                value: help | home | level
             }
             onHelpClicked: {
                 displayDialog(dialogHelp)

@@ -21,7 +21,7 @@
 */
 import QtQuick 2.1
 import GCompris 1.0
-import QtMultimedia 5.0
+import "."
 
 import "../../core"
 import "enumerate.js" as Activity
@@ -39,7 +39,7 @@ ActivityBase {
         signal start
         signal stop
         fillMode: Image.PreserveAspectCrop
-        source: Activity.url + "background.svgz"
+        source: Activity.url + "background.svg"
         sourceSize.width: parent.width
 
         Component.onCompleted: {
@@ -48,6 +48,17 @@ ActivityBase {
         }
         onStart: { Activity.start(items) }
         onStop: { Activity.stop() }
+
+        Keys.onDownPressed: {
+            if(++answerColumn.currentIndex >= answerColumn.count)
+                answerColumn.currentIndex = 0
+            Activity.registerAnswerItem(answerColumn.itemAt(answerColumn.currentIndex))
+        }
+        Keys.onUpPressed: {
+            if(--answerColumn.currentIndex < 0)
+                answerColumn.currentIndex = answerColumn.count - 1
+            Activity.registerAnswerItem(answerColumn.itemAt(answerColumn.currentIndex))
+        }
 
         QtObject {
             id: items
@@ -77,10 +88,14 @@ ActivityBase {
             Repeater
             {
                 id: answerColumn
+                property int currentIndex
+
+                onModelChanged: currentIndex = count - 1
                 AnswerArea {
                     imgPath: modelData
                     focus: true
                     backspaceCode: keyboard.backspace
+                    audioEffects: activity.audioEffects
                 }
             }
         }
@@ -128,7 +143,7 @@ ActivityBase {
         Bar {
             id: bar
             anchors.bottom: keyboard.top
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -137,17 +152,10 @@ ActivityBase {
             onHomeClicked: activity.home()
         }
 
-        GCAudio {
-            id: winAudio
-            source: "qrc:/gcompris/src/core/resource/sounds/bonus.wav"
-        }
-
         Bonus {
             id: bonus
+            audioEffects: activity.audioEffects
             Component.onCompleted: win.connect(Activity.nextLevel)
-            onWin: {
-                winAudio.play()
-            }
         }
     }
 }

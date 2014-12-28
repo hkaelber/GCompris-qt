@@ -45,7 +45,6 @@ var mode;
 function start(_items, _mode)
 {
     Core.checkForVoices(_items.bar);
-    _items.nextLevelAudio.source = GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/misc/click_on_letter.ogg");
 
     items = _items;
     mode = _mode;
@@ -57,43 +56,34 @@ function start(_items, _mode)
     initLevel();
 }
 
-function parseLevels(json)
+function validateLevels(levels)
 {
-    try {
-        levels = JSON.parse(json);
-        // minimal syntax check:
-        var i;
-        for (i = 0; i < levels.length; i++) {
-            if (undefined === levels[i].questions
-                || typeof levels[i].questions != "string"
-                || levels[i].questions.length < 1
-                || typeof levels[i].answers != "string"
-                || levels[i].answers.length < 1)
-                return false;
-        }
-        if (i < 1)
+    var i;
+    for (i = 0; i < levels.length; i++) {
+        if (undefined === levels[i].questions
+            || typeof levels[i].questions != "string"
+            || levels[i].questions.length < 1
+            || typeof levels[i].answers != "string"
+            || levels[i].answers.length < 1)
             return false;
-    } catch(e) {
-        console.error("Click_on_letter: Error parsing JSON: " + e)
-        return false;
     }
+    if (i < 1)
+        return false;
     return true;
 }
 
 function loadLevels()
 {
-    var ret;    
-    var json = items.levelsFile.read(
-                GCompris.ApplicationInfo.getLocaleFilePath(url +
-                                                           "levels-$LOCALE.json"))
-    if (json == "" || !parseLevels(json)) {
-        console.warn("Click_on_letter: Invalid levels file " +
-                items.levelsFile.name);
+    var ret;
+    var filename = GCompris.ApplicationInfo.getLocaleFilePath(url + "levels-$LOCALE.json");
+    levels = items.parser.parseFromUrl(filename);
+    if (levels == null) {
+        console.warn("Click_on_letter: Invalid levels file " + filename);
         // fallback to default Latin (levels-en.json) file:
-        json = items.levelsFile.read(defaultLevelsFile);
-        if (json == "" || !parseLevels(json)) {
+        levels = items.parser.parseFromUrl(defaultLevelsFile);
+        if (levels == null) {
             console.error("Click_on_letter: Invalid default levels file "
-                + items.levelsFile.name + ". Can't continue!");
+                + defaultLevelsFile + ". Can't continue!");
             // any way to error-exit here?
             return;
         }
@@ -150,22 +140,31 @@ function initLevel() {
     }
 
     currentLetter = questions.split("")[currentSubLevel];
-    if (GCompris.ApplicationSettings.isAudioEnabled &&
-        GCompris.DownloadManager.haveLocalResource(
+    if (GCompris.ApplicationSettings.isAudioVoicesEnabled &&
+            GCompris.DownloadManager.haveLocalResource(
                 GCompris.DownloadManager.getVoicesResourceForLocale(
-                        GCompris.ApplicationInfo.localeShort))) {
-        items.nextLevelAudio.stop();
-        items.nextLevelAudio.play();
-        items.questionItem.visible = false;
+                    GCompris.ApplicationInfo.localeShort))) {
+        items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/misc/click_on_letter.ogg"));
+        items.audioVoices.silence(100)
+        playLetter(currentLetter)
+        items.questionItem.visible = false
+        items.repeatItem.visible = true
     } else {
         // no sound -> show question
         items.questionItem.visible = true;
+        items.repeatItem.visible = false
     }
     // Maybe we will display it if sound fails
     items.questionItem.text = currentLetter;
 }
 
+function playLetter(letter) {
+    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
+                                                                       + Core.getSoundFilenamForChar(letter)))
+}
+
 function nextLevel() {
+    items.audioVoices.clearQueue()
     if(maxLevel <= ++currentLevel ) {
         currentLevel = 0
     }
@@ -174,6 +173,7 @@ function nextLevel() {
 }
 
 function previousLevel() {
+    items.audioVoices.clearQueue()
     if(--currentLevel < 0) {
         currentLevel = maxLevel - 1
     }
@@ -192,8 +192,8 @@ function nextSubLevel() {
 function checkAnswer(index)
 {
     var modelEntry = items.trainModel.get(index);
-    items.letterAudio.playLetterDelayed(modelEntry.letter, 0);
     if (modelEntry.letter == currentLetter) {
+        playLetter(modelEntry.letter);
         items.bonus.good("flower");
         return true
     } else {

@@ -18,7 +18,6 @@
  along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.2
-import QtMultimedia 5.0
 import "planegame.js" as Activity
 import "../../core"
 import GCompris 1.0
@@ -32,11 +31,10 @@ Image {
     /* An helper property to remember if a cloud has been wrongly touched */
     property bool touched: false
 
-    sourceSize.height: 100 * ApplicationInfo.ratio
+    sourceSize.height: 60 * ApplicationInfo.ratio
     height: sourceSize.height * heightRatio
 
     state: "normal"
-//    source: "qrc:/gcompris/src/activities/planegame/resource/cloud.svgz"
     fillMode: Image.PreserveAspectFit
 
     z: 5
@@ -54,7 +52,7 @@ Image {
         state = "storm"
     }
 
-    Text {
+    GCText {
         id: number
         anchors.horizontalCenter: cloud.horizontalCenter
         anchors.verticalCenter: cloud.verticalCenter
@@ -84,14 +82,14 @@ Image {
             name: "normal"
             PropertyChanges {
                 target: cloud
-                source: "qrc:/gcompris/src/activities/planegame/resource/cloud.svgz"
+                source: Activity.url + "resource/cloud.svgz"
             }
         },
         State {
             name: "storm"
             PropertyChanges {
                 target: cloud
-                source: "qrc:/gcompris/src/activities/planegame/resource/cloud_storm.svgz"
+                source: Activity.url + "resource/cloud_storm.svgz"
             }
             StateChangeScript {
                 script: stormy.start()
@@ -111,10 +109,6 @@ Image {
         id: particles
         anchors.fill: parent
         clip: false
-    }
-
-    GCAudio {
-        id: audioNumber
     }
 
 }

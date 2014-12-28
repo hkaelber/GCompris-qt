@@ -35,7 +35,7 @@ ActivityBase {
     pageComponent: Image {
         id: background
         anchors.fill: parent
-        source: Activity.url + "/background.svgz"
+        source: Activity.url + "/background.svg"
         sourceSize.width: parent.width
         signal start
         signal stop
@@ -50,6 +50,7 @@ ActivityBase {
             id: items
             property Item main: activity.main
             property alias background: background
+            property GCAudio audioEffects: activity.audioEffects
             property alias answerModel: answerModel
             property alias pocketModel: pocketModel
             property alias store: store
@@ -79,6 +80,7 @@ ActivityBase {
 
             // === The Answer Area ===
             Rectangle {
+                id: answerArea
                 height: (column.itemHeight + 10) * column.nbLines
                 width: column.width
                 color: "#55333333"
@@ -117,9 +119,10 @@ ActivityBase {
                             sourceSize.height: column.itemHeight
                             height: column.itemHeight
 
-                            MouseArea {
+                            MultiPointTouchArea {
                                 anchors.fill: parent
-                                onClicked: Activity.unpay(index)
+                                mouseEnabled: true
+                                onReleased: Activity.unpay(index)
                             }
                         }
                     }
@@ -127,13 +130,17 @@ ActivityBase {
             }
 
             // === The Store Area ===
-            property int nbStoreColumns: 4
+            property int nbStoreColumns: activity.dataset === "BACK_WITHOUT_CENTS" ||
+                                         activity.dataset === "BACK_WITH_CENTS" ? store.model.length + 1 : store.model.length
             property int itemStoreWidth:
-                Math.min(width / nbStoreColumns - 10 - 10 / nbStoreColumns,
-                         parent.height * 0.18 - 10 - 10)
+                Math.min( (width - storeAreaFlow.anchors.leftMargin -
+                           storeAreaFlow.anchors.rightMargin -
+                           storeAreaFlow.spacing * nbStoreColumns - 1) / nbStoreColumns,
+                          (parent.height - answerArea.height - instructionsArea.realHeight - pocketArea.height - bar.height) / 2)
             property int itemStoreHeight: itemStoreWidth
 
             Rectangle {
+                id: storeArea
                 height: (column.itemStoreHeight + 10)
                 width: column.width
                 color: "#55333333"
@@ -142,6 +149,7 @@ ActivityBase {
                 radius: 5
 
                 Flow {
+                    id: storeAreaFlow
                     anchors.topMargin: 4
                     anchors.bottomMargin: 4
                     anchors.leftMargin: 20
@@ -161,7 +169,7 @@ ActivityBase {
                         id: tux
                         visible: activity.dataset === "BACK_WITHOUT_CENTS" ||
                                  activity.dataset === "BACK_WITH_CENTS"
-                        source: Activity.url + "/tux.svgz"
+                        source: Activity.url + "/tux.svg"
                         sourceSize.height:  column.itemStoreHeight
                         Repeater {
                             id: tuxMoney
@@ -179,7 +187,7 @@ ActivityBase {
                         Image {
                             source: Activity.url + modelData.img
                             sourceSize.height:  column.itemStoreHeight
-                            Text {
+                            GCText {
                                 text: modelData.price
                                 font.pointSize: 20
                                 font.weight: Font.DemiBold
@@ -196,6 +204,7 @@ ActivityBase {
 
             // == The instructions Area ==
             Rectangle {
+                id: instructionsArea
                 height: instructions.height
                 width: column.width
                 color: "#55333333"
@@ -207,17 +216,21 @@ ActivityBase {
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
                 visible: bar.level === 1
-                Text {
+
+                property int realHeight: bar.level === 1 ? height : 0
+
+                GCText {
                     id: instructions
                     horizontalAlignment: Text.AlignHCenter
                     width: column.width
                     wrapMode: Text.WordWrap
-                    font.pointSize: 16
+                    font.pointSize: 14
                 }
             }
 
             // === The Pocket Area ===
             Rectangle {
+                id: pocketArea
                 height: (column.itemHeight + 10) * column.nbLines
                 width: column.width
                 color: "#661111AA"
@@ -256,9 +269,10 @@ ActivityBase {
                             sourceSize.height:  column.itemHeight
                             height: column.itemHeight
 
-                            MouseArea {
+                            MultiPointTouchArea {
                                 anchors.fill: parent
-                                onClicked: Activity.pay(index)
+                                mouseEnabled: true
+                                onReleased: Activity.pay(index)
                             }
                         }
                     }
@@ -275,7 +289,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }

@@ -20,7 +20,6 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.1
-import QtMultimedia 5.0
 import GCompris 1.0
 
 import "../../core"
@@ -64,27 +63,49 @@ ActivityBase {
         onStart: { Activity.start(items) }
         onStop: { Activity.stop() }
 
-        /* Sounds */
-        GCAudio {
-            id: playFlip
-            source: "qrc:/gcompris/src/core/resource/sounds/flip.wav"
-        }
-
-        GCAudio {
-            id: playBrick
-            source: "qrc:/gcompris/src/core/resource/sounds/brick.wav"
-        }
-
         /* Instruction */
-        Text {
+        Item {
             id: instruction
-            y: parent.height * 0.65
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pointSize: 22
-            color: "white"
-            text: ""
             z: 99
+            anchors {
+                top: parent.top
+                topMargin: 10
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: parent.width * 0.9
+            property alias text: instructionTxt.text
+            visible: bar.level === 1 && text != ""
+
+            GCText {
+                id: instructionTxt
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                font.pointSize: 16
+                color: "white"
+                style: Text.Outline
+                styleColor: "black"
+                horizontalAlignment: Text.AlignHCenter
+                width: parent.width
+                wrapMode: TextEdit.WordWrap
+                z: 2
+            }
+
+            Rectangle {
+                anchors.fill: instructionTxt
+                z: 1
+                opacity: 0.8
+                radius: 10
+                border.width: 2
+                border.color: "black"
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#000" }
+                    GradientStop { position: 0.9; color: "#666" }
+                    GradientStop { position: 1.0; color: "#AAA" }
+                }
+            }
         }
+
 
         /* The progress bars */
         Rectangle {
@@ -207,15 +228,6 @@ ActivityBase {
             anchors.verticalCenter: parent.verticalCenter
             sourceSize.width: 154 * ApplicationInfo.ratio
             x: parent.width/2 - width/2
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MidButton
-                onClicked: {
-                    /* The ball is  on the initial place */
-                    instruction.text = qsTr("Click twice on the ball to shoot it.")
-                }
-            }
         }
 
         /* The 2 click icon */
@@ -259,6 +271,10 @@ ActivityBase {
                         x: parent.width/2 - width/2;
                         y: parent.height*0.77 - height/2
                     }
+                    PropertyChanges {
+                        target: instruction
+                        text: qsTr("Double click or double tap on the ball to kick it.")
+                    }
                 },
                 State {
                     name: "RIGHT"
@@ -291,6 +307,10 @@ ActivityBase {
                         x: parent.width/2 - width/2;
                         y: player.y + player.height / 2
                     }
+                    PropertyChanges {
+                        target: instruction
+                        text: qsTr("Click or tap the ball to bring it back to its former position")
+                    }
                 }
             ]
 
@@ -318,7 +338,7 @@ ActivityBase {
                         progess.anim.running = false;
 
                         /* Play sound */
-                        playBrick.play()
+                        activity.audioEffects.play("qrc:/gcompris/src/core/resource/sounds/brick.wav")
 
                         /* Success or not */
                         if(progess.ratio < 100) {
@@ -342,7 +362,7 @@ ActivityBase {
                         progess.anim.running = true;
 
                         /* Play sound */
-                        playFlip.play()
+                        activity.audioEffects.play("qrc:/gcompris/src/core/resource/sounds/flip.wav")
                     }
                 }
             }
@@ -367,7 +387,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -378,6 +398,9 @@ ActivityBase {
 
         Bonus {
             id: bonus
+            audioEffects: activity.audioEffects
+            winSound: "qrc:/gcompris/src/activities/ballcatch/resource/tuxok.wav"
+            looseSound: "qrc:/gcompris/src/activities/ballcatch/resource/youcannot.wav"
             Component.onCompleted: {
                 win.connect(Activity.nextLevel)
             }

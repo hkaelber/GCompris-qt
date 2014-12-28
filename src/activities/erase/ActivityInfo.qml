@@ -3,14 +3,15 @@ import GCompris 1.0
 ActivityInfo {
   name: "erase/Erase.qml"
   difficulty: 1
-  icon: "erase/erase.svgz"
+  icon: "erase/erase.svg"
   author: "Bruno Coudoin <bruno.coudoin@gcompris.net>"
   demo: false
-  title: qsTr("Move the mouse")
-  description: qsTr("Move the mouse to erase the area and discover the background")
+  title: qsTr("Move the mouse or touch the screen")
+  description: qsTr("Move the mouse or touch the screen to erase the area and discover the background")
+//  intro: " Clear the window with your sponge and discover the hidden picture."
   goal: qsTr("Motor-coordination")
   prerequisite: qsTr("Mouse-manipulation")
-  manual: qsTr("Move the mouse until all the blocks disappear. You can add you own images under the directory '~/My GCompris/erase'.")
-  credit: qsTr("Animal pictures are taken from the Animal Photography Page of Ralf Schmode (&lt;http://schmode.net/&gt;) and from LE BERRE Daniel. These people kindly gave GCompris the authorization to include their pictures. Thanks a lot, both of you.")
-  section: "/computer/mouse"
+  manual: qsTr("Move the mouse or touch the screen until all the blocks disappear.")
+  credit: ""
+  section: "computer mouse"
 }

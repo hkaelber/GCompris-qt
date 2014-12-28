@@ -9,7 +9,9 @@ align4
 align4-2players
 alphabet-sequence
 ballcatch
+braille_alphabets
 canal_lock
+clickanddraw
 clickgame
 click_on_letter
 click_on_letter_up
@@ -17,6 +19,7 @@ clockgame
 color_mix
 color_mix_light
 colors
+drawnumber
 enumerate
 erase
 erase_2clic
@@ -30,7 +33,9 @@ gnumch-factors
 gnumch-inequality
 gnumch-multiples
 gnumch-primes
+guessnumber
 hexagon
+imageid
 instruments
 leftright
 lightsoff
@@ -69,7 +74,12 @@ mosaic
 numbers-odd-even
 penalty
 planegame
+redraw
+redraw_symmetrical
 reversecount
+scalesboard
+scalesboard_weight
+scalesboard_weight_avoirdupois
 smallnumbers
 smallnumbers2
 sudoku

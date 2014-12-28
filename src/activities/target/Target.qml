@@ -108,6 +108,7 @@ ActivityBase {
             anchors.fill: parent
             enabled: items.currentArrow != items.nbArrow && !items.arrowFlying
             onClicked: {
+                activity.audioEffects.play(Activity.url + 'arrow.wav')
                 items.arrowFlying = true
                 if(items.currentArrow != items.nbArrow) {
                     arrowRepeater.itemAt(items.currentArrow).opacity = 1
@@ -116,7 +117,7 @@ ActivityBase {
             }
         }
 
-        Text {
+        GCText {
             id: scoreItem
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
@@ -164,7 +165,7 @@ ActivityBase {
                 bonus.good("flower")
         }
 
-        Text {
+        GCText {
             id: userEntry
             anchors.top: scoreItem.bottom
             width: parent.width
@@ -211,7 +212,7 @@ ActivityBase {
         Bar {
             id: bar
             anchors.bottom: keyboard.top
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }

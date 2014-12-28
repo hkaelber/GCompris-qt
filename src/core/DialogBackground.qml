@@ -30,6 +30,7 @@ Rectangle {
     z: 1000
     property bool isDialog: true
     property string title
+    property alias titleIcon: titleIcon.source
     property string content
     signal close
     signal start
@@ -48,21 +49,30 @@ Rectangle {
             Rectangle {
                 color: "#e6e6e6"
                 radius: 6.0
-                width: parent.width
+                width: dialogBackground.width - 30
                 height: title.height * 1.2
                 border.color: "black"
                 border.width: 2
 
-                Text {
+                Image {
+                    id: titleIcon
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        margins: 4 * ApplicationInfo.ratio
+                    }
+                }
+
+                GCText {
                     id: title
                     text: dialogBackground.title
                     width: dialogBackground.width - 30
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Helvetica"
                     color: "black"
-                    font.pointSize: 24
+                    font.pointSize: 20
                     font.weight: Font.DemiBold
+                    wrapMode: Text.WordWrap
                 }
             }
             Rectangle {
@@ -83,14 +93,15 @@ Rectangle {
                     flickableDirection: Flickable.VerticalFlick
                     clip: true
 
-                    Text {
+                    GCText {
                         id: textContent
                         text: content
                         width: flick.width
                         height: flick.height
-                        font.pointSize: 16
+                        font.pointSize: 14
                         wrapMode: TextEdit.Wrap
                         textFormat: TextEdit.RichText
+                        onLinkActivated: Qt.openUrlExternally(link)
                     }
                 }
             }

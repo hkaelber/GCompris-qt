@@ -22,7 +22,6 @@
 
 import QtQuick 2.1
 import GCompris 1.0
-import QtMultimedia 5.0
 
 import "../../core"
 import "gletters.js" as Activity
@@ -51,8 +50,6 @@ ActivityBase {
     onStart: focus = true
     onStop: {}
     
-    Keys.onPressed: Activity.processKeyPress(event.text)
-    
     pageComponent: Image {
         id: background
         source: activity.dataSetUrl + "background.svgz"
@@ -71,6 +68,7 @@ ActivityBase {
             id: items
             property Item main: activity.main
             property Item ourActivity: activity
+            property GCAudio audioVoices: activity.audioVoices
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
@@ -78,12 +76,34 @@ ActivityBase {
             property alias score: score
             property alias keyboard: keyboard
             property alias wordDropTimer: wordDropTimer
-            property alias flipAudio: flipAudio
-            property alias crashAudio: crashAudio
+            property GCAudio audioEffects: activity.audioEffects
         }
 
-        onStart: { Activity.start(items, uppercaseOnly, mode) }
+        onStart: {
+            Activity.start(items, uppercaseOnly, mode);
+            if (!ApplicationInfo.isMobile)
+                textinput.forceActiveFocus();
+        }
         onStop: { Activity.stop() }
+
+        TextInput {
+            // Helper element to capture composed key events like french ô which
+            // are not available via Keys.onPressed() on linux. Must be
+            // disabled on mobile!
+            id: textinput
+            anchors.centerIn: background
+            enabled: !ApplicationInfo.isMobile
+            focus: true
+            visible: false
+
+            onTextChanged: {
+                if (text != "") {
+                    Activity.processKeyPress(text);
+                    text = "";
+                }
+            }
+
+        }
 
         DialogHelp {
             id: dialogHelp
@@ -93,7 +113,7 @@ ActivityBase {
         Bar {
             id: bar
             anchors.bottom: keyboard.top
-            content: BarEnumContent { value: help | home | previous | next }
+            content: BarEnumContent { value: help | home | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -135,27 +155,17 @@ ActivityBase {
         Wordlist {
             id: wordlist
             defaultFilename: activity.dataSetUrl + "default-en.json"
-            filename: ApplicationInfo.getLocaleFilePath(activity.dataSetUrl +
-                                                       "default-$LOCALE.json");
+            filename: ""
 
             onError: console.log("Gletters: Wordlist error: " + msg);
         }
         
         Timer {
             id: wordDropTimer
-            repeat: false        
+            repeat: false
             onTriggered: Activity.dropWord();
         }
 
-        GCAudio {
-            id: flipAudio
-            source: "qrc:/gcompris/src/core/resource/sounds/flip.wav";
-        }
-
-        GCAudio {
-            id: crashAudio
-            source: "qrc:/gcompris/src/core/resource/sounds/crash.wav";
-        }
     }
 
 }

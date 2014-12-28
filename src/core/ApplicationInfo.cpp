@@ -48,6 +48,9 @@
 #include "ApplicationInfo.h"
 #include <QDebug>
 
+#include <QFontDatabase>
+#include <QDir>
+
 QQuickWindow *ApplicationInfo::m_window = NULL;
 ApplicationInfo *ApplicationInfo::m_instance = NULL;
 
@@ -84,6 +87,14 @@ ApplicationInfo::ApplicationInfo(QObject *parent): QObject(parent)
 
     if (m_isMobile)
         connect(qApp->primaryScreen(), SIGNAL(physicalSizeChanged(QSizeF)), this, SLOT(notifyPortraitMode()));
+
+    // Get all symbol fonts to remove them
+    QFontDatabase database;
+    m_excludedFonts = database.families(QFontDatabase::Symbol);
+
+    // Get fonts from rcc
+    const QStringList fontFilters = {"*.otf", "*.ttf"};
+    m_fontsFromRcc = QDir(":/gcompris/src/core/resource/fonts").entryList(fontFilters);
 }
 
 ApplicationInfo::~ApplicationInfo()
@@ -109,7 +120,7 @@ QString ApplicationInfo::getFilePath(const QString &file)
 #if defined(Q_OS_ANDROID)
     return QString("assets:/%1").arg(file);
 #else
-    return QString("%1/rcc/%2").arg(QCoreApplication::applicationDirPath(), file);
+    return QString("%1/%2/rcc/%3").arg(QCoreApplication::applicationDirPath(), GCOMPRIS_DATA_FOLDER, file);
 #endif
 }
 
@@ -133,6 +144,16 @@ QString ApplicationInfo::getLocaleFilePath(const QString &file)
     QString filename = file;
     filename.replace("$LOCALE", localeShortName);
     return filename;
+}
+
+QStringList ApplicationInfo::getSystemExcludedFonts()
+{
+    return m_excludedFonts;
+}
+
+QStringList ApplicationInfo::getFontsFromRcc()
+{
+    return m_fontsFromRcc;
 }
 
 void ApplicationInfo::notifyPortraitMode()

@@ -40,7 +40,7 @@ ActivityBase {
 
     pageComponent: Image {
         id: background
-        source: Activity.url + "maze_bg.svgz"
+        source: Activity.url + "maze_bg.svg"
         sourceSize.width: parent.width
         anchors.fill: parent
         signal start
@@ -61,7 +61,7 @@ ActivityBase {
             property alias mazeRows: maze.rows
             property alias mazeColumns: maze.columns
             property alias mazeRepeater: mazeRepeater.model
-            property alias playBrick: playBrick
+            property GCAudio audioEffects: activity.audioEffects
             property alias message: message
             property int playerx: 0
             property int playery: 0
@@ -69,7 +69,7 @@ ActivityBase {
             property int doory: 0
             property int cellSize: Math.min((parent.height - 200) / mazeRows,
                                             (parent.width - 40) / mazeColumns)
-            property int wallSize: cellSize / 10
+            property int wallSize: Math.max(2, cellSize / 10)
             property bool wallVisible: true
             property bool fastMode: false
         }
@@ -155,6 +155,68 @@ ActivityBase {
             }
         }
 
+        MultiPointTouchArea {
+            anchors.fill: parent
+            touchPoints: [ TouchPoint { id: point1 } ]
+            mouseEnabled: true
+            property real startX
+            property real startY
+            // Workaround to avoid having 2 times the onReleased event
+            property bool started
+
+            onPressed: {
+                startX = point1.x
+                startY = point1.y
+                started = true
+            }
+
+            onReleased: {
+                if(!started)
+                    return false
+                var moveX = point1.x - startX
+                var moveY = point1.y - startY
+                // Find the direction with the most move
+                if(Math.abs(moveX) * ApplicationInfo.ratio > 10 &&
+                   Math.abs(moveX) > Math.abs(moveY)) {
+                    if(moveX > 10 * ApplicationInfo.ratio)
+                        Activity.clickRight()
+                    else if(moveX < -10 * ApplicationInfo.ratio)
+                        Activity.clickLeft()
+                } else if(Math.abs(moveY) * ApplicationInfo.ratio > 10 &&
+                          Math.abs(moveX) < Math.abs(moveY)) {
+                    if(moveY > 10 * ApplicationInfo.ratio)
+                        Activity.clickDown()
+                    else if(moveY < -10 * ApplicationInfo.ratio)
+                        Activity.clickUp()
+                } else {
+                    // No move, just a tap or mouse click
+                    if(point1.x > player.x + player.width)
+                        Activity.clickRight()
+                    else if(point1.x < player.x)
+                        Activity.clickLeft()
+                    else if(point1.y < player.y)
+                        Activity.clickUp()
+                    else if(point1.y > player.y + player.height)
+                        Activity.clickDown()
+
+                }
+
+                started = false
+            }
+        }
+
+        // Show an hint to show that can move by swiping anywhere
+        Image {
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                margins: 12
+            }
+            source: "qrc:/gcompris/src/core/resource/arrows_move.svg"
+            sourceSize.width: 140
+            opacity: bar.level == 1 && ApplicationInfo.isMobile ? 1 : 0
+        }
+
         Image {
             id: player
             source: Activity.url + "tux_top_south.svg"
@@ -197,56 +259,13 @@ ActivityBase {
                 }
             }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    items.fastMode = !items.fastMode
-                }
-            }
-
             Image {
                 id: shoes
-                source: Activity.url + "tux_shoes_top_south.svgz"
+                source: Activity.url + "tux_shoes_top_south.svg"
                 sourceSize.width: items.cellSize * 0.8
                 anchors.centerIn: parent
                 visible: items.fastMode
             }
-        }
-
-        MouseArea {
-            id: clickUp
-            x: maze.x + items.playerx * items.cellSize
-            y: maze.y + items.playery * items.cellSize - height
-            height: items.cellSize
-            width: items.cellSize
-            onClicked: Activity.clickUp()
-        }
-
-        MouseArea {
-            id: clickDown
-            x: maze.x + items.playerx * items.cellSize
-            y: maze.y + items.playery * items.cellSize + player.height
-            height: items.cellSize
-            width: items.cellSize
-            onClicked: Activity.clickDown()
-        }
-
-        MouseArea {
-            id: clickRight
-            x: maze.x + items.playerx * items.cellSize + player.width
-            y: maze.y + items.playery * items.cellSize
-            height: items.cellSize
-            width: items.cellSize
-            onClicked: Activity.clickRight()
-        }
-
-        MouseArea {
-            id: clickLeft
-            x: maze.x + items.playerx * items.cellSize - width
-            y: maze.y + items.playery * items.cellSize
-            height: items.cellSize
-            width: items.cellSize
-            onClicked: Activity.clickLeft()
         }
 
         Image {
@@ -261,12 +280,22 @@ ActivityBase {
         }
 
         BarButton {
+            id: fastmode
+            source: Activity.url + "fast-mode-button.svg"
+            sourceSize.width: 66 * bar.barZoom
+            visible: !message.visible
+            x: 10 * ApplicationInfo.ratio
+            y: 10 * ApplicationInfo.ratio
+            onClicked: items.fastMode = !items.fastMode
+        }
+
+        BarButton {
             id: switchMaze
             source: Activity.url + "maze-2d-bubble.svg"
             anchors {
-                right: bar.left
-                bottom: bar.bottom
-                bottomMargin: 10
+                right: parent.right
+                top: parent.top
+                margins: 10
             }
             sourceSize.width: 66 * bar.barZoom
             visible: invisibleMode
@@ -276,82 +305,21 @@ ActivityBase {
             }
         }
 
-        BarButton {
-            id: fastmode
-            source: Activity.url + "fast-mode-button.svgz"
-            sourceSize.width: 66 * bar.barZoom
-            visible: true
-            x: 10 * ApplicationInfo.ratio
-            y: 10 * ApplicationInfo.ratio
-            onClicked: items.fastMode = !items.fastMode
-        }
-
-        BarButton {
-            id: buttonright
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20 * ApplicationInfo.ratio
-            anchors.right: parent.right
-            anchors.rightMargin: 20 * ApplicationInfo.ratio
-            visible: ApplicationInfo.isMobile && !message.visible
-            source: relativeMode ? Activity.url + "button_rotate_right.svg" : "qrc:/gcompris/src/core/resource/bar_next.svgz"
-            sourceSize.width: 45 * ApplicationInfo.ratio
-            onClicked: Activity.clickRight()
-        }
-
-        BarButton {
-            id: buttonbottom
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20 * ApplicationInfo.ratio
-            anchors.right: buttonright.left
-            anchors.rightMargin: 20 * ApplicationInfo.ratio
-            visible: ApplicationInfo.isMobile && !message.visible
-            source: Activity.url + "button_down.svgz"
-            sourceSize.height: 45 * ApplicationInfo.ratio
-            onClicked: Activity.clickDown()
-        }
-
-        BarButton {
-            id: buttontop
-            anchors.bottom: buttonbottom.top
-            anchors.bottomMargin: 20 * ApplicationInfo.ratio
-            anchors.right: buttonright.left
-            anchors.rightMargin: 20 * ApplicationInfo.ratio
-            visible: ApplicationInfo.isMobile && !message.visible
-            source: Activity.url + "button_up.svgz"
-            sourceSize.height: 45 * ApplicationInfo.ratio
-            onClicked: Activity.clickUp()
-        }
-        BarButton {
-            id: buttonleft
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20 * ApplicationInfo.ratio
-            anchors.right: buttonbottom.left
-            anchors.rightMargin: 20 * ApplicationInfo.ratio
-            visible: ApplicationInfo.isMobile && !message.visible
-            source: relativeMode ? Activity.url + "button_rotate_left.svg" : "qrc:/gcompris/src/core/resource/bar_previous.svgz"
-            sourceSize.width: 45 * ApplicationInfo.ratio
-            onClicked: Activity.clickLeft()
-        }
-
-        Text {
+        GCText {
             id: message
             anchors {
                 left: parent.left
-                bottom: parent.bottom
-                margins: 20
+                right: switchMaze.left
+                top: parent.top
+                margins: 10
             }
-            width: activity.width - x - 20
-            font.pointSize: 18
+            width: background.width - x - 20
+            font.pointSize: 14
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             visible: false
             wrapMode: Text.Wrap
             text: qsTr("Look at your position, then switch back to invisible mode to continue your moves")
-        }
-
-        GCAudio {
-            id: playBrick
-            source: "qrc:/gcompris/src/core/resource/sounds/brick.wav"
         }
 
         DialogHelp {
@@ -361,18 +329,10 @@ ActivityBase {
 
         Bar {
             id: bar
-            anchors {
-                bottom: undefined 
-                top: parent.top
-                right: parent.right
-                topMargin: height + 10  // FIXME: fix this in the Bar
-            }
             content: BarEnumContent {
-                value: help | home | previous | next
+                value: help | home | level
             }
-            onHelpClicked: {
-                displayDialog(dialogHelp)
-            }
+            onHelpClicked: displayDialog(dialogHelp)
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: activity.home()

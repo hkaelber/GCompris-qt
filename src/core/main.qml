@@ -21,7 +21,6 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Window 2.1
-import QtMultimedia 5.0
 import QtQuick.Dialogs 1.1
 
 import GCompris 1.0
@@ -36,20 +35,55 @@ Window {
     title: "GCompris"
 
     onClosing: Core.quit()
-        
+
     GCAudio {
-        id: audio
-        source: "qrc:/gcompris/src/core/resource/intro.ogg"
-        autoPlay: false
+        id: audioVoices
+        muted: !ApplicationSettings.isAudioVoicesEnabled
+
+        Timer {
+            id: delayedWelcomeTimer
+            interval: 10000 /* Make sure, that playing welcome.ogg if delayed
+                             * because of not yet registered voices, will only
+                             * happen max 10sec after startup */
+            repeat: false
+
+            onTriggered: {
+                DownloadManager.voicesRegistered.disconnect(playWelcome);
+            }
+
+            function playWelcome() {
+                audioVoices.append(ApplicationInfo.getAudioFilePath("voices/$LOCALE/misc/welcome.ogg"));
+            }
+        }
+
+        Component.onCompleted: {
+            if(ApplicationSettings.isAudioEffectsEnabled)
+                append("qrc:/gcompris/src/core/resource/intro.ogg")
+
+            if (DownloadManager.areVoicesRegistered())
+                delayedWelcomeTimer.playWelcome();
+            else {
+                DownloadManager.voicesRegistered.connect(
+                        delayedWelcomeTimer.playWelcome);
+                delayedWelcomeTimer.start();
+            }
+        }
+    }
+
+    GCAudio {
+        id: audioEffects
+        muted: !ApplicationSettings.isAudioEffectsEnabled
     }
 
     function playIntroVoice(name) {
         name = name.split("/")[0]
-        audio.append(ApplicationInfo.getAudioFilePath("voices/$LOCALE/intro/" + name + ".ogg"))
+        audioVoices.append(ApplicationInfo.getAudioFilePath("voices/$LOCALE/intro/" + name + ".ogg"))
     }
 
     Component.onCompleted: {
-        console.log("enter main.qml (run #" + ApplicationSettings.exeCount + ")")
+        console.log("enter main.qml (run #" + ApplicationSettings.exeCount
+                + ", ratio=" + ApplicationInfo.ratio
+                + ", dpi=" + Math.round(Screen.pixelDensity*25.4) + ")");
         if (ApplicationSettings.exeCount == 1) {
             // first run
             var buttonHandler = new Array();
@@ -71,16 +105,23 @@ Window {
     StackView {
         id: pageView
         anchors.fill: parent
-        initialItem: "qrc:/gcompris/src/activities/" + ActivityInfoTree.rootMenu.name
+        initialItem: {
+            "item": "qrc:/gcompris/src/activities/" + ActivityInfoTree.rootMenu.name,
+            "properties": {
+                'audioVoices': audioVoices,
+                'audioEffects': audioEffects
+            }
+        }
+
         delegate: StackViewDelegate {
             id: root
             function getTransition(properties)
             {
                 properties.exitItem.pause()
+                audioVoices.clearQueue()
                 if(!properties.exitItem.isDialog) {
                     if(!properties.enterItem.isDialog) {
                         playIntroVoice(properties.enterItem.activityInfo.name)
-                        properties.enterItem.audio = audio
                     }
                     properties.enterItem.start()
                 }
