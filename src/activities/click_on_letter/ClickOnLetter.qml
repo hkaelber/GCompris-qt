@@ -36,6 +36,7 @@ ActivityBase {
      * or "uppercase" (click_on_letter_up): */
     property string mode: "lowercase"
 
+    onStart: focus = true
 
     pageComponent: Image {
         id: background
@@ -164,7 +165,7 @@ ActivityBase {
                 opacity: 1.0
                 z:11            
                 text: ""
-                font.pointSize: 44
+                fontSize: 44
                 font.bold: true
                 style: Text.Outline
                 styleColor: "black"

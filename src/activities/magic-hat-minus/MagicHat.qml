@@ -85,7 +85,7 @@ ActivityBase {
                 anchors.right: mainlayout.right
                 anchors.rightMargin: 10
                 y: secondRow.y
-                font.pointSize: 66
+                fontSize: 66
                 color: "white"
             }
         }
@@ -191,7 +191,6 @@ ActivityBase {
 
         Bonus {
             id: bonus
-            audioEffects: activity.audioEffects
             Component.onCompleted: win.connect(Activity.nextLevel)
         }
     }

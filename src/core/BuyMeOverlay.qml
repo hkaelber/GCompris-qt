@@ -47,7 +47,7 @@ Component {
             
             GCText {
                 id: instructionTxt
-                font.pointSize: 16
+                fontSize: mediumSize
                 color: "white"
                 style: Text.Outline
                 styleColor: "black"
@@ -71,8 +71,8 @@ Component {
                 }
                 
                 onClicked: {
-                    ApplicationSettings.isDemoMode = !ApplicationSettings.isDemoMode
-                    console.log("call buying api")
+                    if(ApplicationSettings.isDemoMode)
+                        ApplicationSettings.isDemoMode = false
                 }
             }
             

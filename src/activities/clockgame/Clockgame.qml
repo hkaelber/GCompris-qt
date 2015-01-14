@@ -105,7 +105,7 @@ ActivityBase {
                           items.targetH) + ":" + Activity.get2CharValue(
                           items.targetM) + ":" + Activity.get2CharValue(
                           items.targetS)
-                font.pointSize: 18
+                fontSize: 18
                 font.weight: Font.DemiBold
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
@@ -157,6 +157,7 @@ ActivityBase {
                 GCText {
                     text: index + 1
                     font {
+                        pointSize: NaN  // need to clear font.pointSize explicitly
                         pixelSize: Math.max(
                                        (index + 1) % 5
                                        === 0 ? clock.radius / 40 : clock.radius / 45,

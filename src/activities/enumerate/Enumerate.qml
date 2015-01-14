@@ -78,6 +78,7 @@ ActivityBase {
         }
 
         Column {
+            id: answer
             anchors {
                 right: parent.right
                 bottom: keyboard.top
@@ -98,6 +99,21 @@ ActivityBase {
                     audioEffects: activity.audioEffects
                 }
             }
+
+            add: Transition {
+                NumberAnimation { properties: "x,y"; duration: 200 }
+            }
+        }
+
+        // Reposition the items to find when whidh or height changes
+        onWidthChanged: {
+            for(var i in itemList.model)
+                itemList.itemAt(i).positionMe()
+        }
+
+        onHeightChanged: {
+            for(var i in itemList.model)
+                itemList.itemAt(i).positionMe()
         }
 
         Repeater
@@ -154,7 +170,6 @@ ActivityBase {
 
         Bonus {
             id: bonus
-            audioEffects: activity.audioEffects
             Component.onCompleted: win.connect(Activity.nextLevel)
         }
     }

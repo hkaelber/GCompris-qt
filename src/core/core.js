@@ -176,8 +176,9 @@ function showDownloadDialog(parent, properties) {
         if (!downloadDialogComponent) {
             downloadDialogComponent = Qt.createComponent("qrc:/gcompris/src/core/DownloadDialog.qml");
             if (downloadDialogComponent.status != Qml.Component.Ready) {
+                throw new Error("Error creating DownloadDialog component: "
+                        + downloadDialogComponent.errorString());
                 downloadDialogComponent = null;
-                throw new Error("Error creating DownloadDialog component");
             }
         }
         properties.dynamic = true;
@@ -227,7 +228,7 @@ function quit(parent)
         buttonHandler[Dialog.StandardButton.No] = function() {};
         buttonHandler[Dialog.StandardButton.Yes] = function() { Qt.quit(); };
         var dialog = showMessageDialog(parent, qsTr("Quit?"),
-                qsTr("Do you really want to quit Gcompris?"),
+                qsTr("Do you really want to quit GCompris?"),
                 "",
                 Dialog.StandardIcon.Question,
                 buttonHandler);

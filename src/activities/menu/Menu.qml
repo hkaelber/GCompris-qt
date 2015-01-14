@@ -35,7 +35,8 @@ ActivityBase {
         else {
             pageView.pop();
             // Restore focus that has been taken by the loaded activity
-            focus = true;
+            if(pageView.currentItem == menuActivity)
+                focus = true;
         }
     }
 
@@ -117,6 +118,8 @@ ActivityBase {
                     event.key === Qt.Key_S) {
                 // Ctrl+S toggle show / hide section
                 ApplicationSettings.sectionVisible = !ApplicationSettings.sectionVisible
+            } else if(event.key === Qt.Key_Space) {
+                currentActiveGrid.currentItem.selectCurrentItem()
             }
         }
         Keys.onReleased: {
@@ -176,6 +179,7 @@ ActivityBase {
                     function selectCurrentItem() {
                         particles.emitter.burst(10)
                         ActivityInfoTree.filterByTag(modelData.tag)
+                        ActivityInfoTree.filterNonFreeActivities()
                         menuActivity.currentTag = modelData.tag
                         section.currentIndex = index
                     }
@@ -207,6 +211,49 @@ ActivityBase {
                          (background.width - section.width) / Math.floor((background.width - section.width) / iconWidth)
         property int activityCellHeight: iconHeight * 1.5
 
+        Loader {
+            id: warningOverlay
+            anchors {
+                top: horizontal ? section.bottom : parent.top
+                bottom: parent.bottom
+                left: horizontal ? parent.left : section.right
+                right: parent.right
+                margins: 4
+            }
+            active: (ActivityInfoTree.menuTree.length === 0) && (currentTag === "favorite")
+            sourceComponent: Item {
+                anchors.fill: parent
+                GCText {
+                    id: instructionTxt
+                    fontSize: smallSize
+                    y: height * 0.2
+                    x: (parent.width - width) / 2
+                    z: 2
+                    width: parent.width * 0.6
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    font.weight: Font.DemiBold
+                    color: 'white'
+                    text: qsTr("Put your favorite activities here by selecting the " +
+                               "star on each activity top right.")
+                }
+                Rectangle {
+                    anchors.fill: instructionTxt
+                    anchors.margins: -6
+                    z: 1
+                    opacity: 0.5
+                    radius: 10
+                    border.width: 2
+                    border.color: "black"
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#000" }
+                        GradientStop { position: 0.9; color: "#666" }
+                        GradientStop { position: 1.0; color: "#AAA" }
+                    }
+                }
+            }
+        }
+
         GridView {
             id: activitiesGrid
             anchors {
@@ -220,6 +267,7 @@ ActivityBase {
             cellHeight: activityCellHeight
             clip: true
             model: ActivityInfoTree.menuTree
+            keyNavigationWraps: true
             property int spacing: 10
 
             delegate: Item {
@@ -255,21 +303,38 @@ ActivityBase {
                         }
                         source: demo || !ApplicationSettings.isDemoMode
                                 ? "" :
-                                  "qrc:/gcompris/src/core/resource/cancel.svgz"
+                                  menuActivity.url + "lock.svg"
                         sourceSize.width: 30 * ApplicationInfo.ratio
                     }
                     GCText {
+                        id: title
                         anchors.top: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
                         horizontalAlignment: Text.AlignHCenter
                         width: activityBackground.width
                         fontSizeMode: Text.Fit
                         minimumPointSize: 7
-                        font.pointSize: 14
+                        fontSize: regularSize
                         elide: Text.ElideRight
                         maximumLineCount: 2
                         wrapMode: Text.WordWrap
                         text: ActivityInfoTree.menuTree[index].title
+                    }
+                    // If we have enough room at the bottom display the description
+                    GCText {
+                        id: description
+                        visible: delegateItem.height - (title.y + title.height) > description.height ? 1 : 0
+                        anchors.top: title.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        width: activityBackground.width
+                        fontSizeMode: Text.Fit
+                        minimumPointSize: 7
+                        fontSize: regularSize
+                        elide: Text.ElideRight
+                        maximumLineCount: 3
+                        wrapMode: Text.WordWrap
+                        text: ActivityInfoTree.menuTree[index].description
                     }
                 }
                 ParticleSystemStar {
@@ -349,6 +414,7 @@ ActivityBase {
         id: dialogConfig
         onClose: {
             ActivityInfoTree.filterByTag(menuActivity.currentTag)
+            ActivityInfoTree.filterNonFreeActivities()
             home()
         }
     }

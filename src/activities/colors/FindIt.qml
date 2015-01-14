@@ -37,12 +37,18 @@ ActivityBase {
     
     property string mode: ""
 
+    onStart: {
+        focus = true;
+    }
+
     pageComponent: Image {
         id: background
         focus: true
         fillMode: Image.PreserveAspectCrop
         sourceSize.width: parent.width
         source: backgroundImg
+
+        property bool keyboardMode: false
 
         signal start
         signal stop
@@ -65,6 +71,22 @@ ActivityBase {
         onStart: Activity.start(items, dataset, mode)
         onStop: Activity.stop()
 
+        Keys.onPressed: {
+            if(event.key === Qt.Key_Space) {
+                container.currentItem.select()
+            }
+        }
+        Keys.onReleased: {
+            keyboardMode = true
+            event.accepted = false
+        }
+        Keys.onEnterPressed: container.currentItem.select();
+        Keys.onReturnPressed: container.currentItem.select();
+        Keys.onRightPressed: container.moveCurrentIndexRight();
+        Keys.onLeftPressed: container.moveCurrentIndexLeft();
+        Keys.onDownPressed: container.moveCurrentIndexDown();
+        Keys.onUpPressed: container.moveCurrentIndexUp();
+
         ListModel {
               id: containerModel
         }
@@ -79,6 +101,7 @@ ActivityBase {
             interactive: false
             cellWidth: itemHeight + 10
             cellHeight: itemWidth + 10
+            keyNavigationWraps: true
             delegate: ColorItem {
                 audioVoices: activity.audioVoices
                 source: model.image
@@ -87,6 +110,27 @@ ActivityBase {
                 sourceSize.height: itemHeight
                 sourceSize.width: itemWidth
             }
+            add: Transition {
+                PathAnimation {
+                    path: Path {
+                        PathCurve { x: background.width / 3}
+                        PathCurve { y: background.height / 3}
+                        PathCurve {}
+                    }
+                    easing.type: Easing.InOutQuad
+                    duration: 2000
+                }
+            }
+            highlight: Rectangle {
+                width: container.cellWidth - container.spacing
+                height: container.cellHeight - container.spacing
+                color:  "#AAFFFFFF"
+                border.width: 3
+                border.color: "black"
+                visible: background.keyboardMode
+                Behavior on x { SpringAnimation { spring: 2; damping: 0.2 } }
+                Behavior on y { SpringAnimation { spring: 2; damping: 0.2 } }
+            }
         }
 
         GCText {
@@ -94,7 +138,7 @@ ActivityBase {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 10
-            font.pointSize: 24
+            fontSize: largeSize
             font.weight: Font.DemiBold
             style: Text.Outline
             styleColor: "black"

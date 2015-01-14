@@ -68,7 +68,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     color: "black"
-                    font.pointSize: 24
+                    fontSize: largeSize
                     font.weight: Font.DemiBold
                 }
             }
@@ -108,8 +108,10 @@ Rectangle {
                                                               "qrc:/gcompris/src/core/resource/cancel.svgz"
                                     MouseArea {
                                         anchors.fill: parent
-                                        //onClicked: ApplicationSettings.isDemoMode ? console.log("call buying api") : ""
-                                        onClicked: ApplicationSettings.isDemoMode = !ApplicationSettings.isDemoMode
+                                        onClicked: {
+                                            if(ApplicationSettings.isDemoMode)
+                                                ApplicationSettings.isDemoMode = false
+                                        }
                                     }
                             }
 
@@ -144,9 +146,19 @@ Rectangle {
                                 }
 
                                 onClicked: {
-                                    ApplicationSettings.isDemoMode = !ApplicationSettings.isDemoMode
-                                    console.log("call buying api")
+                                    if(ApplicationSettings.isDemoMode)
+                                        ApplicationSettings.isDemoMode = false
                                 }
+                            }
+                        }
+
+                        GCDialogCheckBox {
+                            id: displayNonFreeActivitiesBox
+                            text: qsTr("Show non-free activities")
+                            visible: ApplicationSettings.isDemoMode
+                            checked: showNonFreeActivities
+                            onCheckedChanged: {
+                                showNonFreeActivities = checked;
                             }
                         }
 
@@ -214,11 +226,40 @@ Rectangle {
                             }
                             GCText {
                                 text: qsTr("Font selector")
-                                font.pointSize: 16
+                                fontSize: mediumSize
                                 wrapMode: Text.WordWrap
                             }
                         }
-
+                        Row {
+                            spacing: 5
+                            Slider {
+                                id: baseFontSizeSlider
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 250 * ApplicationInfo.ratio
+                                style: GCSliderStyle {}
+                                maximumValue: ApplicationSettings.baseFontSizeMax
+                                minimumValue: ApplicationSettings.baseFontSizeMin
+                                stepSize: 1.0
+                                tickmarksEnabled: true
+                                updateValueWhileDragging: true
+                                value: baseFontSize
+                                onValueChanged: ApplicationSettings.baseFontSize = value;
+                            }
+                            GCText {
+                                id: baseFontSizeText
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Font size")
+                                fontSize: mediumSize
+                                wrapMode: Text.WordWrap
+                            }
+                            Button {
+                                height: parent.height
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: qsTr("Default");
+                                style: GCButtonStyle {}
+                                onClicked: baseFontSizeSlider.value = 0.0
+                            }
+                        }
                         Row {
                             spacing: 5
                             ComboBox {
@@ -231,7 +272,7 @@ Rectangle {
                             }
                             GCText {
                                 text: qsTr("Language selector")
-                                font.pointSize: 16
+                                fontSize: mediumSize
                                 wrapMode: Text.WordWrap
                             }
                         }
@@ -245,7 +286,8 @@ Rectangle {
                             property bool haveLocalResource: false
 
                             function localeChanged() {
-                                var localeShort = languages.get(languageBox.currentIndex).locale.substr(0, 2);
+                                var localeShort =
+                                        ApplicationInfo.getLocaleShort(languages.get(languageBox.currentIndex).locale);
                                 var language = languages.get(languageBox.currentIndex).text;
                                 voicesText.text = language;
                                 voicesRow.haveLocalResource = DownloadManager.haveLocalResource(
@@ -287,9 +329,10 @@ Rectangle {
                                 style: GCButtonStyle {}
 
                                 onClicked: {
+                                    var localeShort =
+                                            ApplicationInfo.getLocaleShort(languages.get(languageBox.currentIndex).locale);
                                     if (DownloadManager.downloadResource(
-                                        DownloadManager.getVoicesResourceForLocale(
-                                                languages.get(languageBox.currentIndex).locale.substr(0, 2))))
+                                        DownloadManager.getVoicesResourceForLocale(localeShort)))
                                     {
                                         var downloadDialog = Core.showDownloadDialog(dialogConfig, {});
                                     }
@@ -304,7 +347,7 @@ Rectangle {
                             GCText {
                                 text: qsTr("Difficulty filter:")
                                 verticalAlignment: Text.AlignVCenter
-                                font.pointSize: 16
+                                fontSize: mediumSize
                                 height: 50 * ApplicationInfo.ratio
                             }
 
@@ -458,21 +501,26 @@ Rectangle {
             anchors.fill: parent
             onClicked: {
                 if(hasConfigChanged())
-                    save()
+                    save();
+                //else
+                //    reset();
                 close()
             }
         }
     }
 
+    property bool showNonFreeActivities: ApplicationSettings.showNonFreeActivities
     property bool isAudioVoicesEnabled: ApplicationSettings.isAudioVoicesEnabled
     property bool isAudioEffectsEnabled: ApplicationSettings.isAudioEffectsEnabled
     property bool isFullscreen: ApplicationSettings.isFullscreen
     property bool isVirtualKeyboard: ApplicationSettings.isVirtualKeyboard
     property bool isAutomaticDownloadsEnabled: ApplicationSettings.isAutomaticDownloadsEnabled
     property bool sectionVisible: ApplicationSettings.sectionVisible
+    property int baseFontSize: ApplicationSettings.baseFontSize
 
     onStart: {
         // Synchronize settings with data
+        showNonFreeActivities = ApplicationSettings.showNonFreeActivities
         isAudioVoicesEnabled = ApplicationSettings.isAudioVoicesEnabled
         enableAudioVoicesBox.checked = isAudioVoicesEnabled
 
@@ -490,6 +538,8 @@ Rectangle {
 
         sectionVisible = ApplicationSettings.sectionVisible
         sectionVisibleBox.checked = sectionVisible
+
+        baseFontSize = ApplicationSettings.baseFontSize;
 
         // Set locale
         for(var i = 0 ; i < languages.count ; i ++) {
@@ -509,6 +559,7 @@ Rectangle {
     }
 
     function save() {
+        ApplicationSettings.showNonFreeActivities = showNonFreeActivities
         ApplicationSettings.isAudioVoicesEnabled = isAudioVoicesEnabled
         ApplicationSettings.isAudioEffectsEnabled = isAudioEffectsEnabled
         ApplicationSettings.isFullscreen = isFullscreen
@@ -518,6 +569,8 @@ Rectangle {
 
         ApplicationSettings.isEmbeddedFont = fonts.get(fontBox.currentIndex).isLocalResource;
         ApplicationSettings.font = fonts.get(fontBox.currentIndex).text
+
+        ApplicationSettings.saveBaseFontSize();
 
         if (ApplicationSettings.locale != languages.get(languageBox.currentIndex).locale) {
             ApplicationSettings.locale = languages.get(languageBox.currentIndex).locale
@@ -547,16 +600,23 @@ Rectangle {
         }
     }
 
+    function reset()
+    {
+        ApplicationSettings.baseFontSize = baseFontSize;
+    }
+
     ListModel {
         id: languages
 
         // This is done this way for having the translations
         Component.onCompleted: {
+            // FIXME: Add the first line for translation asap
+            languages.append( { "text": "Your system default", "locale": "system" })
             languages.append( { "text": "UK English", "locale": "en_GB.UTF-8" })
             languages.append( { "text": "American English", "locale": "en_US.UTF-8" } )
             languages.append( { "text": "български", "locale": "bg_BG.UTF-8" } )
             languages.append( { "text": "Brezhoneg", "locale": "br_FR.UTF-8" } )
-            languages.append( { "text": "Česká republika", "locale": "cs_CZ.UTF-8" } )
+            languages.append( { "text": "Česká", "locale": "cs_CZ.UTF-8" } )
             languages.append( { "text": "Dansk", "locale": "da_DK.UTF-8" } )
             languages.append( { "text": "Deutsch", "locale": "de_DE.UTF-8" } )
             languages.append( { "text": "Ελληνικά", "locale": "el_GR.UTF-8" } )
@@ -634,7 +694,9 @@ Rectangle {
                 (ApplicationSettings.isAudioEffectsEnabled != isAudioEffectsEnabled) ||
                 (ApplicationSettings.isFullscreen != isFullscreen) ||
                 (ApplicationSettings.isVirtualKeyboard != isVirtualKeyboard) ||
-                (ApplicationSettings.isAutomaticDownloadsEnabled != isAutomaticDownloadsEnabled)
+                (ApplicationSettings.isAutomaticDownloadsEnabled != isAutomaticDownloadsEnabled) ||
+                (ApplicationSettings.baseFontSize != baseFontSize) ||
+                (ApplicationSettings.showNonFreeActivities != showNonFreeActivities)
                 );
     }
 }

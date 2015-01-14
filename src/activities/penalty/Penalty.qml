@@ -81,7 +81,7 @@ ActivityBase {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }
-                font.pointSize: 16
+                fontSize: mediumSize
                 color: "white"
                 style: Text.Outline
                 styleColor: "black"
@@ -398,7 +398,6 @@ ActivityBase {
 
         Bonus {
             id: bonus
-            audioEffects: activity.audioEffects
             winSound: "qrc:/gcompris/src/activities/ballcatch/resource/tuxok.wav"
             looseSound: "qrc:/gcompris/src/activities/ballcatch/resource/youcannot.wav"
             Component.onCompleted: {

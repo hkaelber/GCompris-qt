@@ -50,11 +50,14 @@
 
 #include <QSettings>
 
+#define GC_DEFAULT_LOCALE "system"
+
 class ApplicationSettings : public QObject
 {
 	Q_OBJECT
 
 	// general group
+    Q_PROPERTY(bool showNonFreeActivities READ showNonFreeActivities WRITE setShowNonFreeActivities NOTIFY showNonFreeActivitiesChanged)
 	Q_PROPERTY(bool isAudioVoicesEnabled READ isAudioVoicesEnabled WRITE setIsAudioVoicesEnabled NOTIFY audioVoicesEnabledChanged)
 	Q_PROPERTY(bool isAudioEffectsEnabled READ isAudioEffectsEnabled WRITE setIsAudioEffectsEnabled NOTIFY audioEffectsEnabledChanged)
     Q_PROPERTY(bool isFullscreen READ isFullscreen WRITE setFullscreen NOTIFY fullscreenChanged)
@@ -67,6 +70,10 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(quint32 filterLevelMax READ filterLevelMax WRITE setFilterLevelMax NOTIFY filterLevelMaxChanged)
 	Q_PROPERTY(bool isDemoMode READ isDemoMode WRITE setDemoMode NOTIFY demoModeChanged)
 	Q_PROPERTY(bool sectionVisible READ sectionVisible WRITE setSectionVisible NOTIFY sectionVisibleChanged)
+    Q_PROPERTY(int baseFontSize READ baseFontSize WRITE setBaseFontSize NOTIFY baseFontSizeChanged)
+    // constant min/max values for baseFontSize:
+    Q_PROPERTY(int baseFontSizeMin READ baseFontSizeMin CONSTANT)
+    Q_PROPERTY(int baseFontSizeMax READ baseFontSizeMax CONSTANT)
 
     // admin group
     Q_PROPERTY(QString downloadServerUrl READ downloadServerUrl WRITE setDownloadServerUrl NOTIFY downloadServerUrlChanged)
@@ -94,10 +101,16 @@ public:
     static QObject *systeminfoProvider(QQmlEngine *engine,
                                        QJSEngine *scriptEngine);
 
-	bool isAudioVoicesEnabled() const { return m_isAudioVoicesEnabled; }
-	void setIsAudioVoicesEnabled(const bool newMode) {
-		m_isAudioVoicesEnabled = newMode;
-		emit audioVoicesEnabledChanged();
+    bool showNonFreeActivities() const { return m_showNonFreeActivities; }
+    void setShowNonFreeActivities(const bool newMode) {
+        m_showNonFreeActivities = newMode;
+        emit showNonFreeActivitiesChanged();
+    }
+
+    bool isAudioVoicesEnabled() const { return m_isAudioVoicesEnabled; }
+    void setIsAudioVoicesEnabled(const bool newMode) {
+        m_isAudioVoicesEnabled = newMode;
+        emit audioVoicesEnabledChanged();
     }
 
 	bool isAudioEffectsEnabled() const { return m_isAudioEffectsEnabled; }
@@ -118,7 +131,9 @@ public:
         emit virtualKeyboardChanged();
     }
 
-    QString locale() const { return m_locale; }
+    QString locale() const {
+        return m_locale;
+    }
     void setLocale(const QString newLocale) {
         m_locale = newLocale;
         emit localeChanged();
@@ -193,7 +208,18 @@ public:
         emit barHiddenChanged();
     }
 
+    int baseFontSize() const { return m_baseFontSize; }
+    void setBaseFontSize(const int newBaseFontSize) {
+        m_baseFontSize = qMax(qMin(newBaseFontSize, baseFontSizeMax()), baseFontSizeMin());
+        emit baseFontSizeChanged();
+    }
+
+    int baseFontSizeMin() const { return m_baseFontSizeMin; }
+    int baseFontSizeMax() const { return m_baseFontSizeMax; }
+
 protected slots:
+
+    Q_INVOKABLE void notifyShowNonFreeActivitiesChanged();
 	Q_INVOKABLE void notifyAudioVoicesEnabledChanged();
 	Q_INVOKABLE void notifyAudioEffectsEnabledChanged();
     Q_INVOKABLE void notifyFullscreenChanged();
@@ -216,10 +242,12 @@ protected slots:
 public slots:
 	Q_INVOKABLE bool isFavorite(const QString &activity);
 	Q_INVOKABLE void setFavorite(const QString &activity, bool favorite);
+    Q_INVOKABLE void saveBaseFontSize();
 
 protected:
 
 signals:
+    void showNonFreeActivitiesChanged();
 	void audioVoicesEnabledChanged();
 	void audioEffectsEnabledChanged();
     void fullscreenChanged();
@@ -232,6 +260,7 @@ signals:
     void filterLevelMaxChanged();
 	void demoModeChanged();
 	void sectionVisibleChanged();
+    void baseFontSizeChanged();
 
     void downloadServerUrlChanged();
 
@@ -246,7 +275,9 @@ private:
                                          const QString& key, const T& value);
 
     static ApplicationSettings *m_instance;
-	bool m_isAudioVoicesEnabled;
+
+    bool m_showNonFreeActivities;
+    bool m_isAudioVoicesEnabled;
 	bool m_isAudioEffectsEnabled;
     bool m_isFullscreen;
     bool m_isVirtualKeyboard;
@@ -260,6 +291,9 @@ private:
     QString m_font;
 	bool m_isDemoMode;
 	bool m_sectionVisible;
+	int m_baseFontSize;
+	const int m_baseFontSizeMin = -7;
+	const int m_baseFontSizeMax = 7;
 
     QString m_downloadServerUrl;
 
