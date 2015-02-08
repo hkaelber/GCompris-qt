@@ -50,7 +50,15 @@ function start() {
     currentLevel = 0;
     currentSubLevel = 0;
 
-    dataset = Lang.load(items.parser, baseUrl + "words.json")
+    dataset = Lang.load(items.parser, baseUrl, "words.json", "content-$LOCALE.json")
+    if(!dataset) {
+        // English fallback
+        items.background.englishFallback = true
+        dataset = Lang.load(items.parser, baseUrl, "words.json", "content-en.json")
+    } else {
+        items.background.englishFallback = false
+    }
+
     lessons = Lang.getAllLessons(dataset)
     maxLevel = lessons.length
 
@@ -64,7 +72,7 @@ function initLevel() {
     items.bar.level = currentLevel + 1;
 
     var currentLesson = lessons[currentLevel]
-    wordList = Lang.getLessonWords(dataset, currentLesson)
+    wordList = Lang.getLessonWords(dataset, currentLesson);
     Core.shuffle(wordList);
 
     maxSubLevel = wordList.length;
@@ -132,5 +140,6 @@ function nextSubLevel() {
 
 // Append to the queue of words for the sublevel the error
 function badWordSelected(wordIndex) {
-    subLevelsLeft.unshift(wordIndex)
+    if (subLevelsLeft[0] != wordIndex)
+        subLevelsLeft.unshift(wordIndex);
 }

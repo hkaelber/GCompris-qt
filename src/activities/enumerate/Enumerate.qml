@@ -131,8 +131,6 @@ ActivityBase {
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
 
-            keyHeight: 35 * ApplicationInfo.ratio
-            equalKeyWidth: true
             layout: [ [
                     { label: "0" },
                     { label: "1" },

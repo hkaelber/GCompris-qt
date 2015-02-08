@@ -22,6 +22,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Window 2.1
 import QtQuick.Dialogs 1.1
+import QtQml 2.2
 
 import GCompris 1.0
 import "qrc:/gcompris/src/core/core.js" as Core
@@ -94,18 +95,28 @@ Window {
                 + ", ratio=" + ApplicationInfo.ratio
                 + ", fontRatio=" + ApplicationInfo.fontRatio
                 + ", dpi=" + Math.round(Screen.pixelDensity*25.4) + ")");
-        if (ApplicationSettings.exeCount == 1) {
+        if (ApplicationSettings.exeCount == 1 && !ApplicationSettings.isKioskMode) {
             // first run
             var buttonHandler = new Array();
             var dialog;
-            buttonHandler[StandardButton.Ok] = function() {};
+            buttonHandler[StandardButton.Yes] = function() {
+                // yes -> start download
+                if (DownloadManager.downloadResource(
+                        DownloadManager.getVoicesResourceForLocale(ApplicationSettings.locale)))
+                    var downloadDialog = Core.showDownloadDialog(main, {});
+            };
+            buttonHandler[StandardButton.No] = function() {};
             dialog = Core.showMessageDialog(main, qsTr("Welcome to GCompris!"),
                     qsTr("You are running GCompris for the first time."),
                     qsTr("You should verify that your application settings especially your language is set correctly, and that all language specific sound files are installed. You can do this in the Preferences Dialog.") +
                     "\n" +
-                    qsTr("Your current locale is '%1'").arg(ApplicationInfo.localeShort) +
+                    qsTr("Have Fun!") +
                     "\n" +
-                    qsTr("Have Fun!"),
+                    qsTr("Your current language is %1 (%2).")
+                        .arg(Qt.locale(ApplicationSettings.locale).nativeLanguageName)
+                        .arg(ApplicationSettings.locale) +
+                    "\n" +
+                    qsTr("Do you want to download the corresponding sound files now?"),
                     StandardIcon.Information,
                     buttonHandler
             );

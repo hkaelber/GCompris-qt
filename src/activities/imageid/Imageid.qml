@@ -43,23 +43,15 @@ ActivityBase {
         sourceSize.width: parent.width
 
         property bool horizontalLayout: background.width > background.height
-        property QtObject dialog
         property bool keyNavigation: false
+        readonly property string wordsResource: "data/words/words.rcc"
+        property bool englishFallback: false
+        property bool downloadWordsNeeded: false
 
         signal start
         signal stop
         signal voiceError
         signal voiceDone
-
-        Connections {
-            target: DownloadManager
-
-            onDownloadFinished: Activity.start(items)
-            onError: {
-                // Fixme display an error message
-                Core.destroyDialog(dialog)
-            }
-        }
 
         Component.onCompleted: {
             activity.start.connect(start)
@@ -78,37 +70,47 @@ ActivityBase {
             property alias parser: parser
             property variant goodWord
             property int goodWordIndex
+            property alias englishFallbackDialog: englishFallbackDialog
 
             function playWord() {
-                activity.audioVoices.append(ApplicationInfo.getAudioFilePath(goodWord.voice))
+                if (!activity.audioVoices.append(ApplicationInfo.getAudioFilePath(goodWord.voice)))
+                    voiceError();
             }
             onGoodWordChanged: playWord()
+        }
+
+        function handleResourceRegistered(resource)
+        {
+            if (resource == wordsResource)
+                Activity.start(items);
         }
 
         onStart: {
             Activity.init(items)
 
-            if(!DownloadManager.haveLocalResource("data/words/words.rcc")) {
-                var buttonHandler = new Array();
-                buttonHandler[StandardButton.No] = function() {};
-                buttonHandler[StandardButton.Yes] = function() {
-                    DownloadManager.updateResource("data/words/words.rcc") };
-                    dialog = Core.showMessageDialog(parent, qsTr("Download?"),
-                                                qsTr("Are you ok to download the images for this activity"),
-                                                "",
-                                                StandardIcon.Question,
-                                                buttonHandler);
-            } else {
-                // Will register the resource file and call start() on callback
-                DownloadManager.updateResource("data/words/words.rcc")
-            }
             repeatItem.visible = false
             keyNavigation = false
             activity.audioVoices.error.connect(voiceError)
             activity.audioVoices.done.connect(voiceDone)
+
+            // check for words.rcc:
+            if (DownloadManager.isResourceRegistered(wordsResource)) {
+                // words.rcc is already registered -> start right away
+                Activity.start(items);
+            } else if(DownloadManager.haveLocalResource(wordsResource)) {
+                // words.rcc is there, but not yet registered -> updateResource
+                DownloadManager.resourceRegistered.connect(handleResourceRegistered);
+                DownloadManager.updateResource(wordsResource);
+            } else {
+                // words.rcc has not been downloaded yet -> ask for download
+                downloadWordsNeeded = true
+            }
         }
 
-        onStop: { Activity.stop() }
+        onStop: {
+            DownloadManager.resourceRegistered.disconnect(handleResourceRegistered);
+            Activity.stop()
+        }
         
         Keys.onRightPressed: {
             keyNavigation = true
@@ -297,7 +299,40 @@ ActivityBase {
             id: bonus
             onWin: Activity.nextLevel()
         }
-        
+
+        Loader {
+            id: englishFallbackDialog
+            sourceComponent: GCDialog {
+                message: qsTr("We are sorry, we don't have yet a translation for your language.") + " " +
+                         qsTr("GCompris is developed by the KDE community, you can translate GCompris by joining a translation team on <a href=\"%2\">%2</a>").arg("http://l10n.kde.org/") +
+                         "<br /> <br />" +
+                         qsTr("We switched to English for this activity but you can select another language in the configuration dialog.")
+                onClose: background.englishFallback = false
+            }
+            anchors.fill: parent
+            focus: true
+            active: background.englishFallback
+            onStatusChanged: if (status == Loader.Ready) item.start()
+        }
+
+        Loader {
+            id: downloadWordsDialog
+            sourceComponent: GCDialog {
+                message: qsTr("The images for this activity are not yet installed.")
+                buttonText: qsTr("Download the images")
+                onClose: background.downloadWordsNeeded = false
+                onButtonHit: {
+                    DownloadManager.resourceRegistered.connect(handleResourceRegistered);
+                    DownloadManager.downloadResource(wordsResource)
+                    var downloadDialog = Core.showDownloadDialog(activity, {});
+                }
+            }
+            anchors.fill: parent
+            focus: true
+            active: background.downloadWordsNeeded
+            onStatusChanged: if (status == Loader.Ready) item.start()
+        }
+
         Score {
             id: score
 
