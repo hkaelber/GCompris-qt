@@ -21,6 +21,7 @@
  */
 
 import QtQuick 2.1
+import QtQuick.Controls 1.1
 import GCompris 1.0
 
 import "../../core"
@@ -45,6 +46,7 @@ ActivityBase {
         signal stop
         
         Component.onCompleted: {
+            dialogActivityConfig.getInitialConfiguration()
             activity.start.connect(start)
             activity.stop.connect(stop)
         }
@@ -105,16 +107,58 @@ ActivityBase {
             onClose: home()
         }
         
+        DialogActivityConfig {
+            id: dialogActivityConfig
+            property string chosenMode
+            content: Component {
+                Item {
+                    Flow {
+                        spacing: 5
+                        width: dialogActivityConfig.width
+                        ComboBox {
+                            id: modeBox
+                            style: GCComboBoxStyle {}
+                            model: ["COLOR", "IMAGE"]
+                            width: 250 * ApplicationInfo.ratio
+                            onCurrentTextChanged: dialogActivityConfig.chosenMode = currentText
+                        }
+                        GCText {
+                            text: qsTr("Select your mode")
+                            fontSize: mediumSize
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                }
+            }
+            onClose: home()
+            onLoadData: {
+                if(dataToSave && dataToSave["mode"]) {
+                    activity.mode = dataToSave["mode"];
+                    Activity.mode = dataToSave["mode"];
+                }
+            }
+
+            onSaveData: {
+                dataToSave = {"mode": chosenMode}
+                activity.mode = chosenMode;
+                Activity.mode = chosenMode;
+            }
+        }
+
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | level | reload}
+            content: BarEnumContent { value: help | home | level | reload | config }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: activity.home()
-            onReloadClicked: Activity.initLevel();
+            onReloadClicked: Activity.initLevel()
+            onConfigClicked: {
+                dialogActivityConfig.active = true
+                displayDialog(dialogActivityConfig)
+            }
         }
 
         Bonus {

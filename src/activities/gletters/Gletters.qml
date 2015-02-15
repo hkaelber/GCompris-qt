@@ -21,6 +21,7 @@
  */
 
 import QtQuick 2.1
+import QtQuick.Controls 1.1
 import GCompris 1.0
 
 import "../../core"
@@ -58,8 +59,11 @@ ActivityBase {
 
         signal start
         signal stop
+
+        property string locale: "$LOCALE"
         
         Component.onCompleted: {
+            dialogActivityConfig.getInitialConfiguration()
             activity.start.connect(start)
             activity.stop.connect(stop)
         }
@@ -77,6 +81,7 @@ ActivityBase {
             property alias keyboard: keyboard
             property alias wordDropTimer: wordDropTimer
             property GCAudio audioEffects: activity.audioEffects
+            property alias locale: background.locale
         }
 
         onStart: {
@@ -105,6 +110,42 @@ ActivityBase {
 
         }
 
+        DialogActivityConfig {
+            id: dialogActivityConfig
+            property string chosenLocale
+            content: Component {
+                Item {
+                    Flow {
+                        spacing: 5
+                        width: dialogActivityConfig.width
+                        ComboBox {
+                            id: modeBox
+                            style: GCComboBoxStyle {}
+                            model: ["en", "fr"]
+                            width: 250 * ApplicationInfo.ratio
+                            onCurrentTextChanged: dialogActivityConfig.chosenLocale = currentText
+                        }
+                        GCText {
+                            text: qsTr("Select your locale")
+                            fontSize: mediumSize
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                }
+            }
+            onClose: home()
+            onLoadData: {
+                if(dataToSave && dataToSave["locale"]) {
+                    background.locale = dataToSave["locale"];
+                }
+            }
+
+            onSaveData: {
+                dataToSave = {"locale": chosenLocale}
+                background.locale = chosenLocale;
+            }
+        }
+
         DialogHelp {
             id: dialogHelp
             onClose: home()
@@ -113,13 +154,17 @@ ActivityBase {
         Bar {
             id: bar
             anchors.bottom: keyboard.top
-            content: BarEnumContent { value: help | home | level }
+            content: BarEnumContent { value: help | home | level | config }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: activity.home()
+            onConfigClicked: {
+                dialogActivityConfig.active = true
+                displayDialog(dialogActivityConfig)
+            }
         }
 
         Bonus {

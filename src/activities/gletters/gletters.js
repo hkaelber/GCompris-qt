@@ -73,7 +73,7 @@ function start(items_, uppercaseOnly_,  _mode) {
     currentLevel = 0;
     currentSubLevel = 0;
     items.wordlist.loadFromFile(GCompris.ApplicationInfo.getLocaleFilePath(
-            items.ourActivity.dataSetUrl + "default-$LOCALE.json"));
+            items.ourActivity.dataSetUrl + "default-"+items.locale+".json"));
     maxLevel = items.wordlist.maxLevel;
     droppedWords = new Array();
     initLevel();
@@ -364,6 +364,6 @@ function nextSubLevel() {
 }
 
 function playLetter(letter) {
-    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
+    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices/"+items.locale+"/alphabet/"
                                                                        + Core.getSoundFilenamForChar(letter)))
 }
