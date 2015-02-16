@@ -142,8 +142,8 @@ Rectangle {
                             Image {
                                     sourceSize.height: 50 * ApplicationInfo.ratio
                                     source:
-                                        demoModeBox.checked ? "qrc:/gcompris/src/core/resource/apply.svgz" :
-                                                              "qrc:/gcompris/src/core/resource/cancel.svgz"
+                                        demoModeBox.checked ? "qrc:/gcompris/src/core/resource/apply.svg" :
+                                                              "qrc:/gcompris/src/core/resource/cancel.svg"
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
@@ -344,8 +344,8 @@ Rectangle {
                             Image {
                                 id: voicesImage
                                 sourceSize.height: 30 * ApplicationInfo.ratio
-                                source: voicesRow.haveLocalResource ? "qrc:/gcompris/src/core/resource/apply.svgz" :
-                                    "qrc:/gcompris/src/core/resource/cancel.svgz"
+                                source: voicesRow.haveLocalResource ? "qrc:/gcompris/src/core/resource/apply.svg" :
+                                    "qrc:/gcompris/src/core/resource/cancel.svg"
                             }
 
                             Button {
@@ -382,7 +382,7 @@ Rectangle {
                             }
 
                             Image {
-                                source: "qrc:/gcompris/src/core/resource/bar_next.svgz"
+                                source: "qrc:/gcompris/src/core/resource/bar_next.svg"
                                 sourceSize.height: Math.min(50 * ApplicationInfo.ratio, parent.width / 8)
 
                                 MouseArea {
@@ -469,7 +469,7 @@ Rectangle {
                             }
 
                             Image {
-                                source: "qrc:/gcompris/src/core/resource/bar_previous.svgz"
+                                source: "qrc:/gcompris/src/core/resource/bar_previous.svg"
                                 sourceSize.height: Math.min(50 * ApplicationInfo.ratio, parent.width / 8)
 
                                 MouseArea {
