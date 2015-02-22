@@ -29,9 +29,6 @@ import "traffic.js" as Activity
 
 ActivityBase {
     id: activity
-
-    property string mode: "IMAGE" // allow to choose between "COLOR" and "IMAGE"
-                                  // mode, candidate for a config dialog
     
     onStart: focus = true
     onStop: {}
@@ -44,6 +41,9 @@ ActivityBase {
 
         signal start
         signal stop
+
+        property string mode: "IMAGE" // allow to choose between "COLOR" and "IMAGE"
+                                  // mode, candidate for a config dialog
         
         Component.onCompleted: {
             dialogActivityConfig.getInitialConfiguration()
@@ -85,7 +85,8 @@ ActivityBase {
                 columns: 6
                 rows: 6
                 spacing: 0
-                
+                // Add an alias to mode so it can be used on Car items
+                property alias mode: background.mode
                 Repeater {
                     id: gridRepeater
                     model: jamGrid.columns * jamGrid.rows
@@ -133,14 +134,14 @@ ActivityBase {
             onClose: home()
             onLoadData: {
                 if(dataToSave && dataToSave["mode"]) {
-                    activity.mode = dataToSave["mode"];
+                    mode = dataToSave["mode"];
                     Activity.mode = dataToSave["mode"];
                 }
             }
 
             onSaveData: {
                 dataToSave = {"mode": dialogActivityConfig.configItem.modeBox.currentText}
-                activity.mode = dialogActivityConfig.configItem.modeBox.currentText;
+                mode = dialogActivityConfig.configItem.modeBox.currentText;
                 Activity.mode = dialogActivityConfig.configItem.modeBox.currentText;
             }
             function setDefaultValues() {
