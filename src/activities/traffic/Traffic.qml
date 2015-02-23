@@ -113,6 +113,12 @@ ActivityBase {
             content: Component {
                 Item {
                     property alias modeBox: modeBox
+
+                    property var availableModes: [
+                    { "text": qsTr("Colors"), "value": "COLOR" },
+                    { "text": qsTr("Images"), "value": "IMAGE" }
+                    ]
+
                     Flow {
                         id: flow
                         spacing: 5
@@ -120,7 +126,7 @@ ActivityBase {
                         ComboBox {
                             id: modeBox
                             style: GCComboBoxStyle {}
-                            model: ["COLOR", "IMAGE"]
+                            model: availableModes
                             width: 250 * ApplicationInfo.ratio
                         }
                         GCText {
@@ -140,12 +146,18 @@ ActivityBase {
             }
 
             onSaveData: {
-                dataToSave = {"mode": dialogActivityConfig.configItem.modeBox.currentText}
-                mode = dialogActivityConfig.configItem.modeBox.currentText;
-                Activity.mode = dialogActivityConfig.configItem.modeBox.currentText;
+                mode = dialogActivityConfig.configItem.availableModes[dialogActivityConfig.configItem.modeBox.currentIndex].value;
+                dataToSave = {"mode": mode}
+                Activity.mode = mode;
             }
+
             function setDefaultValues() {
-                dialogActivityConfig.configItem.modeBox.currentIndex = (mode == "COLOR" ? 0 : 1);
+                for(var i = 0 ; i < dialogActivityConfig.configItem.availableModes.length ; i ++) {
+                    if(dialogActivityConfig.configItem.availableModes[i].value === mode) {
+                        dialogActivityConfig.configItem.modeBox.currentIndex = i;
+                        break;
+                    }
+                }
             }
         }
 
