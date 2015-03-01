@@ -112,37 +112,81 @@ ActivityBase {
 
         DialogActivityConfig {
             id: dialogActivityConfig
-            property string chosenLocale
             content: Component {
                 Item {
-                    Flow {
-                        spacing: 5
-                        width: dialogActivityConfig.width
-                        ComboBox {
-                            id: modeBox
-                            style: GCComboBoxStyle {}
-                            model: ["en", "fr"]
+                    property alias localeBox: localeBox
+                    height: column.height
+
+                    property alias availableLangs: langs.languages
+                    LanguageList {
+                        id: langs
+                    }
+
+                    Column {
+                        id: column
+                        spacing: 10
+                        width: parent.width
+
+                        Flow {
+                            spacing: 5
+                            width: dialogActivityConfig.width
+                            ComboBox {
+                                id: localeBox
+                                style: GCComboBoxStyle {}
+                                model: langs.languages
+                                width: 250 * ApplicationInfo.ratio
+                            }
+                            GCText {
+                                text: qsTr("Select your locale")
+                                fontSize: mediumSize
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+/* TODO handle this:
+                        GCDialogCheckBox {
+                            id: uppercaseBox
                             width: 250 * ApplicationInfo.ratio
-                            onCurrentTextChanged: dialogActivityConfig.chosenLocale = currentText
+                            text: qsTr("Uppercase only mode")
+                            checked: true
+                            onCheckedChanged: {
+                                print("uppercase changed")
+                            }
                         }
-                        GCText {
-                            text: qsTr("Select your locale")
-                            fontSize: mediumSize
-                            wrapMode: Text.WordWrap
-                        }
+*/
                     }
                 }
             }
+
             onClose: home()
             onLoadData: {
                 if(dataToSave && dataToSave["locale"]) {
                     background.locale = dataToSave["locale"];
                 }
             }
-
             onSaveData: {
-                dataToSave = {"locale": chosenLocale}
-                background.locale = chosenLocale;
+                var oldLocale = background.locale;
+                var newLocale = dialogActivityConfig.configItem.availableLangs[dialogActivityConfig.loader.item.localeBox.currentIndex].locale;
+                // Remove .UTF-8
+                newLocale = newLocale.substring(0, newLocale.indexOf('.'))
+                dataToSave = {"locale": newLocale}
+                background.locale = newLocale;
+
+                // Restart the activity with new informations
+                if(oldLocale !== newLocale) {
+                    background.stop();
+                    background.start();
+                }
+            }
+
+
+            function setDefaultValues() {
+                var localeUtf8 = background.locale + ".UTF-8";
+                for(var i = 0 ; i < dialogActivityConfig.configItem.availableLangs.length ; i ++) {
+                    if(dialogActivityConfig.configItem.availableLangs[i].locale === localeUtf8) {
+                        dialogActivityConfig.loader.item.localeBox.currentIndex = i;
+                        break;
+                    }
+                }
             }
         }
 
@@ -163,6 +207,7 @@ ActivityBase {
             onHomeClicked: activity.home()
             onConfigClicked: {
                 dialogActivityConfig.active = true
+                dialogActivityConfig.setDefaultValues()
                 displayDialog(dialogActivityConfig)
             }
         }
@@ -197,6 +242,9 @@ ActivityBase {
         Wordlist {
             id: wordlist
             defaultFilename: activity.dataSetUrl + "default-en.json"
+            // To switch between locales: xx_XX stored in configuration and
+            // possibly correct xx if available (ie fr_FR for french but dataset is fr.)
+            useDefault: false
             filename: ""
 
             onError: console.log("Gletters: Wordlist error: " + msg);
