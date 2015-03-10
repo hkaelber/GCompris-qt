@@ -30,7 +30,6 @@
 #include <QMutexLocker>
 #include <QNetworkConfiguration>
 #include <QDirIterator>
-#include <QtQml>
 
 const QString DownloadManager::contentsFilename = QString("Contents");
 DownloadManager* DownloadManager::_instance = 0;
@@ -129,8 +128,8 @@ QString DownloadManager::getVoicesResourceForLocale(const QString& locale) const
 inline QString DownloadManager::getAbsoluteResourcePath(const QString& path) const
 {
     foreach (const QString &base, getSystemResourcePaths()) {
-        if (QFile::exists(base + "/" + path))
-            return QString(base + "/" + path);
+        if (QFile::exists(base + '/' + path))
+            return QString(base + '/' + path);
     }
     return QString();
 }
@@ -141,17 +140,17 @@ inline QString DownloadManager::getAbsoluteResourcePath(const QString& path) con
  */
 inline QString DownloadManager::getRelativeResourcePath(const QString& path) const
 {
-    QStringList parts = path.split("/", QString::SkipEmptyParts);
+    QStringList parts = path.split('/', QString::SkipEmptyParts);
     if (parts.size() < 3)
         return QString();
-    return QString(parts[parts.size()-3] + "/" + parts[parts.size()-2]
-                   + "/" + parts[parts.size()-1]);
+    return QString(parts[parts.size()-3] + '/' + parts[parts.size()-2]
+                   + '/' + parts[parts.size()-1]);
 }
 
 /** Check if the given relative resource path exists locally */
 bool DownloadManager::haveLocalResource(const QString& path) const
 {
-    return (getAbsoluteResourcePath(path) != QString());
+    return (!getAbsoluteResourcePath(path).isEmpty());
 }
 
 /** Update resource from server if not prohibited by the settings and register
@@ -165,7 +164,7 @@ bool DownloadManager::updateResource(const QString& path)
     else {
         QString absPath = getAbsoluteResourcePath(path);
         // automatic download prohibited -> register if available
-        if (absPath != QString())
+        if (!absPath.isEmpty())
             return registerResource(absPath);
         else {
             qDebug() << "No such local resource and download prohibited:"
@@ -186,7 +185,7 @@ bool DownloadManager::updateResource(const QString& path)
 bool DownloadManager::downloadResource(const QString& path)
 {
     qDebug() << "Downloading resource file" << path;
-    DownloadJob* job = new DownloadJob(QUrl(serverUrl.toString() + "/" + path));
+    DownloadJob* job = new DownloadJob(QUrl(serverUrl.toString() + '/' + path));
 
     {
         QMutexLocker locker(&jobsMutex);
@@ -347,16 +346,16 @@ inline QString DownloadManager::getFilenameForUrl(const QUrl& url) const
 
 inline QUrl DownloadManager::getUrlForFilename(const QString& filename) const
 {
-    return QUrl(serverUrl.toString() + "/" + getRelativeResourcePath(filename));
+    return QUrl(serverUrl.toString() + '/' + getRelativeResourcePath(filename));
 }
 
 inline QString DownloadManager::getResourceRootForFilename(const QString& filename) const
 {
     QStringList parts = QFileInfo(filename).path()
-            .replace("-" COMPRESSED_AUDIO, "")
-            .split("/", QString::SkipEmptyParts);
-    return QString("/gcompris") + "/" + parts[parts.size()-2] +
-            "/" + parts[parts.size()-1];
+            .remove("-" COMPRESSED_AUDIO)
+            .split('/', QString::SkipEmptyParts);
+    return QString("/gcompris") + '/' + parts[parts.size()-2] +
+            '/' + parts[parts.size()-1];
 }
 
 /** Get platform-specific path storing downloaded resources
@@ -392,7 +391,7 @@ inline QStringList DownloadManager::getSystemResourcePaths() const
         "assets:",
 #endif
         QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) +
-            "/" + GCOMPRIS_APPLICATION_NAME
+            '/' + GCOMPRIS_APPLICATION_NAME
     });
 }
 
@@ -526,7 +525,7 @@ bool DownloadManager::registerResource(const QString& filename)
 bool DownloadManager::isResourceRegistered(const QString& resource) const
 {
     for (auto &base: getSystemResourcePaths())
-        if (isRegistered(base + "/" + resource))
+        if (isRegistered(base + '/' + resource))
             return true;
     return false;
 }
@@ -610,7 +609,7 @@ void DownloadManager::downloadFinished()
         QString relPath = getRelativeResourcePath(getFilenameForUrl(job->url));
         // check in each resource-path for an up2date rcc file:
         foreach (const QString &base, getSystemResourcePaths()) {
-            QString filename = base + "/" + relPath;
+            QString filename = base + '/' + relPath;
             if (QFile::exists(filename)
                 && checksumMatches(job, filename))
             {
@@ -648,7 +647,7 @@ void DownloadManager::downloadFinished()
             nUrl = job->queue.takeFirst();
             QString relPath = getRelativeResourcePath(getFilenameForUrl(nUrl));
             foreach (const QString &base, getSystemResourcePaths()) {
-                QString filename = base + "/" + relPath;
+                QString filename = base + '/' + relPath;
                 if (QFile::exists(filename))
                     registerResource(filename);
                 }
