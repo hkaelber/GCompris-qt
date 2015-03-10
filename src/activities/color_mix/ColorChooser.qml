@@ -57,6 +57,14 @@ Image {
         }
     }
 
+    Colorize {
+        id: color
+        anchors.fill: parent
+        source: parent
+        hue: 0.0
+        saturation: 1
+    }
+
     ColorButton {
         text: "+"
         anchors {
