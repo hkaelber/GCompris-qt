@@ -352,7 +352,7 @@ inline QUrl DownloadManager::getUrlForFilename(const QString& filename) const
 inline QString DownloadManager::getResourceRootForFilename(const QString& filename) const
 {
     QStringList parts = QFileInfo(filename).path()
-            .remove("-" COMPRESSED_AUDIO)
+            .remove("-" COMPRESSED_AUDIO) // krazy:excludeall=doublequote_chars
             .split('/', QString::SkipEmptyParts);
     return QString("/gcompris") + '/' + parts[parts.size()-2] +
             '/' + parts[parts.size()-1];
@@ -438,7 +438,7 @@ bool DownloadManager::parseContents(DownloadJob *job)
     QTextStream in(&job->file);
     while (!in.atEnd()) {
         QString line = in.readLine();
-        QStringList parts = line.split(" ", QString::SkipEmptyParts);
+        QStringList parts = line.split(' ', QString::SkipEmptyParts);
         if (parts.size() != 2) {
             qWarning() << "Invalid format of Contents file!";
             return false;
