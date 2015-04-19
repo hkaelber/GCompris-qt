@@ -24,7 +24,6 @@
 import QtQuick 2.1
 import GCompris 1.0
 import QtGraphicalEffects 1.0
-import QtQuick.Dialogs 1.1
 
 import "../../core"
 import "imageid.js" as Activity
@@ -303,6 +302,7 @@ ActivityBase {
         Loader {
             id: englishFallbackDialog
             sourceComponent: GCDialog {
+                parent: activity.main
                 message: qsTr("We are sorry, we don't have yet a translation for your language.") + " " +
                          qsTr("GCompris is developed by the KDE community, you can translate GCompris by joining a translation team on <a href=\"%2\">%2</a>").arg("http://l10n.kde.org/") +
                          "<br /> <br />" +
@@ -318,10 +318,11 @@ ActivityBase {
         Loader {
             id: downloadWordsDialog
             sourceComponent: GCDialog {
+                parent: activity.main
                 message: qsTr("The images for this activity are not yet installed.")
-                buttonText: qsTr("Download the images")
+                button1Text: qsTr("Download the images")
                 onClose: background.downloadWordsNeeded = false
-                onButtonHit: {
+                onButton1Hit: {
                     DownloadManager.resourceRegistered.connect(handleResourceRegistered);
                     DownloadManager.downloadResource(wordsResource)
                     var downloadDialog = Core.showDownloadDialog(activity, {});

@@ -30,7 +30,7 @@ ActivityBase {
 
     onHome: {
         if(pageView.depth === 1) {
-            Core.quit(menuActivity);
+            Core.quit(main);
         }
         else {
             pageView.pop();
@@ -361,6 +361,8 @@ ActivityBase {
                 }
 
                 function selectCurrentItem() {
+                    if(pageView.busy)
+                        return
                     particles.burst(50)
                     ActivityInfoTree.currentActivity = ActivityInfoTree.menuTree[index]
                     activityLoader.setSource("qrc:/gcompris/src/activities/" + ActivityInfoTree.menuTree[index].name,
@@ -412,6 +414,7 @@ ActivityBase {
 
     DialogConfig {
         id: dialogConfig
+        main: menuActivity.main
         onClose: {
             ActivityInfoTree.filterByTag(menuActivity.currentTag)
             ActivityInfoTree.filterLockedActivities()
