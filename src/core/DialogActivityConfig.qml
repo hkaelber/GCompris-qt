@@ -28,10 +28,18 @@ Rectangle {
     border.width: 1
     z: 1000
     property bool isDialog: true
-    property string title: qsTr("%1 configuration").arg(activityInfo.title)
+    property string title: {
+        if(activityInfo)
+        qsTr("%1 configuration").arg(activityInfo.title)
+        else
+        qsTr("Configuration")
+    }
     property alias titleIcon: titleIcon.source
     property alias active: loader.active
+    property alias loader: loader
+    property alias configItem: loader.item
     property QtObject activityInfo: ActivityInfoTree.currentActivity
+    property string activityName: ""
 
     property var dataToSave
 
@@ -45,7 +53,10 @@ Rectangle {
     property Component content
 
     function getInitialConfiguration() {
-        dataToSave = ApplicationSettings.loadActivityConfiguration(activityInfo.name.split('/')[0])
+        if(activityName == "") {
+            activityName = ActivityInfoTree.currentActivity.name.split('/')[0];
+        }
+        dataToSave = ApplicationSettings.loadActivityConfiguration(activityName)
         loadData()
     }
 
@@ -102,11 +113,12 @@ Rectangle {
                     anchors.fill: parent
                     flickableDirection: Flickable.VerticalFlick
                     clip: true
-
+                    contentHeight: contentItem.childrenRect.height + 40 * ApplicationInfo.ratio
                     Loader {
                         id: loader
                         active: false
                         sourceComponent: dialogActivityContent.content
+                        property alias rootItem: dialogActivityContent
                     }
                 }
             }
@@ -118,7 +130,7 @@ Rectangle {
     GCButtonCancel {
         onClose: {
             saveData()
-            ApplicationSettings.saveActivityConfiguration(activityInfo.name.split('/')[0], dataToSave)
+            ApplicationSettings.saveActivityConfiguration(activityName, dataToSave)
             parent.close()
         }
     }

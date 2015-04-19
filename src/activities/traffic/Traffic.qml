@@ -109,10 +109,11 @@ ActivityBase {
         
         DialogActivityConfig {
             id: dialogActivityConfig
-            property string chosenMode
             content: Component {
                 Item {
+                    property alias modeBox: modeBox
                     Flow {
+                        id: flow
                         spacing: 5
                         width: dialogActivityConfig.width
                         ComboBox {
@@ -120,7 +121,6 @@ ActivityBase {
                             style: GCComboBoxStyle {}
                             model: ["COLOR", "IMAGE"]
                             width: 250 * ApplicationInfo.ratio
-                            onCurrentTextChanged: dialogActivityConfig.chosenMode = currentText
                         }
                         GCText {
                             text: qsTr("Select your mode")
@@ -139,9 +139,12 @@ ActivityBase {
             }
 
             onSaveData: {
-                dataToSave = {"mode": chosenMode}
-                activity.mode = chosenMode;
-                Activity.mode = chosenMode;
+                dataToSave = {"mode": dialogActivityConfig.configItem.modeBox.currentText}
+                activity.mode = dialogActivityConfig.configItem.modeBox.currentText;
+                Activity.mode = dialogActivityConfig.configItem.modeBox.currentText;
+            }
+            function setDefaultValues() {
+                dialogActivityConfig.configItem.modeBox.currentIndex = (mode == "COLOR" ? 0 : 1);
             }
         }
 
@@ -157,6 +160,8 @@ ActivityBase {
             onReloadClicked: Activity.initLevel()
             onConfigClicked: {
                 dialogActivityConfig.active = true
+                // Set default values
+                dialogActivityConfig.setDefaultValues();
                 displayDialog(dialogActivityConfig)
             }
         }
