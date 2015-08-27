@@ -1,6 +1,6 @@
 /* GCompris - FirstScreen.qml
  *
- * Copyright (C) 2014 <Arkit Vora>
+ * Copyright (C) 2014 Arkit Vora <arkitvora123@gmail.com>
  *
  * Authors:
  *   Srishti Sethi <srishakatux@gmail.com> (GTK+ version)
@@ -20,7 +20,6 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.1
-import QtQuick.Layouts 1.1
 import GCompris 1.0
 import "../../core"
 import "braille_alphabets.js" as Activity
@@ -39,7 +38,7 @@ Image {
         horizontalAlignment: Text.AlignHCenter
         font.weight: Font.DemiBold
         anchors.centerIn: parent.Center
-        color: "white"
+        color: "#2a2a2a"
         width: parent.width
         wrapMode: Text.WordWrap
     }
@@ -77,7 +76,7 @@ Image {
             left: introChar.right
             leftMargin: 30 * ApplicationInfo.ratio
         }
-        color: "white"
+        color: "#2a2a2a"
         width: parent.width / 2
         wrapMode: Text.WordWrap
     }
@@ -85,10 +84,10 @@ Image {
     GCText {
         id: bottom_text
         text: qsTr("When you are ready, click on me and try reproducing Braille characters.")
-        fontSize: smallSize
-        font.weight: Font.DemiBold
+        fontSize: regularSize
+        font.weight: Font.Bold
         width: parent.width * 0.3
-        color: "white"
+        color: "#2a2a2a"
         horizontalAlignment: Text.AlignJustify
         wrapMode:  Text.WordWrap
         anchors {

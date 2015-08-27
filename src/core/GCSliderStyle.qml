@@ -1,6 +1,6 @@
 /* GCompris - GCSliderStyle.qml
  *
- * Copyright (C) 2014 Holger Kaelberer
+ * Copyright (C) 2014 Holger Kaelberer <holger.k@elberer.de>
  *
  * Authors:
  *   Holger Kaelberer <holger.k@elberer.de>
@@ -19,10 +19,16 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import GCompris 1.0
 
+/**
+ * Provides styling for GCompris sliders.
+ * @ingroup components
+ *
+ * @inherit QtQuick.Controls.Styles.SliderStyle
+ */
 SliderStyle {
     groove: Item {
         anchors.verticalCenter: parent.verticalCenter

@@ -1,42 +1,28 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/* GCompris - ApplicationSettingsDefault.cpp
+ *
+ * Copyright (C) 2014 Bruno Coudoin <bruno.coudoin@gcompris.net>
+ *
+ * Authors:
+ *   Bruno Coudoin <bruno.coudoin@gcompris.net>
+ *
+ * This file was originally created from Digia example code under BSD license
+ * and heavily modified since then.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "ApplicationInfo.h"
 
 #include <QtCore/QtMath>
 #include <QtCore/QUrl>
@@ -45,7 +31,6 @@
 #include <QtGui/QScreen>
 #include <QtCore/QLocale>
 #include <QtQuick/QQuickWindow>
-#include "ApplicationInfo.h"
 
 #include <qmath.h>
 #include <QDebug>
@@ -60,28 +45,29 @@ ApplicationInfo::ApplicationInfo(QObject *parent): QObject(parent)
 {
 
     m_isMobile = false;
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_BLACKBERRY)
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_BLACKBERRY) || defined(SAILFISHOS)
     m_isMobile = true;
 #endif
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
+#if defined(Q_OS_ANDROID)
+    // Put android before checking linux/unix as it is also a linux
+    m_platform = Android;
+#elif (defined(Q_OS_LINUX) || defined(Q_OS_UNIX))
     m_platform = Linux;
 #elif defined(Q_OS_WIN)
     m_platform = Windows;
 #elif defined(Q_OS_MAC)
     m_platform = MacOSX;
-#elif defined(Q_OS_ANDROID)
-    m_platform = Android;
 #elif defined(Q_OS_IOS)
     m_platform = Ios;
 #elif defined(Q_OS_BLACKBERRY)
     m_platform = Blackberry;
+#elif defined(SAILFISHOS)
+    m_platform = SailfishOS;
 #endif
 
     QRect rect = qApp->primaryScreen()->geometry();
-//    m_ratio = 2;
-//    m_ratio = 2.56;
-    m_ratio = m_isMobile ? qMin(qMax(rect.width(), rect.height())/800. , qMin(rect.width(), rect.height())/520.) : 1;
+    m_ratio = qMin(qMax(rect.width(), rect.height())/800. , qMin(rect.width(), rect.height())/520.);
     // calculate a factor for font-scaling, cf.
     // http://doc.qt.io/qt-5/scalability.html#calculating-scaling-ratio
     qreal refDpi = 216.;
@@ -90,12 +76,8 @@ ApplicationInfo::ApplicationInfo(QObject *parent): QObject(parent)
     qreal height = qMax(rect.width(), rect.height());
     qreal width = qMin(rect.width(), rect.height());
     qreal dpi = qApp->primaryScreen()->logicalDotsPerInch();
-    m_fontRatio = m_isMobile ? qMax(qreal(1.0), qMin(height*refDpi/(dpi*refHeight), width*refDpi/(dpi*refWidth))) : 1;
-    m_sliderHandleWidth = getSizeWithRatio(70);
-    m_sliderHandleHeight = getSizeWithRatio(87);
-    m_sliderGapWidth = getSizeWithRatio(100);
+    m_fontRatio = qMax(qreal(1.0), qMin(height*refDpi/(dpi*refHeight), width*refDpi/(dpi*refWidth)));
     m_isPortraitMode = m_isMobile ? rect.height() > rect.width() : false;
-    m_hMargin =  m_isPortraitMode ? 20 * ratio() : 50 * ratio();
     m_applicationWidth = m_isMobile ? rect.width() : 1120;
 
     if (m_isMobile)
@@ -133,6 +115,8 @@ QString ApplicationInfo::getFilePath(const QString &file)
 {
 #if defined(Q_OS_ANDROID)
     return QString("assets:/%1").arg(file);
+#elif defined(Q_OS_MAC)
+    return QString("%1/rcc/%2").arg(QCoreApplication::applicationDirPath(), file);
 #else
     return QString("%1/%2/rcc/%3").arg(QCoreApplication::applicationDirPath(), GCOMPRIS_DATA_FOLDER, file);
 #endif
@@ -144,13 +128,14 @@ QString ApplicationInfo::getAudioFilePath(const QString &file)
 
     QString filename = file;
     filename.replace("$LOCALE", localeName);
-    return getResourceDataPath() + "/" + filename;
+    filename.replace("$CA", COMPRESSED_AUDIO);
+
+    if(file.startsWith('/') || file.startsWith(QLatin1String("qrc:")) || file.startsWith(':'))
+        return filename;
+    else
+        return getResourceDataPath() + '/' + filename;
 }
 
-// Given a file name, if it contains $LOCALE it is replaced by
-// the current locale like 'en' while in the English locale.
-// e.g. qrc:/foo/bar_$LOCALE.json => qrc:/foo/bar_en.json
-// FIXME should check long locale first
 QString ApplicationInfo::getLocaleFilePath(const QString &file)
 {
     QString localeShortName = localeShort();
@@ -181,9 +166,7 @@ void ApplicationInfo::setIsPortraitMode(const bool newMode)
 {
     if (m_isPortraitMode != newMode) {
         m_isPortraitMode = newMode;
-        m_hMargin = m_isPortraitMode ? 20 * ratio() : 50 * ratio();
         emit portraitModeChanged();
-        emit hMarginChanged();
     }
 }
 
@@ -213,9 +196,13 @@ QString ApplicationInfo::getVoicesLocale(const QString &locale)
     QString _locale = locale;
     if(_locale == GC_DEFAULT_LOCALE) {
         _locale = QLocale::system().name();
+        if(_locale == "C")
+            _locale = "en_US";
     }
     // locales we have country-specific voices for:
-    if (_locale.startsWith("pt_BR") || _locale.startsWith("zh_CN"))
+    if (_locale.startsWith(QLatin1String("pt_BR")) ||
+        _locale.startsWith(QLatin1String("zh_CN")) ||
+        _locale.startsWith(QLatin1String("zh_TW")))
         return QLocale(_locale).name();
     // short locale for all the rest:
     return localeShort(_locale);

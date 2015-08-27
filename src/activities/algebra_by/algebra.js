@@ -40,6 +40,7 @@ function start(coreItems_, otherItems_, operand_) {
 }
 
 function stop() {
+    coreItems.balloon.stopMoving()
 }
 
 function initLevel() {
@@ -85,6 +86,10 @@ function calculateOperands()
         firstOperandVal = coreItems.bar.level + 9
         secondOperandVal = operations[coreItems.score.currentSubLevel - 1]
         break;
+    case "/":
+        firstOperandVal = coreItems.bar.level * operations[coreItems.score.currentSubLevel - 1]
+        secondOperandVal = coreItems.bar.level
+        break;
     }
 
     otheritems.firstOp.text = firstOperandVal
@@ -103,6 +108,9 @@ function getAnswer() {
 
     case "-":
         return (firstOperandVal - secondOperandVal)
+    
+    case "/":
+        return (firstOperandVal / secondOperandVal)
     }
 }
 
@@ -117,6 +125,9 @@ function validateAnswer(screenAnswer)
         return (getAnswer() === screenAnswer)
 
     case "-":
+        return (getAnswer() === screenAnswer)
+        
+    case "/":
         return (getAnswer() === screenAnswer)
     }
 }

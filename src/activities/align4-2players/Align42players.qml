@@ -1,6 +1,6 @@
 /* GCompris - align4-2players.qml
  *
- * Copyright (C) 2014 Bharath M S
+ * Copyright (C) 2014 Bharath M S <brat.197@gmail.com>
  *
  * Authors:
  *   Laurent Lacheny <laurent.lacheny@wanadoo.fr> (GTK+ version)
@@ -107,7 +107,7 @@ ActivityBase {
                         width: items.cellSize
                         height: items.cellSize
                         border.color: "#FFFFFFFF"
-                        border.width: 1 * ApplicationInfo.ratio
+                        border.width: 0
                         Piece {
                             anchors.fill: parent
                             state: stateTemp
@@ -172,7 +172,7 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | reload }
+            content: BarEnumContent { value: help | home | reload | (twoPlayer ? 0 : level) }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -180,6 +180,8 @@ ActivityBase {
             onReloadClicked: {
                 Activity.reset()
             }
+            onPreviousLevelClicked: Activity.previousLevel()
+            onNextLevelClicked: Activity.nextLevel()
         }
 
         Image {
@@ -187,7 +189,7 @@ ActivityBase {
             source: Activity.url + "score_1.svg"
             sourceSize.height: bar.height * 1.1
             anchors {
-                bottom: bar.bottom
+                bottom: parent.width > parent.height ? bar.bottom : bar.top
                 bottomMargin: 10
                 right: parent.right
                 rightMargin: 2 * ApplicationInfo.ratio
@@ -207,7 +209,7 @@ ActivityBase {
             source: Activity.url + "score_2.svg"
             sourceSize.height: bar.height * 1.1
             anchors {
-                bottom: bar.bottom
+                bottom: parent.width > parent.height ? bar.bottom : bar.top
                 bottomMargin: 10
                 right: player1.left
                 rightMargin: 2 * ApplicationInfo.ratio

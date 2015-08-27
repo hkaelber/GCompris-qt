@@ -1,6 +1,6 @@
 /* GCompris - MagicHat.qml
  *
- * Copyright (C) 2014 <Thibaut ROMAIN>
+ * Copyright (C) 2014 Thibaut ROMAIN <thibrom@gmail.com>
  *
  * Authors:
  *   <Bruno Coudoin> (GTK+ version)
@@ -20,7 +20,6 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.1
-import QtQuick.Layouts 1.1
 
 import "../../core"
 import "../magic-hat-minus/"

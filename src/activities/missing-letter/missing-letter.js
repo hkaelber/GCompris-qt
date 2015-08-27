@@ -1,6 +1,6 @@
 /* GCompris - missing-letter.js
  *
- * Copyright (C) 2014 <YOUR NAME HERE>
+ * Copyright (C) 2014 "Amit Tomar" <a.tomar@outlook.com>
  *
  * Authors:
  *   "Pascal Georges" <pascal.georgis1.free.fr> (GTK+ version)
@@ -253,6 +253,8 @@ function createLastLevel()
 }
 
 function playLetter(letter) {
-    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
+    // WARNING This activity is english only for now
+    // replace en by $LOCALE once i18n support
+    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices-$CA/en/alphabet/"
                                                                        + Core.getSoundFilenamForChar(letter)))
 }

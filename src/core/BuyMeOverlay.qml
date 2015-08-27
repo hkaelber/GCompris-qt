@@ -1,6 +1,6 @@
 /* GCompris - BuyMeOverlay.qml
  *
- * Copyright (C) 2014 Bruno Coudoin
+ * Copyright (C) 2014 Bruno Coudoin <bruno.coudoin@gcompris.net>
  *
  * Authors:
  *   Bruno Coudoin <bruno.coudoin@gcompris.net>
@@ -19,7 +19,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.0
 import GCompris 1.0
 
 Item {

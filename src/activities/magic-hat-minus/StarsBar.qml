@@ -1,6 +1,6 @@
 /* GCompris - MagicHat.qml
  *
- * Copyright (C) 2014 <Thibaut ROMAIN>
+ * Copyright (C) 2014 Thibaut ROMAIN <thibrom@gmail.com>
  *
  * Authors:
  *   <Bruno Coudoin> (GTK+ version)
@@ -41,7 +41,7 @@ Item {
         spacing: 5
         Repeater {
             id: repeaterStars
-            model: 10
+            model: item.opacity == 1 ? 10 : 0
             Item {
                 id: star
                 width: item.starsSize
@@ -94,13 +94,13 @@ Item {
     }
 
     function initStars() {
-        for(var i=0; i<10; i++) {
+        for(var i=0; i<repeaterStars.count; i++) {
             repeaterStars.itemAt(i).starToMove.state = "Init"
         }
     }
 
     function resetStars() {
-        for(var i=0; i<10; i++) {
+        for(var i=0; i<repeaterStars.count; i++) {
             repeaterStars.itemAt(i).starFixed.selected = i < nbStarsOn ? true : false
         }
     }

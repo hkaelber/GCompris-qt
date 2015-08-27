@@ -72,8 +72,33 @@ function start(items_, uppercaseOnly_,  _mode) {
     mode = _mode;
     currentLevel = 0;
     currentSubLevel = 0;
+
+    var locale = items.locale == "system" ? "$LOCALE" : items.locale
+
+    // register the voices for the locale
+    GCompris.DownloadManager.updateResource(GCompris.DownloadManager.getVoicesResourceForLocale(GCompris.ApplicationInfo.getVoicesLocale(items.locale)));
+
     items.wordlist.loadFromFile(GCompris.ApplicationInfo.getLocaleFilePath(
-            items.ourActivity.dataSetUrl + "default-$LOCALE.json"));
+            items.ourActivity.dataSetUrl + "default-"+locale+".json"));
+    // If wordlist is empty, we try to load from short locale and if not present again, we switch to default one
+    var localeUnderscoreIndex = locale.indexOf('_')
+    // probably exist a better way to see if the list is empty
+    if(items.wordlist.maxLevel == 0) {
+        var localeShort;
+        // We will first look again for locale xx (without _XX if exist)
+        if(localeUnderscoreIndex > 0) {
+            localeShort = locale.substring(0, localeUnderscoreIndex)
+        }
+        else {
+            localeShort = locale;
+        }
+        // If not found, we will use the default file
+        items.wordlist.useDefault = true
+        items.wordlist.loadFromFile(GCompris.ApplicationInfo.getLocaleFilePath(
+        items.ourActivity.dataSetUrl + "default-"+localeShort+".json"));
+        // We remove the using of default file for next time we enter this function
+        items.wordlist.useDefault = false
+    }
     maxLevel = items.wordlist.maxLevel;
     droppedWords = new Array();
     initLevel();
@@ -86,6 +111,7 @@ function stop() {
 }
 
 function initLevel() {
+    items.audioVoices.clearQueue()
     items.bar.level = currentLevel + 1;
     wgMaxFallingItems = 3
     successRate = 1.0
@@ -117,15 +143,28 @@ function initLevel() {
         var letters = new Array();
         items.keyboard.shiftKey = false;
         for (var i = 0; i < level.words.length; i++) {
-            for (var j = 0; j < level.words[i].length; j++) {
-                var letter = level.words[i].charAt(j);
+            if(mode ==='letter') {
+                // The word is a letter, even if it has several chars (digraph)
+                var letter = level.words[i];
                 var isUpper = (letter == letter.toLocaleUpperCase());
                 if (isUpper && letters.indexOf(letter.toLocaleLowerCase()) !== -1)
                     items.keyboard.shiftKey = true;
                 else if (!isUpper && letters.indexOf(letter.toLocaleUpperCase()) !== -1)
                     items.keyboard.shiftKey = true;
                 else if (letters.indexOf(letter) === -1)
-                    letters.push(level.words[i].charAt(j));
+                    letters.push(level.words[i]);
+            } else {
+                // We split each word in char to create the keyboard
+                for (var j = 0; j < level.words[i].length; j++) {
+                    var letter = level.words[i].charAt(j);
+                    var isUpper = (letter == letter.toLocaleUpperCase());
+                    if (isUpper && letters.indexOf(letter.toLocaleLowerCase()) !== -1)
+                        items.keyboard.shiftKey = true;
+                    else if (!isUpper && letters.indexOf(letter.toLocaleUpperCase()) !== -1)
+                        items.keyboard.shiftKey = true;
+                    else if (letters.indexOf(letter) === -1)
+                        letters.push(level.words[i].charAt(j));
+                }
             }
         }
         letters.sort();
@@ -261,7 +300,7 @@ function createWord()
                     "x": Math.random() * (items.main.width - 25),
                     "y": -25,
                 });
-        } else if(items.ourActivity.getDominoValues(text)) {
+        } else if(items.ourActivity.getDominoValues(text).length) {
             word = wordComponent.createObject( items.background,
                 {
                     "text": text,
@@ -277,6 +316,7 @@ function createWord()
                     // assume x=width-25px for now, Word auto-adjusts onCompleted():
                     "x": Math.random() * (items.main.width - 25),
                     "y": -25,
+                    "mode": mode,
                 });
         }
 
@@ -358,12 +398,20 @@ function previousLevel() {
 function nextSubLevel() {
     if( ++currentSubLevel >= maxSubLevel) {
         currentSubLevel = 0
-        items.bonus.good("lion");
+        items.bonusTimer.start();
     } else
         initSubLevel();
 }
 
 function playLetter(letter) {
-    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices/$LOCALE/alphabet/"
+    var locale = GCompris.ApplicationInfo.getVoicesLocale(items.locale)
+
+    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices-$CA/"+locale+"/alphabet/"
                                                                        + Core.getSoundFilenamForChar(letter)))
+}
+
+
+function focusTextInput() {
+    if (!GCompris.ApplicationInfo.isMobile && items && items.textinput)
+        items.textinput.forceActiveFocus();
 }

@@ -20,58 +20,74 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-  This file contains all javascript methods that can be used by more than one
-  activity.
-  */
-
+/**
+ * @file
+ * Contains commonly used javascript methods.
+ * @ingroup components
+ *
+ * FIXME: how to include this file in kgenapidox's output?
+ */
 .pragma library
 .import QtQml 2.2 as Qml
 .import GCompris 1.0 as GCompris
 
-/*
-  function shuffle()
-  Shuffle the array passed in parameter and returns it.
-*/
+/**
+ * Shuffle the array @p o and returns it.
+ *
+ * @param o Array to shuffle.
+ * @returns A shuffled array.
+ */
 function shuffle(o) {
     for(var j, x, i = o.length; i;
         j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
 }
 
-// from soundutil.c
-/** return a string representing of a letter or a number audio file
- *  get alphabet sound file name
+/**
+ * Return the filename of the audio voices file for the passed letters
+ * (or a number) @p c
  *
- * the returned sound has the suffix .ogg
+ * A letter maybe a digraph or more characters (a pair of characters used
+ * to write one phoneme). In this case the result have the form U0066U0068.ogg
  *
- * \return a newly allocated string of the form U0033.ogg
+ * The returned audio file. has the suffix .ogg
+ *
+ * @param c Letter or number character.
+ * @return A filename for the audio file for the passed letter @p c of the
+ *         form U0033.ogg
  */
 function getSoundFilenamForChar(c)
 {
-    var result = "U";
-    var codeHex = c.toLowerCase().charCodeAt(0).toString(16).toUpperCase();
-    while (codeHex.length < 4) {
-        codeHex = "0" + codeHex;
+    var results = ''
+    for(var i = 0; i < c.length; ++i) {
+        var result = "U";
+        var codeHex = c.toLowerCase().charCodeAt(i).toString(16).toUpperCase();
+        while (codeHex.length < 4) {
+            codeHex = "0" + codeHex;
+        }
+        results += "U" + codeHex
     }
-    result += codeHex + ".ogg";
-    return result;
+    results += ".$CA";
+    return results;
 }
 
-/** Create and present a MessageDialog with the given parameters
- * 
- * Instantiates a Messagedialog object dynamically as child of the  passed
- * parent object. After on of the buttons passed in the buttonHandler parameter
- * has been pressed the dialog will be closed and destroyed automatically.
- * 
- * @param parent QML parent object
- * @param informativeText  Informative text
- * @param button1Text the text of the first button
- * @param button1Callback the callback of the first button
- * @param button2Text the text of the second button
- * @param button2Callback the callback of the second button
- * @param closeCallback the callback of the close button
- * @returns The MessageDialog object upon success, null otherwise
+/**
+ * Create and present a GCDialog with the given parameters
+ *
+ * Instantiates a GCDialog object dynamically as child of the  passed
+ * parent object. After one of the buttons passed in the buttonHandler parameter
+ * has been pressed, the dialog will be closed and destroyed automatically.
+ *
+ * @param parent            QML parent object
+ * @param informativeText   Informative text
+ * @param button1Text the   Label of the first button
+ * @param button1Callback   Callback handler for the first button
+ * @param button2Text       Label of the second button
+ * @param button2Callback   Callback handler for the second button
+ * @param closeCallback     Callback handler for the close button
+ * @returns The GCDialog object upon success, null otherwise
+ *
+ * @sa GCDialog
  */
 function showMessageDialog(parent, informativeText,
                            button1Text, button1Callback,
@@ -84,7 +100,7 @@ function showMessageDialog(parent, informativeText,
         + '    button1Text: "' + button1Text + '"\n'
         + '    button2Text: "' + button2Text + '"\n'
         + ' }\n';
-    
+
     var dialog = null;
     try {
         dialog = Qt.createQmlObject(qmlStr, parent);
@@ -104,9 +120,10 @@ function showMessageDialog(parent, informativeText,
     return dialog;
 }
 
-/** Destroy a dialog
- * 
- * @param dialog A dynamically created MessageDialog or DownloadDialog
+/**
+ * Destroy dialog @p dialog
+ *
+ * @param dialog A dynamically created GCDialog or DownloadDialog
  */
 function destroyDialog(dialog) {
     if (dialog) {
@@ -117,15 +134,19 @@ function destroyDialog(dialog) {
 
 var downloadDialogComponent = null;
 
-/** Create and present a DownloadDialog with the given parameters
- * 
+/**
+ * Create and present a DownloadDialog with the given parameters.
+ *
  * Instantiates a DownloadDialog object dynamically as child of the  passed
- * parent object.
- * 
- * @param parent QML parent object
+ * parent object. The DownloadDialog.dynamic property will be set, and the
+ * dialog will be destroyed dynamically after closing.
+ *
+ * @param parent     QML parent object
  * @param properties Object with property-value pairs used to parametrize the new
- *                   object. Used directly as properties parameter of 
- *                   Component.createObject(); 
+ *                   object. Used directly as properties parameter of
+ *                   Component.createObject()
+ * @returns          A newly created DownloadDialog object upon success, null
+ *                   otherwise.
  */
 function showDownloadDialog(parent, properties) {
     var dialog = null;
@@ -152,11 +173,18 @@ function showDownloadDialog(parent, properties) {
     return dialog;
 }
 
+/**
+ * Helper checking for availability of audio voices for the current locale and
+ * informing the user in case they're missing.
+ *
+ * Can be used by acitivities that depend on audio voices to inform the user
+ * of missing resources during startup.
+ *
+ * @param parent Parent QML object.
+ */
 function checkForVoices(parent)
 {
-    if (!GCompris.DownloadManager.haveLocalResource(
-            GCompris.DownloadManager.getVoicesResourceForLocale(
-                    GCompris.ApplicationSettings.locale))) {
+    if (!GCompris.DownloadManager.areVoicesRegistered()) {
         showMessageDialog(parent,
                 qsTr("Missing sound files!") + '\n'
                 + qsTr("This activity uses language sound files, that are not yet installed on your system.")
@@ -169,11 +197,23 @@ function checkForVoices(parent)
 }
 
 var aboutToQuit = false;
+/**
+ * Central function for quitting GCompris.
+ *
+ * Should be used everywhere instead of Qt.quit(), warning in case of running
+ * downloadloads and showing a confirmation dialog on mobile devices.
+ * Call Qt.quit() itself upon confirmation.
+ *
+ * @param parent QML parent object used for the dynamic dialog.
+ */
 function quit(parent)
 {
     if (aboutToQuit)  // don't execute concurrently
         return;
     aboutToQuit = true;
+
+    GCompris.ApplicationInfo.abandonAudioFocus()
+
     if (GCompris.DownloadManager.downloadIsRunning()) {
         var dialog = showDownloadDialog(parent, {
             text: qsTr("Download in progress")
@@ -191,9 +231,14 @@ function quit(parent)
                 qsTr("Quit?") +
                 '\n' +
                 qsTr("Do you really want to quit GCompris?"),
-                "YES", function() { Qt.quit(); },
-                "NO", function() { aboutToQuit = false; },
+                qsTr("Yes"), function() { Qt.quit(); },
+                qsTr("No"), function() { aboutToQuit = false; },
                 function() { aboutToQuit = false; } );
     } else
         Qt.quit();
+}
+
+function isLeftToRightLocale(locale) {
+    var localeShort = GCompris.ApplicationInfo.getVoicesLocale(locale)
+    return (localeShort != "ar" && localeShort != "he");
 }

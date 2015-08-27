@@ -33,7 +33,7 @@ ActivityBase {
 
     pageComponent: Image {
         id: background
-        source: Activity.url + "penalty_bg.svgz"
+        source: Activity.url + "penalty_bg.svg"
         sourceSize.width: parent.width
         fillMode: Image.Stretch
         anchors.fill: parent
@@ -124,7 +124,7 @@ ActivityBase {
                 id: animationLeft
                 onRunningChanged: {
                     if (!animationLeft.running) {
-                        timerBad.start()
+                        timerBonus.start()
                     }
                 }
                 PropertyAnimation
@@ -162,7 +162,7 @@ ActivityBase {
                 id: animationRight
                 onRunningChanged: {
                     if (!animationRight.running) {
-                        timerBad.start()
+                        timerBonus.start()
                     }
                 }
                 PropertyAnimation
@@ -199,7 +199,7 @@ ActivityBase {
                 id: animationTop
                 onRunningChanged: {
                     if (!animationTop.running) {
-                        timerBad.start()
+                        timerBonus.start()
                     }
                 }
                 PropertyAnimation
@@ -223,7 +223,7 @@ ActivityBase {
         /* The player */
         Image {
             id: player
-            source: Activity.url + "penalty_player.svgz"
+            source: Activity.url + "penalty_player.svg"
             fillMode: Image.PreserveAspectFit
             anchors.verticalCenter: parent.verticalCenter
             sourceSize.width: 154 * ApplicationInfo.ratio
@@ -232,7 +232,7 @@ ActivityBase {
 
         /* The 2 click icon */
         Image {
-            source: Activity.url + "click_icon.svgz"
+            source: Activity.url + "click_icon.svg"
             sourceSize.width: 90 * ApplicationInfo.ratio
             anchors.bottomMargin: 10
             anchors.rightMargin: 10
@@ -242,12 +242,12 @@ ActivityBase {
 
         /* The spot under the ball */
         Rectangle {
-            radius: ball.width / 2
+            radius: 100 * ApplicationInfo.ratio
             color: "white"
-            width: ball.width / 2
-            height: ball.height / 3
+            width: 50 * ApplicationInfo.ratio
+            height: 33 * ApplicationInfo.ratio
             x: parent.width / 2 - width / 2
-            y: parent.height * 0.77 + ball.height / 2 - height / 2
+            y: parent.height * 0.77 + width - height / 2
             border.width: 1
             border.color: "#b4b4b4"
         }
@@ -255,12 +255,13 @@ ActivityBase {
         /* The ball */
         Image {
             id: ball
-            source: Activity.url + "penalty_ball.svgz"
+            source: Activity.url + "penalty_ball.svg"
             fillMode: Image.PreserveAspectFit
-            sourceSize.width: 62 * ApplicationInfo.ratio
+            sourceSize.width: 100 * ApplicationInfo.ratio
 
             Behavior on x { PropertyAnimation {easing.type: Easing.OutQuad; duration:  1000} }
             Behavior on y { PropertyAnimation {easing.type: Easing.OutQuad; duration:  1000} }
+            Behavior on sourceSize.width { PropertyAnimation {easing.type: Easing.OutQuad; duration: 1000} }
 
             state: "INITIAL"
             states: [
@@ -268,6 +269,7 @@ ActivityBase {
                     name: "INITIAL"
                     PropertyChanges {
                         target: ball;
+                        sourceSize.width: 100 * ApplicationInfo.ratio
                         x: parent.width/2 - width/2;
                         y: parent.height*0.77 - height/2
                     }
@@ -280,6 +282,7 @@ ActivityBase {
                     name: "RIGHT"
                     PropertyChanges {
                         target: ball;
+                        sourceSize.width: 75 * ApplicationInfo.ratio
                         x: background.width * 0.8;
                         y: background.height * 0.3
                     }
@@ -288,6 +291,7 @@ ActivityBase {
                     name: "LEFT"
                     PropertyChanges {
                         target: ball;
+                        sourceSize.width: 75 * ApplicationInfo.ratio
                         x: background.width * 0.2;
                         y: background.height * 0.3
                     }
@@ -296,6 +300,7 @@ ActivityBase {
                     name: "CENTER"
                     PropertyChanges {
                         target: ball;
+                        sourceSize.width: 75 * ApplicationInfo.ratio
                         x: parent.width/2 - width/2;
                         y: background.height * 0.1
                     }
@@ -304,6 +309,7 @@ ActivityBase {
                     name: "FAIL"
                     PropertyChanges {
                         target: ball;
+                        sourceSize.width: 75 * ApplicationInfo.ratio
                         x: parent.width/2 - width/2;
                         y: player.y + player.height / 2
                     }
@@ -326,40 +332,40 @@ ActivityBase {
                     }
 
                     /* This is a shoot */
-                    var progess = progressTop
+                    var progress = progressTop
                     if (mouse.button == Qt.LeftButton) {
-                        progess = progressLeft
+                        progress = progressLeft
                     } else if (mouse.button == Qt.RightButton) {
-                        progess = progressRight
+                        progress = progressRight
+                    } else if (mouse.button == Qt.MidButton) {
+                        progress = progressTop
                     }
 
-                    if(progess.ratio > 0) {
+                    if(progress.ratio > 0) {
                         /* Second click, stop animation */
-                        progess.anim.running = false;
+                        progress.anim.running = false;
 
                         /* Play sound */
                         activity.audioEffects.play("qrc:/gcompris/src/core/resource/sounds/brick.wav")
 
                         /* Success or not */
-                        if(progess.ratio < 100) {
+                        if(progress.ratio < 100) {
                             /* Success */
-                            if(progess === progressLeft) {
+                            if(progress === progressLeft) {
                                 ball.state = "LEFT"
-                            } else if(progess === progressRight) {
+                            } else if(progress === progressRight) {
                                 ball.state = "RIGHT"
                             } else {
                                 ball.state = "CENTER"
                             }
-
-                            timerGood.start()
                         } else {
                             /* failure */
                             ball.state = "FAIL"
-                            timerBad.start()
                         }
+                        timerBonus.start()
                     } else {
                         /* First click, start animation*/
-                        progess.anim.running = true;
+                        progress.anim.running = true;
 
                         /* Play sound */
                         activity.audioEffects.play("qrc:/gcompris/src/core/resource/sounds/flip.wav")
@@ -369,15 +375,16 @@ ActivityBase {
         }
 
         Timer {
-            id: timerGood
+            id: timerBonus
             interval: 1500
-            onTriggered: bonus.good("tux")
-        }
-
-        Timer {
-            id: timerBad
-            interval: 1500
-            onTriggered: bonus.bad("tux")
+            onTriggered: {
+                if (ball.state == "FAIL" || ball.state == "INITIAL") {
+                    bonus.bad("tux")
+                    ball.state = "FAIL"
+                } else {
+                    bonus.good("tux")
+                }
+            }
         }
 
         DialogHelp {

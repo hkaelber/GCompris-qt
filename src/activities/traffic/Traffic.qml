@@ -1,6 +1,6 @@
 /* GCompris - Traffic.qml
  *
- * Copyright (C) 2014 Holger Kaelberer
+ * Copyright (C) 2014 Holger Kaelberer <holger.k@elberer.de>
  *
  * Authors:
  *   Bruno Coudoin <bruno.coudoin@gcompris.net> (GTK+ version)
@@ -28,9 +28,6 @@ import "traffic.js" as Activity
 
 ActivityBase {
     id: activity
-
-    property string mode: "IMAGE" // allow to choose between "COLOR" and "IMAGE"
-                                  // mode, candidate for a config dialog
     
     onStart: focus = true
     onStop: {}
@@ -43,8 +40,12 @@ ActivityBase {
 
         signal start
         signal stop
+
+        property string mode: "IMAGE" // allow to choose between "COLOR" and "IMAGE"
+                                  // mode, candidate for a config dialog
         
         Component.onCompleted: {
+            dialogActivityConfig.getInitialConfiguration()
             activity.start.connect(start)
             activity.stop.connect(stop)
         }
@@ -69,12 +70,11 @@ ActivityBase {
             source: "qrc:/gcompris/src/activities/traffic/resource/traffic_box.svg"
 
             anchors.centerIn: parent
-            sourceSize.width: Math.max(400, background.width * 0.4175 * ApplicationInfo.ratio) //334
-            sourceSize.height: Math.max(400, background.height * 0.636538462 * ApplicationInfo.ratio) //331
+            sourceSize.width: Math.min(background.width * 0.85,
+                                       background.height * 0.85)
             fillMode: Image.PreserveAspectFit
-            property double scaleFactor: Math.min(background.width / background.sourceSize.width,
-                    background.height / background.sourceSize.height)
-            
+            property double scaleFactor: background.width / background.sourceSize.width
+
             Grid {
                 id: jamGrid
                 anchors.centerIn: parent
@@ -83,7 +83,8 @@ ActivityBase {
                 columns: 6
                 rows: 6
                 spacing: 0
-                
+                // Add an alias to mode so it can be used on Car items
+                property alias mode: background.mode
                 Repeater {
                     id: gridRepeater
                     model: jamGrid.columns * jamGrid.rows
@@ -105,16 +106,71 @@ ActivityBase {
             onClose: home()
         }
         
+        DialogActivityConfig {
+            id: dialogActivityConfig
+            currentActivity: activity
+            content: Component {
+                Item {
+                    property alias modeBox: modeBox
+
+                    property var availableModes: [
+                    { "text": qsTr("Colors"), "value": "COLOR" },
+                    { "text": qsTr("Images"), "value": "IMAGE" }
+                    ]
+
+                    Flow {
+                        id: flow
+                        spacing: 5
+                        width: dialogActivityConfig.width
+                        GCComboBox {
+                            id: modeBox
+                            model: availableModes
+                            background: dialogActivityConfig
+                            label: qsTr("Select your mode")
+                        }
+                    }
+                }
+            }
+            onClose: home()
+            onLoadData: {
+                if(dataToSave && dataToSave["mode"]) {
+                    mode = dataToSave["mode"];
+                    Activity.mode = dataToSave["mode"];
+                }
+            }
+
+            onSaveData: {
+                mode = dialogActivityConfig.configItem.availableModes[dialogActivityConfig.configItem.modeBox.currentIndex].value;
+                dataToSave = {"mode": mode}
+                Activity.mode = mode;
+            }
+
+            function setDefaultValues() {
+                for(var i = 0 ; i < dialogActivityConfig.configItem.availableModes.length ; i ++) {
+                    if(dialogActivityConfig.configItem.availableModes[i].value === mode) {
+                        dialogActivityConfig.configItem.modeBox.currentIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | level | reload}
+            content: BarEnumContent { value: help | home | level | reload | config }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: activity.home()
-            onReloadClicked: Activity.initLevel();
+            onReloadClicked: Activity.initLevel()
+            onConfigClicked: {
+                dialogActivityConfig.active = true
+                // Set default values
+                dialogActivityConfig.setDefaultValues();
+                displayDialog(dialogActivityConfig)
+            }
         }
 
         Bonus {

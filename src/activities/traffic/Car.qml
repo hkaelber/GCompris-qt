@@ -1,6 +1,6 @@
 /* GCompris - Car.qml
  *
- * Copyright (C) 2014 Holger Kaelberer 
+ * Copyright (C) 2014 Holger Kaelberer  <holger.k@elberer.de>
  * 
  * Authors:
  *   Bruno Coudoin <bruno.coudoin@gcompris.net> (GTK+ Mostly full rewrite)
@@ -41,18 +41,33 @@ Item {
     property var xBounds: undefined
     property var yBounds: undefined
 
-    x: (Activity.mode == "COLOR" || car.isHorizontal) ? (xPos * blockSize) : ((xPos+1) * blockSize)
-    y: (Activity.mode == "COLOR" || car.isHorizontal) ? (yPos * blockSize) : ((yPos) * blockSize)
+    property string mode
+    property bool isMoving: false
+
+    Component.onCompleted: {
+        mode = parent.mode
+        connection.target = parent
+    }
+    // Connect the jamGrid.mode to car.mode to automatically change the wrapped object
+    Connections {
+        id: connection
+        onModeChanged: {
+            car.mode = parent.mode;
+        }
+    }
+
+    x: (mode == "COLOR" || car.isHorizontal) ? (xPos * blockSize) : ((xPos+1) * blockSize)
+    y: (mode == "COLOR" || car.isHorizontal) ? (yPos * blockSize) : ((yPos) * blockSize)
 
     // track effective coordinates (needed for transformed image):
     property real effX: car.xPos * car.blockSize
     property real effY: car.yPos * car.blockSize
-    property real effWidth: (Activity.mode == "COLOR" || car.isHorizontal) ? car.width : car.height
-    property real effHeight: (Activity.mode == "COLOR" || car.isHorizontal) ? car.height : car.width
+    property real effWidth: (mode == "COLOR" || car.isHorizontal) ? car.width : car.height
+    property real effHeight: (mode == "COLOR" || car.isHorizontal) ? car.height : car.width
     property GCAudio audioEffects
 
-    width: (Activity.mode == "IMAGE" || isHorizontal) ? (size * blockSize) : blockSize
-    height: (Activity.mode == "IMAGE" || isHorizontal) ? blockSize : (size * blockSize)
+    width: (mode == "IMAGE" || isHorizontal) ? (size * blockSize) : blockSize
+    height: (mode == "IMAGE" || isHorizontal) ? blockSize : (size * blockSize)
 
     Item {
         id: carWrapper
@@ -63,7 +78,7 @@ Item {
         
         Rectangle {
             id: carRect
-            visible: (Activity.mode == "COLOR")
+            visible: (mode == "COLOR")
             
             z: 11
             anchors.fill: parent
@@ -81,13 +96,17 @@ Item {
                 property real startY;
             
                 onPressed: {
-                    car.audioEffects.play(Activity.baseUrl + "car.wav")
-                    rectTouch.startX = point1.x;
-                    rectTouch.startY = point1.y;
+                    if (!Activity.isMoving) {
+                        Activity.isMoving = true;
+                        car.isMoving = true;
+                        car.audioEffects.play(Activity.baseUrl + "car.wav")
+                        rectTouch.startX = point1.x;
+                        rectTouch.startY = point1.y;
+                    }
                 }
                 
                 onUpdated: {
-                    if (!Activity.haveWon) {
+                    if (car.isMoving && !Activity.haveWon) {
                         var deltaX = point1.x - startX;
                         var deltaY = point1.y - startY;
                         Activity.updateCarPosition(car, car.x + deltaX, car.y + deltaY);
@@ -95,15 +114,19 @@ Item {
                 }
 
                 onReleased: {
-                    if (!Activity.haveWon)
-                        Activity.snapCarToGrid(car);
+                    if (car.isMoving) {
+                        car.isMoving = false;
+                        Activity.isMoving = false;
+                        if (!Activity.haveWon)
+                            Activity.snapCarToGrid(car);
+                    }
                 }
             }
         }
         
         Image {
             id: carImage
-            visible: (Activity.mode == "IMAGE")
+            visible: (mode == "IMAGE")
             
             fillMode: Image.PreserveAspectFit
             anchors.fill: parent
@@ -121,13 +144,17 @@ Item {
                 property real startY;
             
                 onPressed: {
-                    car.audioEffects.play(Activity.baseUrl + "car.wav")
-                    imageTouch.startX = imagePoint.x;
-                    imageTouch.startY = imagePoint.y;
+                    if (!Activity.isMoving) {
+                        Activity.isMoving = true;
+                        car.isMoving = true;
+                        car.audioEffects.play(Activity.baseUrl + "car.wav")
+                        imageTouch.startX = imagePoint.x;
+                        imageTouch.startY = imagePoint.y;
+                    }
                 }
                 
                 onUpdated: {
-                    if (!Activity.haveWon) {
+                    if (car.isMoving && !Activity.haveWon) {
                         var deltaX = imagePoint.x - startX;
                         var deltaY = imagePoint.y - startY;
                         if (!car.isHorizontal) {
@@ -140,8 +167,12 @@ Item {
                 }
 
                 onReleased: {
-                    if (!Activity.haveWon)
-                        Activity.snapCarToGrid(car);
+                    if (car.isMoving) {
+                        Activity.isMoving = false;
+                        car.isMoving = false;
+                        if (!Activity.haveWon)
+                            Activity.snapCarToGrid(car);
+                    }
                 }
             }
         }

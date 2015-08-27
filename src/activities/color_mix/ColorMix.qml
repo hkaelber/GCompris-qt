@@ -57,6 +57,7 @@ ActivityBase {
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
+            property alias score: score
             property int maxSteps: 1
             property int targetColor1: 0
             property int targetColor2: 0
@@ -86,8 +87,8 @@ ActivityBase {
                 topMargin: items.margins
                 horizontalCenter: parent.horizontalCenter
             }
-            border.color: "black"
-            border.width: 2
+            border.color: "#2a2a2a"
+            border.width: 0
             color: Activity.getColor(items.targetColor1, items.targetColor2,
                                      items.targetColor3)
         }
@@ -95,6 +96,7 @@ ActivityBase {
         GCText {
             text: qsTr("Match the color")
             fontSize: 18
+            color: "#2a2a2a"
             horizontalAlignment: Text.AlignRight
             wrapMode: Text.WordWrap
             anchors {
@@ -128,8 +130,8 @@ ActivityBase {
                 top: target.bottom
                 topMargin: (background.height - items.chooserHeight * 4) / 2
             }
-            border.color: "black"
-            border.width: 2
+            border.color: "#2a2a2a"
+            border.width: 0
             color: Activity.getColor(items.currentColor1, items.currentColor2,
                                      items.currentColor3)
         }
@@ -175,9 +177,19 @@ ActivityBase {
             rotation: 180
         }
 
+        Score {
+            id: score
+            x: parent.width * 0.25
+            y: parent.height * 0.65
+            anchors.right: undefined
+            anchors.bottom: undefined
+            currentSubLevel: 0
+            numberOfSubLevels: 10
+        }
+
         BarButton {
             id: validate
-            source: "qrc:/gcompris/src/core/resource/bar_ok.svgz"
+            source: "qrc:/gcompris/src/core/resource/bar_ok.svg"
             sourceSize.width: 66 * bar.barZoom
             visible: true
             anchors {
@@ -250,7 +262,7 @@ ActivityBase {
 
         Bonus {
             id: bonus
-            Component.onCompleted: win.connect(Activity.nextLevel)
+            Component.onCompleted: win.connect(Activity.nextSubLevel)
         }
     }
 }

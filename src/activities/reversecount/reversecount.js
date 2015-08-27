@@ -30,37 +30,36 @@ var iceBlocksLayout = [[0, 0],[1, 0],[2, 0],[3, 0],[4, 0],
                        [0, 1]]
 
 var backgrounds = [
-            "baleine.svgz",
-            "phoque.svgz",
-            "ourspolaire.svgz",
-            "morse.svgz",
-            "elephant_mer.svgz",
-            "epaulard.svgz",
-            "narval.svgz"
+            "baleine.svg",
+            "phoque.svg",
+            "ourspolaire.svg",
+            "morse.svg",
+            "elephant_mer.svg",
+            "epaulard.svg",
+            "narval.svg"
         ]
 
 var tuxIceBlockNumber = 0
 var tuxIceBlockNumberGoal = 0
 var tuxIsMoving = false;
 var debuginttmp = 0
-var clockPos
 var placeFishToReachBool = false
 
 var level = null;
 
 var fishes = [
-            "Benzfish.svgz",
-            "blue-fish.svgz",
-            "drunken_duck_cartoon_globefish_kugelfisch.svgz",
-            "Fish02.svgz",
-            "molumen_Codfish.svgz",
-            "mystica_Aquarium_fish_-_Amphiprion_percula.svgz",
-            "pepinux_Pez_dorado.svgz",
-            "The_Whale-Fish.svgz",
-            "Benzfish.svgz",
-            "blue-fish.svgz",
-            "drunken_duck_cartoon_globefish_kugelfisch.svgz",
-            "Fish02.svgz"
+            "Benzfish.svg",
+            "blue-fish.svg",
+            "drunken_duck_cartoon_globefish_kugelfisch.svg",
+            "Fish02.svg",
+            "molumen_Codfish.svg",
+            "mystica_Aquarium_fish_-_Amphiprion_percula.svg",
+            "pepinux_Pez_dorado.svg",
+            "The_Whale-Fish.svg",
+            "Benzfish.svg",
+            "blue-fish.svg",
+            "drunken_duck_cartoon_globefish_kugelfisch.svg",
+            "Fish02.svg"
         ]
 
 
@@ -143,8 +142,7 @@ function initLevel() {
     numberOfFish = levels[currentLevel].numberOfFish
 
     fishIndex = 0
-    clockPos = 4
-    setClock()
+    items.clockPosition = 4
     tuxIceBlockNumber = 0
     items.tux.init()
 
@@ -159,9 +157,8 @@ function moveTux() {
 
     if (tuxIceBlockNumberGoal > fishIndex)
     {
-        clockPos--
-        setClock()
-        if (clockPos === 0) {
+        items.clockPosition--
+        if (items.clockPosition === 0) {
             lost()
             initLevel()
             return
@@ -198,8 +195,7 @@ function moveTuxToNextIceBlock() {
         if (--numberOfFish == 0) {
             won()
             items.fishToReach.showParticles()
-            clockPos++
-            setClock()
+            items.clockPosition++
             return
         }
 
@@ -212,9 +208,8 @@ function moveTuxToNextIceBlock() {
     items.audioEffects.play(url + 'icy_walk.wav')
     //if tux reaches its position + dice number before reaching the fish, calculation was wrong
     if (tuxIceBlockNumber == tuxIceBlockNumberGoal) {
-        clockPos--
-        setClock()
-        if (clockPos === 0) {
+        items.clockPosition--
+        if (items.clockPosition === 0) {
             lost()
             initLevel()
             return
@@ -273,7 +268,13 @@ function calculateNextPlaceFishToReach() {
 }
 
 function placeFishToReach() {
-    items.fishToReach.opacity = 0
+    // placeFishToReach can be called when the opacity is 0.
+    // In this case, this does not trigger the onOpacityChanged of the fish Image (meaning the fish will not be displayed) so we directly set the opacity to 1.
+    if(items.fishToReach.opacity == 0)
+        items.fishToReach.opacity = 1
+    else
+        items.fishToReach.opacity = 0
+
     items.fishToReach.nextSource = url + fishes[fishIndex % fishes.length]
     items.fishToReach.nextX = iceBlocksLayout[fishIndex % iceBlocksLayout.length][0] *
             items.background.width / 5 +
@@ -284,14 +285,8 @@ function placeFishToReach() {
 }
 
 
-
-function setClock() {
-    items.clock.source = url + "flower" + clockPos + ".svgz"
-}
-
-
 function nextLevel() {
-    if(numberOfLevel <= ++currentLevel ) {
+    if(numberOfLevel <= ++currentLevel) {
         currentLevel = 0
     }
     initLevel();

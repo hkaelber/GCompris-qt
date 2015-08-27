@@ -1,42 +1,26 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+/* GCompris - ApplicationSettingsDefault.cpp
+ *
+ * Copyright (C) 2014 Johnny Jazeix <jazeix@gmail.com>
+ *
+ * Authors:
+ *   Johnny Jazeix <jazeix@gmail.com>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "ApplicationSettings.h"
+#include "ApplicationInfo.h"
 
 #include <QtCore/qmath.h>
 #include <QtCore/QUrl>
@@ -47,11 +31,10 @@
 
 #include <QSettings>
 #include <QStandardPaths>
-#include "ApplicationSettings.h"
-#include "ApplicationInfo.h"
 #include <QDebug>
 
 #define GC_DEFAULT_FONT "Andika-R.ttf"
+#define GC_DEFAULT_FONT_CAPITALIZATION 0 // Font.MixedCase
 
 static const QString GENERAL_GROUP_KEY = "General";
 static const QString ADMIN_GROUP_KEY = "Admin";
@@ -76,6 +59,7 @@ static const QString FILTER_LEVEL_MIN = "filterLevelMin";
 static const QString FILTER_LEVEL_MAX = "filterLevelMax";
 
 static const QString BASE_FONT_SIZE_KEY = "baseFontSize";
+static const QString FONT_CAPITALIZATION = "fontCapitalization";
 
 static const QString DEFAULT_CURSOR = "defaultCursor";
 static const QString NO_CURSOR = "noCursor";
@@ -87,8 +71,7 @@ ApplicationSettings *ApplicationSettings::m_instance = NULL;
 
 ApplicationSettings::ApplicationSettings(QObject *parent): QObject(parent),
 	 m_config(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
-			  "/gcompris/" + GCOMPRIS_APPLICATION_NAME + ".conf", QSettings::IniFormat)
-
+			  "/gcompris/" + GCOMPRIS_APPLICATION_NAME + ".conf", QSettings::IniFormat), m_baseFontSizeMin(-7), m_baseFontSizeMax(7)
 {
     // initialize from settings file or default
 
@@ -101,6 +84,7 @@ ApplicationSettings::ApplicationSettings(QObject *parent): QObject(parent),
             ApplicationInfo::getInstance()->isMobile()).toBool();
     m_locale = m_config.value(LOCALE_KEY, GC_DEFAULT_LOCALE).toString();
     m_font = m_config.value(FONT_KEY, GC_DEFAULT_FONT).toString();
+    m_fontCapitalization = m_config.value(FONT_CAPITALIZATION, GC_DEFAULT_FONT_CAPITALIZATION).toUInt();
     m_isEmbeddedFont = m_config.value(IS_CURRENT_FONT_EMBEDDED, true).toBool();
 
 // The default demo mode based on the platform
@@ -121,7 +105,7 @@ ApplicationSettings::ApplicationSettings(QObject *parent): QObject(parent),
     m_showLockedActivities = m_config.value(SHOW_LOCKED_ACTIVITIES_KEY, m_isDemoMode).toBool();
 	m_sectionVisible = m_config.value(SECTION_VISIBLE, true).toBool();
 	m_isAutomaticDownloadsEnabled = m_config.value(ENABLE_AUTOMATIC_DOWNLOADS,
-            !ApplicationInfo::getInstance()->isMobile()).toBool();
+            !ApplicationInfo::getInstance()->isMobile() && ApplicationInfo::isDownloadAllowed()).toBool();
     m_filterLevelMin = m_config.value(FILTER_LEVEL_MIN, 1).toUInt();
     m_filterLevelMax = m_config.value(FILTER_LEVEL_MAX, 6).toUInt();
 	m_defaultCursor = m_config.value(DEFAULT_CURSOR, false).toBool();
@@ -182,8 +166,9 @@ ApplicationSettings::~ApplicationSettings()
     m_config.setValue(SECTION_VISIBLE, m_sectionVisible);
 	m_config.setValue(DEFAULT_CURSOR, m_defaultCursor);
 	m_config.setValue(NO_CURSOR, m_noCursor);
-	m_config.setValue(BASE_FONT_SIZE_KEY, m_baseFontSize);
-	m_config.endGroup();
+    m_config.setValue(BASE_FONT_SIZE_KEY, m_baseFontSize);
+    m_config.setValue(FONT_CAPITALIZATION, m_fontCapitalization);
+    m_config.endGroup();
 
     // admin group
     m_config.beginGroup(ADMIN_GROUP_KEY);
@@ -236,6 +221,12 @@ void ApplicationSettings::notifyEmbeddedFontChanged()
     qDebug() << "new font is embedded: " << m_isEmbeddedFont;
 }
 
+void ApplicationSettings::notifyFontCapitalizationChanged()
+{
+    updateValueInConfig(GENERAL_GROUP_KEY, FONT_CAPITALIZATION, m_fontCapitalization);
+    qDebug() << "new fontCapitalization: " << m_fontCapitalization;
+}
+
 void ApplicationSettings::notifyFullscreenChanged()
 {
     updateValueInConfig(GENERAL_GROUP_KEY, FULLSCREEN_KEY, m_isFullscreen);
@@ -246,6 +237,16 @@ void ApplicationSettings::notifyVirtualKeyboardChanged()
 {
     updateValueInConfig(GENERAL_GROUP_KEY, VIRTUALKEYBOARD_KEY, m_isVirtualKeyboard);
     qDebug() << "virtualkeyboard set to: " << m_isVirtualKeyboard;
+}
+
+bool ApplicationSettings::isAutomaticDownloadsEnabled() const {
+    return m_isAutomaticDownloadsEnabled && ApplicationInfo::isDownloadAllowed();
+}
+void ApplicationSettings::setIsAutomaticDownloadsEnabled(const bool newIsAutomaticDownloadsEnabled) {
+    if(ApplicationInfo::isDownloadAllowed()) {
+        m_isAutomaticDownloadsEnabled = newIsAutomaticDownloadsEnabled;
+        emit automaticDownloadsEnabledChanged();
+    }
 }
 
 void ApplicationSettings::notifyAutomaticDownloadsEnabledChanged()
@@ -304,6 +305,29 @@ void ApplicationSettings::notifyBarHiddenChanged()
 void ApplicationSettings::saveBaseFontSize()
 {
     updateValueInConfig(GENERAL_GROUP_KEY, BASE_FONT_SIZE_KEY, m_baseFontSize);
+}
+
+void ApplicationSettings::saveActivityConfiguration(const QString &activity, const QVariantMap &data)
+{
+    qDebug() << "save configuration for:" << activity;
+    QMapIterator<QString, QVariant> i(data);
+    while (i.hasNext()) {
+        i.next();
+        updateValueInConfig(activity, i.key(), i.value());
+    }
+}
+
+QVariantMap ApplicationSettings::loadActivityConfiguration(const QString &activity)
+{
+    qDebug() << "load configuration for:" << activity;
+    m_config.beginGroup(activity);
+    QStringList keys = m_config.childKeys();
+    QVariantMap data;
+    foreach(const QString &key, keys) {
+        data[key] = m_config.value(key);
+    }
+    m_config.endGroup();
+    return data;
 }
 
 void ApplicationSettings::setFavorite(const QString &activity, bool favorite)

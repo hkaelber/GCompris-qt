@@ -1,6 +1,6 @@
 /* GCompris - Word.qml
  *
- * Copyright (C) 2014 Holger Kaelberer
+ * Copyright (C) 2014 Holger Kaelberer <holger.k@elberer.de>
  *
  * Authors:
  *   Bruno Coudoin <bruno.coudoin@gcompris.net> (GTK+ version)
@@ -37,6 +37,7 @@ Item {
     property int unmatchedIndex: 0;
     property alias text: wordText.text;
     property bool wonState: false
+    property string mode
 
     signal won
 
@@ -84,13 +85,18 @@ Item {
         if (wonState)
             return
 
-        var chars = text.split("");
-        if (chars[unmatchedIndex] == c) {
-            unmatchedIndex++;
-            return true;
+        if(word.mode === 'letter') {
+            unmatchedIndex = c.length
+            return (text === c)
         } else {
-            unmatchedIndex = 0;
-            return false;
+            var chars = text.split("");
+            if (chars[unmatchedIndex] == c) {
+                unmatchedIndex++;
+                return true;
+            } else {
+                unmatchedIndex = 0;
+                return false;
+            }
         }
     }
 
@@ -137,12 +143,12 @@ Item {
     DropShadow {
         id: dropShadow
         anchors.fill: wordText
-        cached: true
-        horizontalOffset: 3
-        verticalOffset: 3
-        radius: 8.0
+        cached: false
+        horizontalOffset: 1
+        verticalOffset: 1
+        radius: 3.0
         samples: 16
-        color: "#80000000"
+        color: "#422a2a2a"
         source: wordText
     }
 

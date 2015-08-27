@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
+if(SAILFISHOS)
+  cmake_minimum_required(VERSION 2.8.11)
+else(SAILfISHOS)
+  cmake_minimum_required(VERSION 2.8.12)
+endif()
 
 project(gcompris C CXX)
 
@@ -18,21 +22,28 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${my_cxx_flags}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${my_cxx_flags}")
 
 set(GCOMPRIS_MAJOR_VERSION 0)
-set(GCOMPRIS_MINOR_VERSION 34)
+set(GCOMPRIS_MINOR_VERSION 40)
 set(GCOMPRIS_PATCH_VERSION 0)
+
+# Set executable filename
+if(ANDROID)
+  set(GCOMPRIS_EXECUTABLE_NAME GCompris)
+  if("${ANDROID_ABI}" STREQUAL "x86")
+    # We always want x86 to be a release above to arm one because the play
+    # store want x86 to be pushed after arm.
+    MATH(EXPR GCOMPRIS_MINOR_VERSION "${GCOMPRIS_MINOR_VERSION}+1")
+  endif("${ANDROID_ABI}" STREQUAL "x86")
+elseif(SAILFISHOS)
+  set(GCOMPRIS_EXECUTABLE_NAME harbour-gcompris-qt)
+else()
+  set(GCOMPRIS_EXECUTABLE_NAME gcompris-qt)
+endif()
 
 set(GCOMPRIS_VERSION ${GCOMPRIS_MAJOR_VERSION}.${GCOMPRIS_MINOR_VERSION})
 
 # An integer value that represents the version of the application
 # Increase it at each release
 set(GCOMPRIS_VERSION_CODE ${GCOMPRIS_MINOR_VERSION})
-
-# Set executable filename
-if(ANDROID)
-  set(GCOMPRIS_EXECUTABLE_NAME GCompris)
-else()
-  set(GCOMPRIS_EXECUTABLE_NAME gcompris-qt)
-endif()
 
 # cmake modules setup
 find_package(ECM 1.4.0 QUIET NO_MODULE)
@@ -54,10 +65,22 @@ if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
             directory and create a build directory and call \"${CMAKE_COMMAND} <path to the sources>\".")
 endif("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
 
-set(QT_REQUIRED_VERSION 5.3.0)
+# Sailfish does not provide a recent Qt version
+if(SAILFISHOS)
+  set(QT_REQUIRED_VERSION 5.2.2)
+else()
+  set(QT_REQUIRED_VERSION 5.3.0)
+endif()
 
 find_package(Qt5 ${QT_REQUIRED_VERSION} REQUIRED
             Qml Quick Gui Multimedia Core Svg Xml XmlPatterns LinguistTools)
+
+find_package (KF5 QUIET COMPONENTS
+    DocTools
+)
+if(KF5_FOUND)
+    include(KDEInstallDirs)
+endif(KF5_FOUND)
 
 #get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})
@@ -67,6 +90,12 @@ find_package(Qt5 ${QT_REQUIRED_VERSION} REQUIRED
 option(WITH_ACTIVATION_CODE "Include the activation system" OFF)
 option(WITH_DEMO_ONLY "Include only demo activities" OFF)
 
+option(WITH_DOWNLOAD "Internal download" ON)
+if(WITH_DOWNLOAD)
+  set(ANDROID_INTERNET_PERMISSION "<uses-permission android:name=\"android.permission.INTERNET\" />")
+  set(ANDROID_ACCESS_NETWORK_STATE_PERMISSION "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />")
+endif(WITH_DOWNLOAD)
+
 # Set output directory
 if(CMAKE_HOST_APPLE)
   set(_bundle_bin gcompris-qt.app/Contents/MacOS)
@@ -74,7 +103,7 @@ if(CMAKE_HOST_APPLE)
 elseif(ANDROID)
   set(_data_dest_dir android/assets)
 else()
-  set(_data_dest_dir share/gcompris-qt)
+  set(_data_dest_dir share/${GCOMPRIS_EXECUTABLE_NAME})
 endif()
 if(ANDROID)
   # Android .so output
@@ -141,9 +170,9 @@ foreach(PoSource ${TRANSLATIONS_FILES})
     # Remove the obsolete translations and set po in the ts output file
     COMMAND msgattrib --no-obsolete  ${CMAKE_CURRENT_SOURCE_DIR}/${PoSource} -o ${OutTsFile}
     # Convert the po into ts
-    COMMAND lconvert -if po -of ts -i ${OutTsFile} -o ${OutTsFile}
+    COMMAND ${Qt5_DIR}/../../../bin/lconvert -if po -of ts -i ${OutTsFile} -o ${OutTsFile}
     # Convert the ts in qm removing non finished translations
-    COMMAND lrelease -compress -nounfinished ${OutTsFile} -qm ${GCOMPRIS_TRANSLATIONS_DIR}/${QmOutput}
+    COMMAND ${Qt5_DIR}/../../../bin/lrelease -compress -nounfinished ${OutTsFile} -qm ${GCOMPRIS_TRANSLATIONS_DIR}/${QmOutput}
     )
   list(APPEND QM_FILES ${QmOutput})
 endforeach()
@@ -164,7 +193,7 @@ endif()
 # If OFF, "make install" will not copy Qt files so only GCompris files will be packaged.
 # By default, it is true on Windows (as we deliver NSIS package), macOS (bundled), android (apk) and false on linux (to do make install)
 # If you want to create a STGZ package for linux (auto-extractible), override this variable by typing : cmake -DBUILD_STANDALONE=ON
-if(UNIX AND NOT ANDROID)
+if(UNIX AND NOT ANDROID AND NOT APPLE)
   option(BUILD_STANDALONE "Build a standalone package when typing 'make package'" OFF)
 else()
   option(BUILD_STANDALONE "Build a standalone package when typing 'make package'" ON)
@@ -172,5 +201,47 @@ endif()
 
 option(WITH_KIOSK_MODE "Set the kiosk mode by default" OFF)
 
+if(WIN32)
+  set(COMPRESSED_AUDIO "ac3" CACHE STRING "Compressed Audio format [ogg|aac|ac3]")
+elseif(APPLE)
+  set(COMPRESSED_AUDIO "aac" CACHE STRING "Compressed Audio format [ogg|aac|ac3]")
+else()
+  set(COMPRESSED_AUDIO "ogg" CACHE STRING "Compressed Audio format [ogg|aac|ac3]")
+endif()
+
+file(GLOB_RECURSE OGG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/ "*.ogg")
+
+foreach(OGG_FILE ${OGG_FILES})
+  # This should only replace the extension
+  string(REGEX REPLACE "ogg$" "aac" AAC_FILE ${OGG_FILE})
+  add_custom_command(
+    OUTPUT ${AAC_FILE}
+    # Put the good line depending on your installation
+    COMMAND avconv -v warning -i ${OGG_FILE} -acodec libvo_aacenc ${AAC_FILE}
+    #COMMAND ffmpeg -v warning -i ${OGG_FILE} -acodec aac -strict -2 ${AAC_FILE}
+    )
+  list(APPEND AAC_FILES ${AAC_FILE})
+endforeach()
+
+add_custom_target(
+  createAacFromOgg
+  DEPENDS ${AAC_FILES}
+  )
+
+set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${GCOMPRIS_VERSION})
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
 add_subdirectory(src)
+
+if(KF5_FOUND)
+    add_subdirectory(docs/docbook)
+endif(KF5_FOUND)
+
+if(SAILFISHOS)
+  # Need to be done at the end, after src
+  add_subdirectory(platforms/sailfishOS)
+endif()
 

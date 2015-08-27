@@ -1,6 +1,6 @@
 /* GCompris - VirtualKey.qml
  *
- * Copyright (C) 2014 Holger Kaelberer
+ * Copyright (C) 2014 Holger Kaelberer <holger.k@elberer.de>
  *
  * Authors:
  *   Holger Kaelberer <holger.k@elberer.de>
@@ -21,8 +21,8 @@
 import QtQuick 2.0
 import GCompris 1.0
 import QtGraphicalEffects 1.0
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.0
 
 Item {
     id: virtualKey
@@ -105,7 +105,7 @@ Item {
     
     DropShadow {
         anchors.fill: button
-        cached: true
+        cached: false
         horizontalOffset: 3
         verticalOffset: 3
         radius: 8.0

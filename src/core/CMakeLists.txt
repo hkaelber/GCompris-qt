@@ -10,6 +10,10 @@ if(WITH_KIOSK_MODE)
   add_definitions(-DWITH_KIOSK_MODE)
 endif()
 
+if(SAILFISHOS)
+  add_definitions(-DSAILFISHOS)
+endif()
+
 # Note: put .cpp files before .h files in the following or cmake messes up
 # moc generation -- WTF! 
 set(gcompris_SRCS
@@ -36,10 +40,10 @@ set(gcompris_SRCS
    config.h.in
 )
 
-if(WITH_ACTIVATION_CODE AND ANDROID)
-  list(APPEND gcompris_SRCS ApplicationSettingsAndroid.cpp)
+if(ANDROID)
+  list(APPEND gcompris_SRCS ApplicationAndroid.cpp)
 else()
-  list(APPEND gcompris_SRCS ApplicationSettingsDefault.cpp)
+  list(APPEND gcompris_SRCS ApplicationSettingsDefault.cpp ApplicationInfoDefault.cpp)
 endif()
 
 include_directories(
@@ -56,9 +60,8 @@ if(CMAKE_HOST_WIN32)
   )
 elseif(CMAKE_HOST_APPLE)
   set(gcompris_icon GCompris.icns)
-  set(gcompris_RES
-    ${GCOMPRIS_RESOURCES}/${gcompris_icon}
-  )
+  set(gcompris_RES ${GCOMPRIS_RESOURCES}/${gcompris_icon})
+  set_source_files_properties(${gcompris_RES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 endif()
 
 if(ANDROID)
@@ -69,9 +72,12 @@ else()
   qt5_use_modules(${GCOMPRIS_EXECUTABLE_NAME} Qml Quick Gui Multimedia Network XmlPatterns Svg Xml Core)
 endif()
 
-target_link_libraries(${GCOMPRIS_EXECUTABLE_NAME} ${QT_LIBRARIES})
+if(CMAKE_HOST_WIN32)
+  # Remove the console for windows
+  set_target_properties(${GCOMPRIS_EXECUTABLE_NAME} PROPERTIES LINK_FLAGS -Wl,-subsystem,windows)
+endif()
 
-GCOMPRIS_ADD_RCC(core *.qml *.js resource/*.* resource/bonus/* resource/sounds/* resource/fonts/* qmldir)
+GCOMPRIS_ADD_RCC(core *.qml *.js resource/*.${COMPRESSED_AUDIO} resource/*.gif resource/*.png resource/*.svg resource/bonus/* resource/sounds/* resource/fonts/* qmldir)
 
 # Installation
 # ============
@@ -84,12 +90,15 @@ install(TARGETS ${GCOMPRIS_EXECUTABLE_NAME}
 
 if(BUILD_STANDALONE)
   # Qt plugins to install
-  set(_qt_plugins Qt5::QJpegPlugin)
+  set(_qt_plugins "")
+  if(NOT SAILFISHOS)
+    list(APPEND _qt_plugins Qt5::QJpegPlugin)
+  endif()
   if(APPLE)
-    list(APPEND _qt_plugins Qt5::QTgaPlugin Qt5::QTiffPlugin Qt5::QCocoaIntegrationPlugin)
+    list(APPEND _qt_plugins Qt5::QTgaPlugin Qt5::QTiffPlugin)
   elseif(WIN32)
-    list(APPEND _qt_plugins Qt5::QWindowsIntegrationPlugin)
-  elseif(UNIX AND NOT ANDROID)
+    list(APPEND _qt_plugins Qt5::QWindowsIntegrationPlugin Qt5::QWindowsAudioPlugin Qt5::AudioCaptureServicePlugin Qt5::DSServicePlugin)
+  elseif(UNIX AND NOT ANDROID AND NOT SAILFISHOS)
     list(APPEND _qt_plugins Qt5::QXcbIntegrationPlugin)
   endif()
 
@@ -101,22 +110,30 @@ if(BUILD_STANDALONE)
   endif()
 
   set(_qt_plugins2 imageformats/${_lib_prefix}qsvg)
-  if(UNIX AND NOT ANDROID)
+  if(UNIX AND NOT ANDROID AND NOT APPLE AND NOT SAILFISHOS)
     list(APPEND _qt_plugins2 mediaservice/${_lib_prefix}gstaudiodecoder
       mediaservice/${_lib_prefix}gstcamerabin
       mediaservice/${_lib_prefix}gstmediacapture
       mediaservice/${_lib_prefix}gstmediaplayer)
+  elseif(APPLE)
+    list(APPEND _qt_plugins2 mediaservice/${_lib_prefix}qavfmediaplayer
+      mediaservice/${_lib_prefix}qtmedia_audioengine
+      mediaservice/${_lib_prefix}qavfcamera)
   endif()
 
   set(_qml_plugins
-    QtQuick/Controls/${_lib_prefix}qtquickcontrolsplugin
     QtQuick/Window.2/${_lib_prefix}windowplugin
     QtQuick/Particles.2/${_lib_prefix}particlesplugin
-    QtQuick/Layouts/${_lib_prefix}qquicklayoutsplugin
     QtQuick.2/${_lib_prefix}qtquick2plugin
     QtMultimedia/${_lib_prefix}declarative_multimedia)
 
-  if(NOT WIN32)
+  if(NOT SAILFISHOS)
+    list(APPEND _qml_plugins
+      QtQuick/Controls/${_lib_prefix}qtquickcontrolsplugin
+      QtQuick/Layouts/${_lib_prefix}qquicklayoutsplugin)
+  endif()
+
+  if(NOT WIN32 AND NOT SAILFISHOS)
     list(APPEND QtAudioEngine/${_lib_prefix}declarative_audioengine)
   endif()
 
@@ -129,14 +146,14 @@ if(BUILD_STANDALONE)
     set(_qt_qml_destdir ${_app}/Contents/qml)
     set(GCOMPRIS_BUNDLE "\${CMAKE_INSTALL_PREFIX}/${_app}")
     set_target_properties(gcompris-qt PROPERTIES
-      MACOSX_BUNDLE_INFO_STRING "${GCOMPRIS_VERSION}, Copyright 2000-2014 Bruno Coudoin and Others"
+      MACOSX_BUNDLE_INFO_STRING "GCompris, Educational game for children 2 to 10"
       MACOSX_BUNDLE_ICON_FILE "${gcompris_icon}"
       MACOSX_BUNDLE_GUI_IDENTIFIER "net.gcompris"
       MACOSX_BUNDLE_LONG_VERSION_STRING "${GCOMPRIS_MAJOR_VERSION}.${GCOMPRIS_MINOR_VERSION}.${GCOMPRIS_PATCH_VERSION}"
       MACOSX_BUNDLE_BUNDLE_NAME "gcompris-qt"
       MACOSX_BUNDLE_SHORT_VERSION_STRING "${GCOMPRIS_VERSION}"
       MACOSX_BUNDLE_BUNDLE_VERSION "${GCOMPRIS_VERSION}"
-      MACOSX_BUNDLE_COPYRIGHT "Copyright 2000-2014 Bruno Coudoin and Others.")
+      MACOSX_BUNDLE_COPYRIGHT "GPL License, Copyright 2000-2015 Bruno Coudoin and Others.")
     set_source_files_properties(${GCOMPRIS_RESOURCES}/${gcompris_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
   else()
     set(_qtconf_destdir bin)
@@ -183,7 +200,7 @@ if(BUILD_STANDALONE)
   install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/FixBundle.cmake)
 
   # install a startup script for linux bundle
-  if(UNIX)
+  if(UNIX AND NOT APPLE AND NOT SAILFISHOS)
     install(PROGRAMS ../../tools/gcompris-qt.sh DESTINATION bin)
   endif()
 endif()
@@ -215,6 +232,23 @@ if(APPLE)
   set(CPACK_DMG_BACKGROUND_IMAGE "${GCOMPRIS_RESOURCES}/dmg_background.png")
 elseif(WIN32)
   set(CPACK_GENERATOR "NSIS")
+elseif(SAILFISHOS)
+  configure_file(${PROJECT_SOURCE_DIR}/platforms/sailfishOS/harbour-gcompris-qt.spec.cmake ${CMAKE_BINARY_DIR}/harbour-gcompris-qt.spec @ONLY)
+
+  install(FILES ${PROJECT_SOURCE_DIR}/platforms/sailfishOS/harbour-gcompris-qt.desktop DESTINATION share/applications)
+  install(FILES ${PROJECT_SOURCE_DIR}/platforms/sailfishOS/harbour-gcompris-qt.png DESTINATION share/icons/hicolor/86x86/apps)
+  set(CPACK_RPM_PACKAGE_SUMMARY "gcompris-qt")
+  # BUILD_ARCH is either armv7hl or i486
+  set(CPACK_RPM_PACKAGE_ARCHITECTURE "${BUILD_ARCH}")
+  set(CPACK_RPM_PACKAGE_NAME "${GCOMPRIS_EXECUTABLE_NAME}")
+  set(CPACK_RPM_PACKAGE_VERSION "${GCOMPRIS_VERSION}")
+  set(CPACK_RPM_PACKAGE_LICENSED "GPLv3")
+  set(CPACK_RPM_PACKAGE_URL "https://www.gcompris.org")
+  set(CPACK_RPM_PACKAGE_DESCRIPTION "GCompris is a high quality educational software suite comprising of numerous activities for children aged 2 to 10.")
+  set(CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_BINARY_DIR}/harbour-gcompris-qt.spec")
+  set(CMAKE_INSTALL_PREFIX "/usr")
+  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+  set(CPACK_GENERATOR "RPM")
 else()
   set(CPACK_GENERATOR "STGZ")
 endif()
