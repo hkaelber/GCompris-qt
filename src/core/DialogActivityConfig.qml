@@ -76,6 +76,8 @@ Rectangle {
      */
     property var dataToSave
 
+    property var dataValidationFunc: null
+
     /// @cond INTERNAL_DOCS
 
     property bool isDialog: true
@@ -209,6 +211,12 @@ Rectangle {
     // The cancel button
     GCButtonCancel {
         onClose: {
+            if (dialogActivityContent.dataValidationFunc && !
+                    dialogActivityContent.dataValidationFunc()) {
+                console.log("Configuration data is invalid, not saving!");
+                return;
+            }
+
             saveData()
             ApplicationSettings.saveActivityConfiguration(activityName, dataToSave)
             parent.close()
