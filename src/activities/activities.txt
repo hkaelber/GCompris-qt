@@ -48,10 +48,10 @@ guessnumber
 hanoi
 hanoi_real
 hexagon
-imageid
 imagename
 instruments
 intro_gravity
+lang
 leftright
 lightsoff
 louis-braille
@@ -60,6 +60,7 @@ magic-hat-plus
 maze
 mazeinvisible
 mazerelative
+melody
 memory
 memory-enumerate
 memory-math-add
@@ -88,12 +89,14 @@ money_back_cents
 money_cents
 mosaic
 numbers-odd-even
+paintings
 penalty
 planegame
 readingh
 readingv
 redraw
 redraw_symmetrical
+renewable_energy
 reversecount
 scalesboard
 scalesboard_weight

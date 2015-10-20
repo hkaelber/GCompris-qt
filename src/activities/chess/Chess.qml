@@ -61,17 +61,21 @@ ActivityBase {
         QtObject {
             id: items
             property Item main: activity.main
+            property GCAudio audioEffects: activity.audioEffects
             property alias background: background
             property alias bar: bar
             property alias bonus: bonus
-            property int cellSize: Math.min(background.width / (8 + 1),
+            property int cellSize: Math.min(background.width / (8 + 2),
                                             background.height / (8 + 3))
             property variant fen: activity.fen
             property bool twoPlayer: activity.twoPlayers
             property bool difficultyByLevel: activity.difficultyByLevel
             property var positions
             property var pieces: pieces
+            property var squares: squares
             property var history
+            property var redo_stack
+            property alias redoTimer: redoTimer
             property int from
             property bool blackTurn
             property bool gameOver
@@ -88,6 +92,7 @@ ActivityBase {
                 top: parent.top
                 topMargin: items.cellSize / 2
                 leftMargin: 10 * ApplicationInfo.ratio
+                rightMargin: 10 * ApplicationInfo.ratio
             }
             columns: 3
             rows: 1
@@ -99,12 +104,19 @@ ActivityBase {
             Column {
                 id: controls
                 spacing: 10
-                width: undo.width + (background.width * 0.9 - undo.width - chessboard.width) / 2
+                anchors {
+                    leftMargin: 10
+                    rightMargin: 10
+                }
+                width: Math.max(undo.width * 1.2,
+                                Math.min(
+                                    (background.width * 0.9 - undo.width - chessboard.width),
+                                    (background.width - chessboard.width) / 2))
 
                 GCText {
                     color: "black"
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: undo.width * 1.2
+                    width: parent.width
                     fontSize: smallSize
                     text: items.message
                     horizontalAlignment: Text.AlignHCenter
@@ -119,6 +131,22 @@ ActivityBase {
                     style: GCButtonStyle {}
                     onClicked: Activity.undo()
                     opacity: items.history.length > 0 ? 1 : 0
+                    Behavior on opacity {
+                        PropertyAnimation {
+                            easing.type: Easing.InQuad
+                            duration: 200
+                        }
+                    }
+                }
+
+                Button {
+                    id: redo
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    height: 30 * ApplicationInfo.ratio
+                    text: qsTr("Redo");
+                    style: GCButtonStyle {}
+                    onClicked: Activity.redo()
+                    opacity: items.redo_stack.length > 0 ? 1 : 0
                     Behavior on opacity {
                         PropertyAnimation {
                             easing.type: Easing.InQuad
@@ -164,11 +192,48 @@ ActivityBase {
                 Behavior on rotation { PropertyAnimation { easing.type: Easing.InOutQuad; duration: 1400 } }
 
                 function swap() {
+                    items.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/flip.wav')
                     if(chessboard.rotation == 180)
                         chessboard.rotation = 0
                     else
                         chessboard.rotation = 180
                 }
+            }
+        }
+
+        Repeater {
+            id: squares
+            model: items.positions
+            delegate: square
+            parent: chessboard
+
+            DropArea {
+                id: square
+                x: items.cellSize * (7 - pos % 8) + spacing / 2
+                y: items.cellSize * Math.floor(pos / 8) + spacing / 2
+                width: items.cellSize - spacing
+                height: items.cellSize - spacing
+                z: 1
+                keys: acceptMove ? ['acceptMe'] : ['sorryNo']
+                property bool acceptMove : false
+                property int pos: modelData.pos
+                property int spacing: 6 * ApplicationInfo.ratio
+                Rectangle {
+                    id: possibleMove
+                    anchors.fill: parent
+                    color: parent.containsDrag ? 'green' : 'transparent'
+                    border.width: parent.acceptMove ? 5 : 0
+                    border.color: "black"
+                    z: 1
+                }
+            }
+
+            function getSquareAt(pos) {
+                for(var i=0; i < squares.count; i++) {
+                    if(squares.itemAt(i).pos === pos)
+                        return squares.itemAt(i)
+                }
+                return(undefined)
             }
         }
 
@@ -187,33 +252,58 @@ ActivityBase {
                 img: modelData.img
                 x: items.cellSize * (7 - pos % 8) + spacing / 2
                 y: items.cellSize * Math.floor(pos / 8) + spacing / 2
+                z: 1
                 pos: modelData.pos
                 newPos: modelData.pos
                 rotation: - chessboard.rotation
 
                 property int spacing: 6 * ApplicationInfo.ratio
 
+                Drag.active: dragArea.drag.active
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+
                 MouseArea {
+                    id: dragArea
                     anchors.fill: parent
                     enabled: !items.gameOver
-                    onClicked: {
+                    drag.target: parent
+                    onPressed: {
+                        piece.Drag.keys = ['acceptMe']
+                        parent.z = 100
                         if(parent.isWhite == 1 && !items.blackTurn ||
                                 parent.isWhite == 0 && items.blackTurn) {
                             items.from = parent.newPos
                             Activity.showPossibleMoves(items.from)
-                        } else if(items.from != -1 && parent.acceptMove) {
+                        } else if(items.from != -1 && squares.getSquareAt(parent.newPos)['acceptMove']) {
                             Activity.moveTo(items.from, parent.newPos)
+                        }
+                    }
+                    onReleased: {
+                        if(piece.Drag.target) {
+                            if(items.from != -1) {
+                                Activity.moveTo(items.from, piece.Drag.target.pos)
+                            }
+                        } else {
+                            var pos = parent.pos
+                            // Force recalc of the old x,y position
+                            parent.pos = 0
+                            pieces.getPieceAt(pos).move(pos)
                         }
                     }
                 }
             }
 
             function moveTo(from, to) {
+                items.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/scroll.wav')
                 var fromPiece = getPieceAt(from)
                 var toPiece = getPieceAt(to)
+                if(toPiece.img != '')
+                    items.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/smudge.wav')
+                else
+                    items.audioEffects.play('qrc:/gcompris/src/core/resource/sounds/scroll.wav')
                 toPiece.hide(from)
-                fromPiece.pos = to
-                fromPiece.newPos = to
+                fromPiece.move(to)
             }
 
             function promotion(to) {
@@ -235,6 +325,20 @@ ActivityBase {
             repeat: false
             interval: 400
             onTriggered: Activity.randomMove()
+        }
+
+        // Use to redo the computer move after the user move
+        Timer {
+            id: redoTimer
+            repeat: false
+            interval: 400
+            onTriggered: Activity.moveByEngine(move)
+            property var move
+
+            function moveByEngine(engineMove) {
+                move = engineMove
+                redoTimer.start()
+            }
         }
 
         DialogHelp {
