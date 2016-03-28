@@ -93,6 +93,7 @@ function showMessageDialog(parent, informativeText,
                            button1Text, button1Callback,
                            button2Text, button2Callback,
                            closeCallback) {
+    //console.debug("Core.showMessageDialog: parent=" + parent + " backtrace="); console.trace();
     var qmlStr =
           'import QtQuick 2.0\n'
         + 'GCDialog {\n'
@@ -211,7 +212,8 @@ function quit(parent)
     if (aboutToQuit)  // don't execute concurrently
         return;
     aboutToQuit = true;
-
+    GCompris.ApplicationSettings.previousHeight = parent.height;
+    GCompris.ApplicationSettings.previousWidth = parent.width;
     GCompris.ApplicationInfo.abandonAudioFocus()
 
     if (GCompris.DownloadManager.downloadIsRunning()) {

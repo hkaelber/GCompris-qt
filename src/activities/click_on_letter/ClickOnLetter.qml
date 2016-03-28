@@ -1,7 +1,7 @@
 /* GCompris - ClickOnLetter.qml
  *
  * Copyright (C) 2014 Holger Kaelberer  <holger.k@elberer.de>
- * 
+ *
  * Authors:
  *   Pascal Georges <pascal.georges1@free.fr> (GTK+ version)
  *   Bruno Coudoin <bruno.coudoin@gcompris.net> (GTK+ Mostly full rewrite)
@@ -31,7 +31,7 @@ import "qrc:/gcompris/src/core/core.js" as Core
 ActivityBase {
     id: activity
     focus: true
-    
+
     /* mode of the activity, either "lowercase" (click_on_letter)
      * or "uppercase" (click_on_letter_up): */
     property string mode: "lowercase"
@@ -45,15 +45,19 @@ ActivityBase {
         fillMode: Image.PreserveAspectCrop
         focus: true
 
+        // system locale by default
+        property string locale: "system"
+
         signal start
         signal stop
         signal voiceError
-        
+
         Component.onCompleted: {
+            dialogActivityConfig.getInitialConfiguration()
             activity.start.connect(start)
             activity.stop.connect(stop)
         }
-        
+
         QtObject {
             id: items
             property Item main: activity.main
@@ -65,8 +69,9 @@ ActivityBase {
             property alias repeatItem: repeatItem
             property alias score: score
             property alias bonus: bonus
+            property alias locale: background.locale
         }
-        
+
         onVoiceError: {
             questionItem.visible = true
             repeatItem.visible = false
@@ -76,8 +81,80 @@ ActivityBase {
             activity.audioVoices.error.connect(voiceError)
             Activity.start(items, mode);
         }
-        
+
         onStop: Activity.stop()
+
+        DialogActivityConfig {
+            id: dialogActivityConfig
+            currentActivity: activity
+            content: Component {
+                Item {
+                    property alias localeBox: localeBox
+                    height: column.height
+
+                    property alias availableLangs: langs.languages
+                    LanguageList {
+                        id: langs
+                    }
+
+                    Column {
+                        id: column
+                        spacing: 10
+                        width: parent.width
+
+                        Flow {
+                            spacing: 5
+                            width: dialogActivityConfig.width
+                            GCComboBox {
+                                id: localeBox
+                                model: langs.languages
+                                background: dialogActivityConfig
+                                label: qsTr("Select your locale")
+                            }
+                        }
+                    }
+                }
+            }
+
+            onClose: home()
+            onLoadData: {
+                if(dataToSave && dataToSave["locale"]) {
+                    background.locale = dataToSave["locale"];
+                }
+            }
+            onSaveData: {
+                var oldLocale = background.locale;
+                var newLocale =
+                dialogActivityConfig.configItem.availableLangs[dialogActivityConfig.loader.item.localeBox.currentIndex].locale;
+                // Remove .UTF-8
+                if(newLocale.indexOf('.') != -1) {
+                    newLocale = newLocale.substring(0, newLocale.indexOf('.'))
+                }
+                dataToSave = {"locale": newLocale }
+
+                background.locale = newLocale;
+
+                // Restart the activity with new information
+                if(oldLocale !== newLocale) {
+                    background.stop();
+                    background.start();
+                }
+            }
+
+            function setDefaultValues() {
+                var localeUtf8 = background.locale;
+                if(background.locale != "system") {
+                    localeUtf8 += ".UTF-8";
+                }
+
+                for(var i = 0 ; i < dialogActivityConfig.configItem.availableLangs.length ; i ++) {
+                    if(dialogActivityConfig.configItem.availableLangs[i].locale === localeUtf8) {
+                        dialogActivityConfig.loader.item.localeBox.currentIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
 
         DialogHelp {
             id: dialogHelpLeftRight
@@ -86,18 +163,22 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | level }
+            content: BarEnumContent { value: help | home | level | config }
             onHelpClicked: {
                 displayDialog(dialogHelpLeftRight)
             }
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: home()
+            onConfigClicked: {
+                dialogActivityConfig.active = true
+                dialogActivityConfig.setDefaultValues()
+                displayDialog(dialogActivityConfig)
+            }
         }
 
         Score {
             id: score
-            
             anchors.top: parent.top
             anchors.topMargin: 10 * ApplicationInfo.ratio
             anchors.left: parent.left
@@ -110,7 +191,7 @@ ActivityBase {
             id: bonus
             Component.onCompleted: win.connect(Activity.nextSubLevel)
         }
-        
+
         BarButton {
             id: repeatItem
             source: "qrc:/gcompris/src/core/resource/bar_repeat.svg";
@@ -145,13 +226,12 @@ ActivityBase {
             width: questionText.width * 2
             height: questionText.height * 1.3
             visible: false
-            
+
             property alias text: questionText.text
-            
+
             Rectangle {
                 id: questionRect
                 anchors.fill: parent
-                
                 border.color: "#FFFFFFFF"
                 border.width: 2
                 color: "#000065"
@@ -164,7 +244,7 @@ ActivityBase {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: 1.0
-                z:11            
+                z:11
                 text: ""
                 fontSize: 44
                 font.bold: true
@@ -183,13 +263,12 @@ ActivityBase {
                 color: "#422a2a2a"
                 source: questionText
             }
+        }
 
-        }
-        
         ListModel {
-            id: trainModel     
+            id: trainModel
         }
-        
+
         property int itemWidth: Math.min(parent.width / 7.5, parent.height / 5)
         property int itemHeight: itemWidth * 1.11
 
@@ -230,18 +309,16 @@ ActivityBase {
             interactive: false
             verticalLayoutDirection: GridView.BottomToTop
             layoutDirection: Qt.LeftToRight
-            
+
             model: trainModel
             delegate: Carriage {
-                sourceSize.width: background.itemWidth
                 width: background.itemWidth
                 nbCarriage: (parent.width - engine.width) / background.itemWidth
             }
         }
-        
+
         JsonParser {
             id: parser
-
             onError: console.error("Click_on_letter: Error parsing JSON: " + msg);
         }
 

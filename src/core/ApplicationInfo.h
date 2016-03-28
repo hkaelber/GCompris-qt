@@ -1,6 +1,6 @@
 /* GCompris - ApplicationSettingsDefault.cpp
  *
- * Copyright (C) 2014 Bruno Coudoin <bruno.coudoin@gcompris.net>
+ * Copyright (C) 2014-2015 Bruno Coudoin <bruno.coudoin@gcompris.net>
  *
  * Authors:
  *   Bruno Coudoin <bruno.coudoin@gcompris.net>
@@ -27,10 +27,10 @@
 #include <config.h>
 #include "ApplicationSettings.h"
 
-#include <qqml.h>
-#include <QtCore/QObject>
-#include <QtQml/QQmlPropertyMap>
+#include <QObject>
+#include <QQmlPropertyMap>
 #include <QQmlEngine>
+#include <QtGlobal>
 
 class QQuickWindow;
 
@@ -114,6 +114,11 @@ class ApplicationInfo : public QObject
      * GCompris version string (compile time).
      */
 	Q_PROPERTY(QString GCVersion READ GCVersion CONSTANT)
+
+    /**
+     * GCompris version code (compile time).
+     */
+	Q_PROPERTY(int GCVersionCode READ GCVersionCode CONSTANT)
 
     /**
      * Qt version string (runtime).
@@ -202,11 +207,46 @@ public:
     Q_INVOKABLE bool requestAudioFocus() const;
 
     /**
-    * Abandon the Audio Focus.
-    *
-    * On systems that support it, it will let an audio player start again.
-    */
+     * Abandon the Audio Focus.
+     *
+     * On systems that support it, it will let an audio player start again.
+     */
     Q_INVOKABLE void abandonAudioFocus() const;
+
+    /**
+     * Return the platform specific path for storing data shared between apps
+     *
+     * On Android: /storage/emulated/0/GCompris (>= Android 4.2),
+     *             /storage/sdcard0/GCompris (< Android 4.2)
+     * On Linux: $HOME/local/share/GCompris
+     */
+    Q_INVOKABLE QString getSharedWritablePath() const;
+
+    /**
+     * Compare two strings respecting locale specific sort order.
+     *
+     * @param a         First string to compare
+     * @param b         Second string to compare
+     * @param locale    Locale to respect for comparison in any of the forms
+     *                  used in GCompris xx[_XX][.codeset]. Defaults to currently
+     *                  set language from global configuration.
+     * @returns         -1, 0 or 1 if a is less than, equal to or greater than b
+     */
+    Q_INVOKABLE int localeCompare(const QString& a, const QString& b, const QString& locale = "") const;
+
+    /**
+     * Sort a list of strings respecting locale specific sort order.
+     *
+     * This function is supposed to be called from QML/JS. As there are still
+     * problems marshalling QStringList from C++ to QML/JS we use QVariantList
+     * both for argument and return value.
+     *
+     * @param list      List of strings to be sorted.
+     * @param locale    Locale to respect for sorting in any of the forms
+     *                  used in GCompris xx[_XX][.codeset].
+     * @returns         List sorted by the sort order of the passed locale.
+     */
+    Q_INVOKABLE QVariantList localeSort(QVariantList list, const QString& locale = "") const;
 
     /// @cond INTERNAL_DOCS
 
@@ -227,16 +267,77 @@ public:
 	bool isPortraitMode() const { return m_isPortraitMode; }
 	void setIsPortraitMode(const bool newMode);
     bool isMobile() const { return m_isMobile; }
-    bool hasShader() const { return false; }
+    bool hasShader() const {
+#if defined(Q_OS_ANDROID)
+        return false;
+#else
+        return true;
+#endif
+    }
 	qreal ratio() const { return m_ratio; }
     qreal fontRatio() const { return m_fontRatio; }
     QString localeShort() const {
         return localeShort( ApplicationSettings::getInstance()->locale() );
     }
     static QString GCVersion() { return VERSION; }
+    static int GCVersionCode() { return VERSION_CODE; }
     static QString QTVersion() { return qVersion(); }
     static QString CompressedAudio() { return COMPRESSED_AUDIO; }
     static bool isDownloadAllowed() { return QString(DOWNLOAD_ALLOWED) == "ON"; }
+
+    /**
+     * Returns the native screen orientation.
+     *
+     * Wraps QScreen::nativeOrientation: The native orientation of the screen
+     * is the orientation where the logo sticker of the device appears the
+     * right way up, or Qt::PrimaryOrientation if the platform does not support
+     * this functionality.
+     *
+     * The native orientation is a property of the hardware, and does not change
+     */
+    Q_INVOKABLE Qt::ScreenOrientation getNativeOrientation();
+
+    /**
+     * Change the desired orientation of the application.
+     *
+     * Android specific function, cf. http://developer.android.com/reference/android/app/Activity.html#setRequestedOrientation(int)
+     *
+     * @param orientation Desired orientation of the application. For possible
+     *                    values cf. http://developer.android.com/reference/android/content/pm/ActivityInfo.html#screenOrientation .
+     *                    Some useful values:
+     *                    - -1: SCREEN_ORIENTATION_UNSPECIFIED
+     *                    -  0: SCREEN_ORIENTATION_LANDSCAPE: forces landscape
+     *                    -  1: SCREEN_ORIENTATION_PORTRAIT: forces portrait
+     *                    -  5: SCREEN_ORIENTATION_NOSENSOR: forces native
+     *                          orientation mode on each device (portrait on
+     *                          smartphones, landscape on tablet)
+     *                    - 14: SCREEN_ORIENTATION_LOCKED: lock current orientation
+     */
+    Q_INVOKABLE void setRequestedOrientation(int orientation);
+
+    /**
+     * Query the desired orientation of the application.
+     *
+     * @sa setRequestedOrientation
+     */
+    Q_INVOKABLE int getRequestedOrientation();
+
+    /**
+     * Checks whether a sensor type from the QtSensor module is supported on
+     * the current platform.
+     *
+     * @param sensorType  Classname of a sensor from the QtSensor module
+     *                    to be checked (e.g. "QTiltSensor").
+     */
+    Q_INVOKABLE bool sensorIsSupported(const QString& sensorType);
+
+    /**
+     * Toggles activation of screensaver on android
+     *
+     * @param value Whether screensaver should be disabled (true) or
+     *              enabled (false).
+     */
+    Q_INVOKABLE void setKeepScreenOn(bool value);
 
     /// @endcond
 

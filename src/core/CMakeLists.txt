@@ -2,10 +2,6 @@ include(qt_helper)
 
 configure_file(config.h.in "${CMAKE_CURRENT_BINARY_DIR}/config.h" @ONLY)
 
-if(WITH_ACTIVATION_CODE)
-  add_definitions(-DWITH_ACTIVATION_CODE)
-endif()
-
 if(WITH_KIOSK_MODE)
   add_definitions(-DWITH_KIOSK_MODE)
 endif()
@@ -66,10 +62,10 @@ endif()
 
 if(ANDROID)
   add_library(${GCOMPRIS_EXECUTABLE_NAME} SHARED ${gcompris_SRCS} ${gcompris_MOC})
-  qt5_use_modules(${GCOMPRIS_EXECUTABLE_NAME} Qml Quick Gui Multimedia Core Svg Xml XmlPatterns AndroidExtras)
+  qt5_use_modules(${GCOMPRIS_EXECUTABLE_NAME} Qml Quick Gui Multimedia Core Svg Xml XmlPatterns Sensors AndroidExtras)
 else()
   add_executable(${GCOMPRIS_EXECUTABLE_NAME} MACOSX_BUNDLE ${gcompris_SRCS} ${gcompris_MOC} ${gcompris_RES})
-  qt5_use_modules(${GCOMPRIS_EXECUTABLE_NAME} Qml Quick Gui Multimedia Network XmlPatterns Svg Xml Core)
+  qt5_use_modules(${GCOMPRIS_EXECUTABLE_NAME} Qml Quick Gui Multimedia Network XmlPatterns Svg Xml Sensors Core)
 endif()
 
 if(CMAKE_HOST_WIN32)
@@ -102,6 +98,8 @@ if(BUILD_STANDALONE)
     list(APPEND _qt_plugins Qt5::QXcbIntegrationPlugin)
   endif()
 
+  list(APPEND _qt_plugins Qt5::genericSensorPlugin Qt5::QtSensorGesturePlugin Qt5::QShakeSensorGesturePlugin)
+
   # Qml plugins to install
   if(WIN32)
     set(_lib_prefix "")
@@ -120,13 +118,14 @@ if(BUILD_STANDALONE)
       mediaservice/${_lib_prefix}qtmedia_audioengine
       mediaservice/${_lib_prefix}qavfcamera)
   endif()
-
+  
   set(_qml_plugins
     QtQuick/Window.2/${_lib_prefix}windowplugin
     QtQuick/Particles.2/${_lib_prefix}particlesplugin
     QtQuick.2/${_lib_prefix}qtquick2plugin
-    QtMultimedia/${_lib_prefix}declarative_multimedia)
-
+    QtMultimedia/${_lib_prefix}declarative_multimedia
+    QtSensors/${_lib_prefix}declarative_sensors)
+  
   if(NOT SAILFISHOS)
     list(APPEND _qml_plugins
       QtQuick/Controls/${_lib_prefix}qtquickcontrolsplugin
@@ -134,7 +133,9 @@ if(BUILD_STANDALONE)
   endif()
 
   if(NOT WIN32 AND NOT SAILFISHOS)
-    list(APPEND QtAudioEngine/${_lib_prefix}declarative_audioengine)
+    list(APPEND _qml_plugins
+      QtAudioEngine/${_lib_prefix}declarative_audioengine
+      Box2D.2.0/${_lib_prefix}Box2D)
   endif()
 
   set(GCOMPRIS_OTHER_LIBS)
@@ -189,6 +190,17 @@ if(BUILD_STANDALONE)
   set(_qml_subdir QtGraphicalEffects)
   getQtQmlPath(_qt_qml_path)
   install(DIRECTORY ${_qt_qml_path}/QtGraphicalEffects DESTINATION ${_qt_qml_destdir})
+
+  # Fix for Linux 'make package' that fails to link with libicu
+  if(UNIX AND NOT APPLE AND NOT SAILFISHOS AND NOT ANDROID)
+    add_library( libicudata SHARED IMPORTED )
+    set_target_properties( libicudata PROPERTIES IMPORTED_LOCATION ${Qt5_DIR}/../../libicudata.so.53 )
+    add_library( libicui18n SHARED IMPORTED )
+    set_target_properties( libicui18n PROPERTIES IMPORTED_LOCATION ${Qt5_DIR}/../../libicui18n.so.53 )
+    add_library( libicuuc SHARED IMPORTED )
+    set_target_properties( libicuuc PROPERTIES IMPORTED_LOCATION ${Qt5_DIR}/../../libicuuc.so.53 )
+    TARGET_LINK_LIBRARIES(${GCOMPRIS_EXECUTABLE_NAME} libicudata libicui18n libicuuc)
+  endif()
 endif(BUILD_STANDALONE)
 
 # Hack: do not fixup Qt and Qml plugins on Windows because fixup_bundle takes ages (cmake bug ?) -> Johnny : we need this even if it takes time because some required dependencies are pulled here
@@ -217,6 +229,8 @@ set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYING")
 set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README")
 
 if(WIN32)
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "${GCOMPRIS_EXECUTABLE_NAME}")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${GCOMPRIS_EXECUTABLE_NAME}")
   set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/installer\\\\gcompris-header.bmp")
   set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/installer\\\\GCompris-install.ico")
   set(CPACK_NSIS_MUI_UNIICON "${PROJECT_SOURCE_DIR}/installer\\\\GCompris-uninstall.ico")

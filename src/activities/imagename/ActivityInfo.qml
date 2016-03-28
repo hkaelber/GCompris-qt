@@ -22,7 +22,7 @@ import GCompris 1.0
 
 ActivityInfo {
   name: "imagename/Imagename.qml"
-  difficulty: 1
+  difficulty: 3
   icon: "imagename/imagename.svg"
   author: "Pulkit Gupta &lt;pulkitgenius@gmail.com&gt;"
   demo: true
@@ -33,4 +33,5 @@ ActivityInfo {
   prerequisite: qsTr("Reading")
   manual: qsTr("Drag each image from the (vertical) box on the left to its (corresponding) name on the right. Click the OK button to check your answer.")
   section: "reading"
+  createdInVersion: 4000
 }

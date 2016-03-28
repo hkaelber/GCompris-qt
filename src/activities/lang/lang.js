@@ -50,7 +50,8 @@ function start() {
     // register the voices for the locale
     GCompris.DownloadManager.updateResource(GCompris.DownloadManager.getVoicesResourceForLocale(locale))
 
-    dataset = Lang.load(items.parser, baseUrl, "words.json",
+    dataset = Lang.load(items.parser, baseUrl,
+                        GCompris.ApplicationSettings.wordset ? "words.json" : "words_sample.json",
                         "content-"+ locale +".json")
 
     // If dataset is empty, we try to load from short locale
@@ -64,7 +65,8 @@ function start() {
         } else {
             localeShort = locale;
         }
-        dataset = Lang.load(items.parser, baseUrl, "words.json",
+        dataset = Lang.load(items.parser, baseUrl,
+                            GCompris.ApplicationSettings.wordset ? "words.json" : "words_sample.json",
                             "content-"+localeShort+ ".json")
     }
 
@@ -72,7 +74,9 @@ function start() {
     if(!dataset) {
         // English fallback
         items.background.englishFallback = true
-        dataset = Lang.load(items.parser, baseUrl, "words.json", "content-en.json")
+        dataset = Lang.load(items.parser, baseUrl,
+                            GCompris.ApplicationSettings.wordset ? "words.json" : "words_sample.json",
+                            "content-en.json")
     } else {
         items.background.englishFallback = false
     }
@@ -157,7 +161,8 @@ function initLevel(lessonModelIndex_) {
                 items.wordList[i-1].concat(flatWordList.splice(0, maxWordInLesson - lastLength))
     }
 
-    items.imageReview.category = lessons[lessonIndex].name
+    items.imageReview.category = items.categoriesTranslations[lessons[lessonIndex].name] //lessons[lessonIndex].name
+
     // Calc the sublevel to start with
     var subLevel = Math.floor(items.menuModel.get(lessonModelIndex)['progress'] / maxWordInLesson)
     if(subLevel >= items.wordList.length)

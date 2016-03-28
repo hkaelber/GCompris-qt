@@ -44,8 +44,8 @@ import "qrc:/gcompris/src/core/core.js" as Core
 Window {
     id: main
     // Start in window mode at full screen size
-    width: Screen.width
-    height: Screen.height
+    width: ApplicationSettings.previousWidth
+    height: ApplicationSettings.previousHeight
     minimumWidth: 400 * ApplicationInfo.ratio
     minimumHeight: 400 * ApplicationInfo.ratio
     title: "GCompris"
@@ -61,7 +61,7 @@ Window {
         }
     }
 
-    onClosing: Core.quit()
+    onClosing: Core.quit(main)
 
     GCAudio {
         id: audioVoices
@@ -107,11 +107,44 @@ Window {
         audioVoices.append(ApplicationInfo.getAudioFilePath("voices-$CA/$LOCALE/intro/" + name + ".$CA"))
     }
 
+    function checkWordset() {
+        if(ApplicationSettings.wordset == '')
+            return
+
+        // check for words.rcc:
+        if (DownloadManager.isDataRegistered("words")) {
+            // words.rcc is already registered -> nothing to do
+        } else if(DownloadManager.haveLocalResource(ApplicationSettings.wordset)) {
+            // words.rcc is there -> register old file first
+            // then try to update in the background
+            DownloadManager.updateResource(ApplicationSettings.wordset);
+        } else {
+            // words.rcc has not been downloaded yet -> ask for download
+            Core.showMessageDialog(
+                        main,
+                        qsTr("The images for several activities are not yet installed.")
+                        + qsTr("Do you want to download them now?"),
+                        qsTr("Yes"),
+                        function() {
+                            if (DownloadManager.downloadResource(ApplicationSettings.wordset))
+                                var downloadDialog = Core.showDownloadDialog(pageView.currentItem, {});
+                        },
+                        qsTr("No"), null,
+                        function() { pageView.currentItem.focus = true }
+            );
+        }
+    }
+    ChangeLog {
+       id: changelog
+    }
+
     Component.onCompleted: {
         console.log("enter main.qml (run #" + ApplicationSettings.exeCount
-                + ", ratio=" + ApplicationInfo.ratio
-                + ", fontRatio=" + ApplicationInfo.fontRatio
-                + ", dpi=" + Math.round(Screen.pixelDensity*25.4) + ")");
+                    + ", ratio=" + ApplicationInfo.ratio
+                    + ", fontRatio=" + ApplicationInfo.fontRatio
+                    + ", dpi=" + Math.round(Screen.pixelDensity*25.4)
+                    + ", sharedWritablePath=" + ApplicationInfo.getSharedWritablePath()
+                    + ")");
         if (ApplicationSettings.exeCount == 1 && !ApplicationSettings.isKioskMode) {
             // first run
             var dialog;
@@ -135,9 +168,33 @@ Window {
                                 var downloadDialog = Core.showDownloadDialog(pageView.currentItem, {});
                         },
                         qsTr("No"), null,
-                        function() { pageView.currentItem.focus = true }
+                        function() {
+                            pageView.currentItem.focus = true
+                            checkWordset()
+                        }
             );
         }
+        else {
+            checkWordset()
+
+            if(changelog.isNewerVersion(ApplicationSettings.lastGCVersionRan, ApplicationInfo.GCVersionCode)) {
+                // display log between ApplicationSettings.lastGCVersionRan and ApplicationInfo.GCVersionCode
+                var dialog;
+                dialog = Core.showMessageDialog(
+                main,
+                qsTr("GCompris has been updated! Here are the new changes:<br/>") + changelog.getLogBetween(ApplicationSettings.lastGCVersionRan, ApplicationInfo.GCVersionCode),
+                "", null,
+                "", null,
+                function() { pageView.currentItem.focus = true }
+                );
+                // Store new version
+                ApplicationSettings.lastGCVersionRan = ApplicationInfo.GCVersionCode;
+            }
+        }
+    }
+
+    Loading {
+        id: loading
     }
 
     StackView {
@@ -147,7 +204,8 @@ Window {
             "item": "qrc:/gcompris/src/activities/" + ActivityInfoTree.rootMenu.name,
             "properties": {
                 'audioVoices': audioVoices,
-                'audioEffects': audioEffects
+                'audioEffects': audioEffects,
+                'loading': loading
             }
         }
 
@@ -158,12 +216,13 @@ Window {
             function getTransition(properties)
             {
                 audioVoices.clearQueue()
-                if(!properties.exitItem.isDialog) {
-                    if(!properties.enterItem.isDialog) {
-                        playIntroVoice(properties.enterItem.activityInfo.name)
-                    }
-                    properties.enterItem.start()
-                }
+                if(!properties.exitItem.isDialog &&        // if coming from menu and
+                        !properties.enterItem.isDialog)    // going into an activity then
+                    playIntroVoice(properties.enterItem.activityInfo.name);    // play intro
+
+                if (!properties.exitItem.isDialog ||       // if coming from menu or
+                        properties.enterItem.alwaysStart)  // start signal enforced (for special case like transition from config-dialog to editor)
+                    properties.enterItem.start();
 
                 if(properties.name === "pushTransition") {
                     if(properties.enterItem.isDialog) {

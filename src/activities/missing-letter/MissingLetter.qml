@@ -25,8 +25,7 @@ import GCompris 1.0
 import "../../core"
 import "missing-letter.js" as Activity
 
-ActivityBase
-{
+ActivityBase {
     id: activity
 
     onStart: focus = true
@@ -39,12 +38,15 @@ ActivityBase
             Activity.focusTextInput()
         }
     }
-    pageComponent: Image
-    {
+    pageComponent: Image {
         id: background
         source: Activity.url + "background.svg"
         sourceSize.width: parent.width
         fillMode: Image.PreserveAspectCrop
+
+        // system locale by default
+        property string locale: "system"
+
         readonly property string wordsResource: "data2/words/words.rcc"
         property bool englishFallback: false
         property bool downloadWordsNeeded: false
@@ -52,15 +54,14 @@ ActivityBase
         signal start
         signal stop
 
-        Component.onCompleted:
-        {
+        Component.onCompleted: {
+            dialogActivityConfig.getInitialConfiguration()
             activity.start.connect(start)
             activity.stop.connect(stop)
         }
 
         // Add here the QML items you need to access in javascript
-        QtObject
-        {
+        QtObject {
             id: items
             property Item  main: activity.main
             property alias background: background
@@ -73,39 +74,17 @@ ActivityBase
             property GCAudio audioVoices: activity.audioVoices
             property alias englishFallbackDialog: englishFallbackDialog
             property alias parser: parser
+            property alias locale: background.locale
             property string answer
             property alias textinput: textinput
-        }
-
-        function handleResourceRegistered(resource)
-        {
-            if (resource == wordsResource)
-                Activity.start();
         }
 
         onStart: {
             Activity.init(items)
             Activity.focusTextInput()
-
-            // check for words.rcc:
-            if (DownloadManager.isDataRegistered("words")) {
-                // words.rcc is already registered -> start right away
-                Activity.start();
-            } else if(DownloadManager.haveLocalResource(wordsResource)) {
-                // words.rcc is there -> register old file first
-                if (DownloadManager.registerResource(wordsResource))
-                    Activity.start(items);
-                else // could not register the old data -> react to a possible update
-                    DownloadManager.resourceRegistered.connect(handleResourceRegistered);
-                // then try to update in the background
-                DownloadManager.updateResource(wordsResource);
-            } else {
-                // words.rcc has not been downloaded yet -> ask for download
-                downloadWordsNeeded = true
-            }
+            Activity.start()
         }
         onStop: {
-            DownloadManager.resourceRegistered.disconnect(handleResourceRegistered);
             Activity.stop()
         }
 
@@ -138,8 +117,7 @@ ActivityBase
         }
 
         // Buttons with possible answers shown on the left of screen
-        Column
-        {
+        Column {
             id: buttonHolder
             spacing: 10 * ApplicationInfo.ratio
             x: holder.x - width - 10 * ApplicationInfo.ratio
@@ -149,8 +127,7 @@ ActivityBase
                 NumberAnimation { properties: "y"; from: holder.y; duration: 500 }
             }
 
-            Repeater
-            {
+            Repeater {
                 id: answers
 
                 AnswerButton {
@@ -166,8 +143,7 @@ ActivityBase
         }
 
         // Picture holder for different images being shown
-        Rectangle
-        {
+        Rectangle {
             id: holder
             width: Math.max(questionImage.width * 1.1, questionImage.height * 1.1)
             height: questionTextBg.y + questionTextBg.height
@@ -184,14 +160,12 @@ ActivityBase
                 GradientStop { position: 1.0; color: "#80AAAAAA" }
             }
 
-            Item
-            {
+            Item {
                 id: spacer
                 height: 20
             }
 
-            Image
-            {
+            Image {
                 id: questionImage
                 anchors.horizontalCenter: holder.horizontalCenter
                 anchors.top: spacer.bottom
@@ -268,25 +242,100 @@ ActivityBase
             anchors.top: parent.top
         }
 
-        DialogHelp
-        {
+        DialogActivityConfig {
+            id: dialogActivityConfig
+            currentActivity: activity
+            content: Component {
+                Item {
+                    property alias localeBox: localeBox
+                    height: column.height
+
+                    property alias availableLangs: langs.languages
+                    LanguageList {
+                        id: langs
+                    }
+
+                    Column {
+                        id: column
+                        spacing: 10
+                        width: parent.width
+
+                        Flow {
+                            spacing: 5
+                            width: dialogActivityConfig.width
+                            GCComboBox {
+                                id: localeBox
+                                model: langs.languages
+                                background: dialogActivityConfig
+                                label: qsTr("Select your locale")
+                            }
+                        }
+                    }
+                }
+            }
+
+            onClose: home()
+            onLoadData: {
+                if(dataToSave && dataToSave["locale"]) {
+                    background.locale = dataToSave["locale"];
+                }
+            }
+            onSaveData: {
+                var oldLocale = background.locale;
+                var newLocale =
+                        dialogActivityConfig.configItem.availableLangs[dialogActivityConfig.loader.item.localeBox.currentIndex].locale;
+                // Remove .UTF-8
+                if(newLocale.indexOf('.') != -1) {
+                    newLocale = newLocale.substring(0, newLocale.indexOf('.'))
+                }
+                dataToSave = {"locale": newLocale }
+
+                background.locale = newLocale;
+
+                // Restart the activity with new information
+                if(oldLocale !== newLocale) {
+                    background.stop();
+                    background.start();
+                }
+            }
+
+
+            function setDefaultValues() {
+                var localeUtf8 = background.locale;
+                if(background.locale != "system") {
+                    localeUtf8 += ".UTF-8";
+                }
+
+                for(var i = 0 ; i < dialogActivityConfig.configItem.availableLangs.length ; i ++) {
+                    if(dialogActivityConfig.configItem.availableLangs[i].locale === localeUtf8) {
+                        dialogActivityConfig.loader.item.localeBox.currentIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        DialogHelp {
             id: dialogHelp
             onClose: home()
         }
 
-        Bar
-        {
+        Bar {
             id: bar
-            content: BarEnumContent { value: help | home | level | repeat }
+            content: BarEnumContent { value: help | home | level | repeat | config }
             onHelpClicked: displayDialog(dialogHelp)
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: activity.home()
             onRepeatClicked: Activity.playCurrentWord()
+            onConfigClicked: {
+                dialogActivityConfig.active = true
+                dialogActivityConfig.setDefaultValues()
+                displayDialog(dialogActivityConfig)
+            }
         }
 
-        Bonus
-        {
+        Bonus {
             id: bonus
             Component.onCompleted: win.connect(Activity.nextLevel)
         }
@@ -294,25 +343,6 @@ ActivityBase
         JsonParser {
             id: parser
             onError: console.error("missing letter: Error parsing json: " + msg);
-        }
-
-        Loader {
-            id: downloadWordsDialog
-            sourceComponent: GCDialog {
-                parent: activity.main
-                message: qsTr("The images for this activity are not yet installed.")
-                button1Text: qsTr("Download the images")
-                onClose: background.downloadWordsNeeded = false
-                onButton1Hit: {
-                    DownloadManager.resourceRegistered.connect(handleResourceRegistered);
-                    DownloadManager.downloadResource(wordsResource)
-                    var downloadDialog = Core.showDownloadDialog(activity, {});
-                }
-            }
-            anchors.fill: parent
-            focus: true
-            active: background.downloadWordsNeeded
-            onStatusChanged: if (status == Loader.Ready) item.start()
         }
 
         Loader {

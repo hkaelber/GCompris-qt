@@ -45,6 +45,7 @@ function load(parser, baseUrl, datasetFilename, translationFilename) {
     if(!dataset['contentText']) {
         return null
     }
+    applyImgPrefix(dataset)
 
     return dataset
 }
@@ -92,6 +93,12 @@ function getAllLessons(dataset) {
     return lessons
 }
 
+/* return a list of words in the lesson. Each words is formatted like:
+ * 'description' => "splatter"
+ * 'image' => "words/splatter.png"
+ * 'voice' => "voices-$CA/$LOCALE/words/splatter.$CA"
+ * 'translatedTxt' => "splatter"
+ */
 function getLessonWords(dataset, lesson) {
     var wordList = lesson.content
     // Fill up the lesson with the translated text
@@ -104,4 +111,18 @@ function getLessonWords(dataset, lesson) {
             allWords.push(word)
     }
     return allWords
+}
+
+/* Apply the imgPrefix of the chapter to the whole image set
+ */
+function applyImgPrefix(dataset) {
+    for (var c = 0; c < dataset.length; c++) {
+        if(!dataset[c].imgPrefix)
+            break
+        for (var l in dataset[c].content) {
+            for (var k in dataset[c].content[l].content) {
+                dataset[c].content[l].content[k].image = dataset[c].imgPrefix + dataset[c].content[l].content[k].image
+            }
+        }
+    }
 }

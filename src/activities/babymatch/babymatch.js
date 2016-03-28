@@ -21,22 +21,27 @@
  */
 .pragma library
 .import QtQuick 2.0 as Quick
+.import GCompris 1.0 as GCompris //for ApplicationInfo
 
 var currentLevel = 1
 var currentSubLevel = 0
 var numberOfLevel
 var numberOfSubLevel
 var items
-var url
+var imagesUrl
+var soundsUrl
+var boardsUrl
 var glowEnabled
 var glowEnabledDefault
 var spots = []
 var showText = []
 var displayDropCircle
 
-function start(items_, url_, levelCount_, answerGlow_, displayDropCircle_) {
+function start(items_, imagesUrl_, soundsUrl_, boardsUrl_, levelCount_, answerGlow_, displayDropCircle_) {
     items = items_
-    url = url_
+    imagesUrl = imagesUrl_
+    soundsUrl = soundsUrl_
+    boardsUrl = boardsUrl_
     numberOfLevel = levelCount_
     glowEnabledDefault = answerGlow_
     displayDropCircle = displayDropCircle_
@@ -55,7 +60,7 @@ function stop() {
 
 function initLevel() {
     items.bar.level = currentLevel
-    var filename = url + "board" + "/" + "board" + currentLevel + "_" + currentSubLevel + ".qml"
+    var filename = boardsUrl + "board" + "/" + "board" + currentLevel + "_" + currentSubLevel + ".qml"
     items.dataset.source = filename
     var levelData = items.dataset.item
     
@@ -72,7 +77,6 @@ function initLevel() {
     items.backgroundImage.source = ""
 
     items.availablePieces.view.currentDisplayedGroup = 0
-    items.availablePieces.view.itemsDropped = 0
     items.availablePieces.view.previousNavigation = 1
     items.availablePieces.view.nextNavigation = 1
     items.availablePieces.view.okShowed = false
@@ -82,7 +86,7 @@ function initLevel() {
     var dropItemComponent = Qt.createComponent("qrc:/gcompris/src/activities/babymatch/DropAnswerItem.qml")
     var textItemComponent = Qt.createComponent("qrc:/gcompris/src/activities/babymatch/TextItem.qml")
     //print(dropItemComponent.errorString())
-    
+
     if(currentSubLevel == 0 && levelData.numberOfSubLevel != undefined)
         numberOfSubLevel = levelData.numberOfSubLevel
         
@@ -94,8 +98,7 @@ function initLevel() {
     else 
         glowEnabled = levelData.glow
 
-    // BUG352639: tooltip is not clear when changing level
-    items.toolTip.visible = false
+    items.toolTip.show('')
 
     if(levelData.instruction == undefined) {
         items.instruction.opacity = 0
@@ -137,17 +140,14 @@ function initLevel() {
                                                         levelData.levels[i].toolTipText.split('|')[1] :
                                                         levelData.levels[i].toolTipText),
                 "pressSound": levelData.levels[i].soundFile == undefined ? 
-							  "qrc:/gcompris/src/core/resource/sounds/bleep.wav" : url + levelData.levels[i].soundFile
+							  "qrc:/gcompris/src/core/resource/sounds/bleep.wav" : soundsUrl + levelData.levels[i].soundFile
             });
 
             spots[j++] = dropItemComponent.createObject(
                          items.backgroundImage, {
                             "posX": levelData.levels[i].x,
                             "posY": levelData.levels[i].y,
-                            "imgHeight": levelData.levels[i].height == undefined ? 0 : levelData.levels[i].height,
-                            "imgWidth": levelData.levels[i].width == undefined ? 0 : levelData.levels[i].width,
-                            "dropAreaSize": levelData.levels[i].dropAreaSize == undefined ? 15 : levelData.levels[i].dropAreaSize,
-                            "imageName" : levelData.levels[i].pixmapfile
+                            "imgName" : levelData.levels[i].pixmapfile,
                          });
         }
         //Create Text pieces for the level which has to display additional information
@@ -163,7 +163,11 @@ function initLevel() {
         //Create static background pieces
         else {
             if(levelData.levels[i].type === "SHAPE_BACKGROUND_IMAGE") {
-                items.backgroundImage.source = url + levelData.levels[i].pixmapfile
+                items.backgroundImage.source = imagesUrl + levelData.levels[i].pixmapfile
+                if(levelData.levels[i].width)
+                    items.backgroundImage.sourceSize.width = levelData.levels[i].width
+                if(levelData.levels[i].height)
+                    items.backgroundImage.sourceSize.height = levelData.levels[i].height
             }
             else {
                 items.backgroundPiecesModel.append( {
@@ -214,6 +218,33 @@ function win() {
     items.bonus.good("flower")
 }
 
-function wrong() {
-    items.bonus.bad("flower")
+function getClosestSpot(x, y) {
+    var minDist = 200 * GCompris.ApplicationInfo.ratio
+    var closestDist = Number.MAX_VALUE
+    var closestItem
+    for(var i = 0 ; i < spots.length ; ++ i) {
+        // Calc Distance
+        var spot = spots[i]
+        var dist = Math.floor(Math.sqrt(Math.pow(x - spot.x, 2) +
+                                        Math.pow(y - spot.y, 2)))
+        if(dist < closestDist) {
+            closestDist = dist
+            closestItem = spot
+        }
+    }
+    if(closestDist < minDist) {
+        return closestItem
+    } else {
+        return null
+    }
+}
+
+function highLightSpot(stopItem, tile) {
+    for(var i = 0 ; i < spots.length ; ++ i) {
+        if(spots[i] === stopItem) {
+            spots[i].show(tile)
+        } else {
+            spots[i].hide()
+        }
+    }
 }

@@ -44,7 +44,6 @@ ActivityBase {
 
         readonly property string wordsResource: "data2/words/words.rcc"
         property bool englishFallback: false
-        property bool downloadWordsNeeded: false
 
         signal start
         signal stop
@@ -71,41 +70,18 @@ ActivityBase {
             property alias englishFallbackDialog: englishFallbackDialog
             property string locale: 'system'
             property alias dialogActivityConfig: dialogActivityConfig
-        }
-
-        function handleResourceRegistered(resource)
-        {
-            if (resource == wordsResource)
-                Activity.start();
+            property variant categoriesTranslations: activity.categoriesTranslations
         }
 
         onStart: {
             Activity.init(items)
             dialogActivityConfig.getInitialConfiguration()
-
             activity.audioVoices.error.connect(voiceError)
             activity.audioVoices.done.connect(voiceDone)
-
-            // check for words.rcc:
-            if (DownloadManager.isDataRegistered("words")) {
-                // words.rcc is already registered -> start right away
-                Activity.start();
-            } else if(DownloadManager.haveLocalResource(wordsResource)) {
-                // words.rcc is there -> register old file first
-                if (DownloadManager.registerResource(wordsResource))
-                    Activity.start(items);
-                else // could not register the old data -> react to a possible update
-                    DownloadManager.resourceRegistered.connect(handleResourceRegistered);
-                // then try to update in the background
-                DownloadManager.updateResource(wordsResource);
-            } else {
-                // words.rcc has not been downloaded yet -> ask for download
-                downloadWordsNeeded = true
-            }
+            Activity.start()
         }
 
         onStop: {
-            DownloadManager.resourceRegistered.disconnect(handleResourceRegistered);
             dialogActivityConfig.saveDatainConfiguration()
             Activity.stop()
         }
@@ -131,9 +107,9 @@ ActivityBase {
         Bar {
             id: bar
             anchors.bottom: keyboardArea.top
-            content: BarEnumContent { value:
-                    menuScreen.started ? help | home | config
-                                       : help | home }
+            content: menuScreen.started ? withConfig : withoutConfig
+            property BarEnumContent withConfig: BarEnumContent { value: help | home | config }
+            property BarEnumContent withoutConfig: BarEnumContent { value: help | home }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
@@ -175,25 +151,6 @@ ActivityBase {
             anchors.fill: parent
             focus: true
             active: background.englishFallback
-            onStatusChanged: if (status == Loader.Ready) item.start()
-        }
-
-        Loader {
-            id: downloadWordsDialog
-            sourceComponent: GCDialog {
-                parent: activity.main
-                message: qsTr("The images for this activity are not yet installed.")
-                button1Text: qsTr("Download the images")
-                onClose: background.downloadWordsNeeded = false
-                onButton1Hit: {
-                    DownloadManager.resourceRegistered.connect(handleResourceRegistered);
-                    DownloadManager.downloadResource(wordsResource)
-                    var downloadDialog = Core.showDownloadDialog(activity, {});
-                }
-            }
-            anchors.fill: parent
-            focus: true
-            active: background.downloadWordsNeeded
             onStatusChanged: if (status == Loader.Ready) item.start()
         }
 
@@ -281,5 +238,18 @@ ActivityBase {
             onClose: home()
         }
     }
+
+    property variant categoriesTranslations: {"other": qsTr("other"),
+        "action": qsTr("action"), "adjective": qsTr("adjective"),
+        "color": qsTr("color"), "number": qsTr("number"),
+        "people": qsTr("people"), "bodyparts": qsTr("bodyparts"),
+        "clothes": qsTr("clothes"), "emotion": qsTr("emotion"),
+        "job": qsTr("job"), "sport": qsTr("sport"),
+        "nature": qsTr("nature"), "animal": qsTr("animal"),
+        "fruit": qsTr("fruit"), "plant": qsTr("plant"),
+        "vegetables": qsTr("vegetables"), "object": qsTr("object"),
+        "construction": qsTr("construction"),
+        "furniture": qsTr("furniture"), "houseware": qsTr("houseware"),
+        "tool": qsTr("tool"), "food": qsTr("food")}
 
 }

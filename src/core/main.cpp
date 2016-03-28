@@ -19,8 +19,8 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <QtDebug>
-#include <QtGui/QGuiApplication>
-#include <QtQuick/QQuickWindow>
+#include <QApplication>
+#include <QQuickWindow>
 #include <QQmlApplicationEngine>
 #include <QStandardPaths>
 #include <QObject>
@@ -44,7 +44,7 @@ bool loadAndroidTranslation(QTranslator &translator, const QString &locale)
     uchar *data = (uchar*)malloc(file.size());
 
     if(!file.exists())
-        qDebug() << "file assets:/" << locale << ".qm exists";
+        qDebug() << "file assets:/" << locale << ".qm does not exist";
 
     in.readRawData((char*)data, file.size());
 
@@ -105,11 +105,23 @@ QString loadTranslation(QSettings &config, QTranslator &translator)
 
 int main(int argc, char *argv[])
 {
-	QGuiApplication app(argc, argv);
+    // Disable it because we already support HDPI display natively
+    qunsetenv("QT_DEVICE_PIXEL_RATIO");
+
+    QApplication app(argc, argv);
     app.setOrganizationName("KDE");
     app.setApplicationName(GCOMPRIS_APPLICATION_NAME);
     app.setOrganizationDomain("kde.org");
     app.setApplicationVersion(ApplicationInfo::GCVersion());
+
+#if defined(Q_OS_MAC)
+    // Sandboxing on MacOSX as documented in:
+    // http://doc.qt.io/qt-5/osx-deployment.html
+    QDir dir(QGuiApplication::applicationDirPath());
+    dir.cdUp();
+    dir.cd("Plugins");
+    QGuiApplication::setLibraryPaths(QStringList(dir.absolutePath()));
+#endif
 
     // Local scope for config
     QSettings config(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
@@ -226,8 +238,16 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine(QUrl("qrc:/gcompris/src/core/main.qml"));
-	QObject::connect(&engine, SIGNAL(quit()), DownloadManager::getInstance(),
-            SLOT(shutdown()));
+    QObject::connect(&engine, &QQmlApplicationEngine::quit, DownloadManager::getInstance(),
+                     &DownloadManager::shutdown);
+    // add import path for shipped qml modules:
+#ifdef SAILFISHOS
+    engine.addImportPath(QStringLiteral("%1/../share/%2/lib/qml")
+                         .arg(QCoreApplication::applicationDirPath()).arg(GCOMPRIS_APPLICATION_NAME));
+#else
+    engine.addImportPath(QStringLiteral("%1/../lib/qml")
+                         .arg(QCoreApplication::applicationDirPath()));
+#endif
 
     if(parser.isSet(exportActivitiesAsSQL)) {
         ActivityInfoTree *menuTree(qobject_cast<ActivityInfoTree*>(ActivityInfoTree::menuTreeProvider(&engine, NULL)));

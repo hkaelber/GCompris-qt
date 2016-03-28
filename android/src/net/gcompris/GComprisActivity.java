@@ -55,6 +55,9 @@ import android.content.Context;
 import android.app.PendingIntent;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import android.view.WindowManager;
+import java.text.Collator;
+import java.util.Locale;
 
 public class GComprisActivity extends QtActivity
 {
@@ -220,4 +223,46 @@ public class GComprisActivity extends QtActivity
 	AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 	am.abandonAudioFocus(null);
     }
+
+	/**
+	 * Toggle activation of screen-saver
+	 *
+	 * Note that the window flags *must* be modified from the UI thread
+	 * otherwise it has no effect.
+	 *
+	 * @param value  Whether screensaver should be enabled or disabled
+	 */
+	public void setKeepScreenOn(boolean value) {
+		if (value)
+			GComprisActivity.this.runOnUiThread(new Runnable() {
+				public void run() {
+					Log.d(QtApplication.QtTAG, "Disabling screensaver");
+					getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				}
+			});
+		else
+			GComprisActivity.this.runOnUiThread(new Runnable() {
+				public void run() {
+					Log.d(QtApplication.QtTAG, "Enabling screensaver");
+					getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				}
+			});
+	}
+
+	public int localeCompare(String a, String b, String locale)
+	{
+		String[] parts = locale.split("[\\._]");
+		Locale l;
+		if (parts.length == 1)
+			l = new Locale(parts[0]);
+		else if (parts.length == 2)
+			l = new Locale(parts[0], parts[1]);
+		else
+			l = Locale.getDefault();
+		Collator collator = Collator.getInstance(l);
+		// Note: This works only if the device supports the
+		// passed locale. If it does not or if an invalid locale string has been
+		// passed, the collator seems to sort according to Locale.getDefault()
+		return collator.compare(a, b);
+	}
 }

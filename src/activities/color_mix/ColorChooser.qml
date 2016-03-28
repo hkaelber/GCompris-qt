@@ -29,46 +29,49 @@ import "."
 
 Image {
     id: chooser
-    source: Activity.url + (activity.modeRGB ? "flashlight.svg" : "tube.svg")
     z: 1
 
     property int maxSteps: 10
     property int currentStep: 0
-    property alias hue: color.hue
+    property real hue
 
     Image {
-        id: intensity
+        id: intensityScreen
         source: Activity.url + "flashlight2.svg"
         sourceSize.height: parent.sourceSize.height
         z: 2
+        visible: false
+    }
+
+    Colorize {
+        anchors.fill: intensityScreen
+        source: intensityScreen
+        hue: chooser.hue
+        lightness: -(maxSteps - currentStep) / maxSteps
+        saturation: 1
         visible: activity.modeRGB ? true : false
+    }
 
-        Colorize {
-            anchors.fill: parent
-            source: parent
-            hue: chooser.hue
-            lightness: -(maxSteps - currentStep) / maxSteps
-            saturation: 1
+    Image {
+        id: intensityLight
+        source: Activity.url + "light.svg"
+        sourceSize.height: intensityScreen.sourceSize.height / 2
+        visible: false
+        anchors {
+            left: intensityScreen.right
+            leftMargin: -20 * ApplicationInfo.ratio
+            verticalCenter: intensityScreen.verticalCenter
         }
+        opacity: currentStep / maxSteps
+    }
 
-        Image {
-            source: Activity.url + "light.svg"
-            sourceSize.height: parent.sourceSize.height / 2
-            anchors {
-                left: parent.right
-                leftMargin: -20 * ApplicationInfo.ratio
-                verticalCenter: parent.verticalCenter
-            }
-            opacity: currentStep / maxSteps
-
-            Colorize {
-                anchors.fill: parent
-                source: parent
-                hue: chooser.hue
-                lightness: -(maxSteps - currentStep) / maxSteps
-                saturation: 1
-            }
-        }
+    Colorize {
+        anchors.fill: intensityLight
+        source: intensityLight
+        hue: chooser.hue
+        lightness: -(maxSteps - currentStep) / maxSteps
+        saturation: 1
+        visible: intensityScreen.visible
     }
 
     Image {
@@ -81,28 +84,21 @@ Image {
             leftMargin: activity.modeRGB ? -20 * ApplicationInfo.ratio : 0
             verticalCenter: parent.verticalCenter
         }
-        visible: currentStep > 0
-        fillMode: Image.PreserveAspectFit
-
-        Colorize {
-            anchors.fill: parent
-            source: parent
-            hue: chooser.hue
-            lightness: 0
-            saturation: 1
-        }
+        visible: false
+        fillMode: Image.PreserveAspectFit        
     }
 
     Colorize {
-        id: color
-        anchors.fill: parent
-        source: parent
-        hue: 0.0
+        anchors.fill: intensityBrush
+        source: intensityBrush
+        hue: chooser.hue
+        lightness: 0
         saturation: 1
+        visible: currentStep > 0
     }
 
     ColorButton {
-        text: "+"
+        source: Activity.url + "plus.svg"
         anchors {
             verticalCenter: parent.verticalCenter
             right: parent.right
@@ -111,7 +107,7 @@ Image {
     }
 
     ColorButton {
-        text: "-"
+        source: Activity.url + "minus.svg"
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left

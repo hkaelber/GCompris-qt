@@ -46,6 +46,13 @@ ActivityBase {
     focus: true
     activityInfo: ActivityInfoTree.rootMenu
 
+    onBack: {
+        pageView.pop(to);
+        // Restore focus that has been taken by the loaded activity
+        if(pageView.currentItem == menuActivity)
+            focus = true;
+    }
+
     onHome: {
         if(pageView.depth === 1) {
             Core.quit(main);
@@ -59,6 +66,14 @@ ActivityBase {
     }
 
     onDisplayDialog: pageView.push(dialog)
+
+    onDisplayDialogs: {
+        var toPush = new Array();
+        for (var i = 0; i < dialogs.length; i++) {
+            toPush.push({item: dialogs[i]});
+        }
+        pageView.push(toPush);
+    }
 
     // @cond INTERNAL_DOCS
     property string url: "qrc:/gcompris/src/activities/menu/resource/"
@@ -116,7 +131,15 @@ ActivityBase {
         Loader {
             id: activityLoader
             asynchronous: true
-            onStatusChanged: if (status == Loader.Ready) loadActivity()
+            onStatusChanged: {
+                if (status == Loader.Loading) {
+                    loading.start();
+                } else if (status == Loader.Ready) {
+                    loading.stop();
+                    loadActivity();
+                } else if (status == Loader.Error)
+                    loading.stop();
+            }
         }
 
         // Filters
@@ -136,7 +159,7 @@ ActivityBase {
                     event.key === Qt.Key_S) {
                 // Ctrl+S toggle show / hide section
                 ApplicationSettings.sectionVisible = !ApplicationSettings.sectionVisible
-            } else if(event.key === Qt.Key_Space) {
+            } else if(event.key === Qt.Key_Space && currentActiveGrid.currentItem) {
                 currentActiveGrid.currentItem.selectCurrentItem()
             }
         }
@@ -146,12 +169,12 @@ ActivityBase {
         }
         Keys.onTabPressed: currentActiveGrid = ((currentActiveGrid == activitiesGrid) ?
                                                     section : activitiesGrid);
-        Keys.onEnterPressed: currentActiveGrid.currentItem.selectCurrentItem();
-        Keys.onReturnPressed: currentActiveGrid.currentItem.selectCurrentItem();
-        Keys.onRightPressed: currentActiveGrid.moveCurrentIndexRight();
-        Keys.onLeftPressed: currentActiveGrid.moveCurrentIndexLeft();
-        Keys.onDownPressed: currentActiveGrid.moveCurrentIndexDown();
-        Keys.onUpPressed: currentActiveGrid.moveCurrentIndexUp();
+        Keys.onEnterPressed: if(currentActiveGrid.currentItem) currentActiveGrid.currentItem.selectCurrentItem();
+        Keys.onReturnPressed: if(currentActiveGrid.currentItem)  currentActiveGrid.currentItem.selectCurrentItem();
+        Keys.onRightPressed: if(currentActiveGrid.currentItem) currentActiveGrid.moveCurrentIndexRight();
+        Keys.onLeftPressed: if(currentActiveGrid.currentItem) currentActiveGrid.moveCurrentIndexLeft();
+        Keys.onDownPressed: if(currentActiveGrid.currentItem && !currentActiveGrid.atYEnd) currentActiveGrid.moveCurrentIndexDown();
+        Keys.onUpPressed: if(currentActiveGrid.currentItem && !currentActiveGrid.atYBeginning) currentActiveGrid.moveCurrentIndexUp();
 
         GridView {
             id: section
@@ -223,8 +246,8 @@ ActivityBase {
         }
 
         // Activities
-        property int iconWidth: 180 * ApplicationInfo.ratio
-        property int iconHeight: 180 * ApplicationInfo.ratio
+        property int iconWidth: 120 * ApplicationInfo.ratio
+        property int iconHeight: 120 * ApplicationInfo.ratio
         property int activityCellWidth:
             horizontal ? background.width / Math.floor(background.width / iconWidth) :
                          (background.width - section.width) / Math.floor((background.width - section.width) / iconWidth)
@@ -326,6 +349,15 @@ ActivityBase {
                                   menuActivity.url + "lock.svg"
                         sourceSize.width: 30 * ApplicationInfo.ratio
                     }
+                    Image {
+                        anchors {
+                            left: parent.left
+                            bottom: parent.bottom
+                        }
+                        source: ActivityInfoTree.menuTree[index].createdInVersion == ApplicationInfo.GCVersionCode
+                                ? menuActivity.url + "new.svg" : ""
+                        sourceSize.width: 30 * ApplicationInfo.ratio
+                    }
                     GCText {
                         id: title
                         anchors.top: parent.bottom
@@ -389,6 +421,7 @@ ActivityBase {
                                              {
                                                  'audioVoices': audioVoices,
                                                  'audioEffects': audioEffects,
+                                                 'loading': loading,
                                                  'menu': menuActivity,
                                                  'activityInfo': ActivityInfoTree.currentActivity
                                              })
@@ -443,6 +476,7 @@ ActivityBase {
                 displayDialog(dialogActivityConfig)
             }
         }
+
     }
 
     DialogAbout {

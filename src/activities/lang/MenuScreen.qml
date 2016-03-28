@@ -95,11 +95,11 @@ Image {
     }
 
     // Activities
-    property int iconWidth: 190 * ApplicationInfo.ratio
-    property int iconHeight: 190 * ApplicationInfo.ratio
+    property int iconWidth: 180 * ApplicationInfo.ratio
+    property int iconHeight: 180 * ApplicationInfo.ratio
 
     property int levelCellWidth: background.width / Math.floor(background.width / iconWidth )
-    property int levelCellHeight: iconHeight * 1.3
+    property int levelCellHeight: iconHeight * 1.4
 
     ListModel {
         id: menuModel
@@ -137,10 +137,11 @@ Image {
             }
             Image {
                 id: containerImage
-                source: "qrc:/gcompris/data/"+ image;
+                source: image;
                 anchors.top: activityBackground.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                sourceSize.height: iconHeight
+                width: iconWidth
+                height: iconHeight
                 anchors.margins: 5
 
                 GCText {
@@ -155,7 +156,7 @@ Image {
                     elide: Text.ElideRight
                     maximumLineCount: 2
                     wrapMode: Text.WordWrap
-                    text: name
+                    text: Activity.items.categoriesTranslations[name]
                 }
                 ProgressBar {
                     id: progressLang
@@ -163,12 +164,12 @@ Image {
                     anchors.topMargin: ApplicationInfo.ratio * 4
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: activityBackground.width
+                    height: 14 * ApplicationInfo.ratio
                     maximumValue: wordCount
                     minimumValue: 0
                     value: progress
                     orientation: Qt.Horizontal
                 }
-
             }
 
             ParticleSystemStarLoader {
@@ -177,7 +178,7 @@ Image {
             }
             MouseArea {
                 anchors.fill: activityBackground
-                enabled: menuScreen.opacity == 1
+                enabled: menuScreen.started
                 onClicked: selectCurrentItem()
             }
 

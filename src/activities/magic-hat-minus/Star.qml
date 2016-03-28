@@ -49,7 +49,7 @@ Item {
         hoverEnabled: true
         onClicked: {
             mainItem.selected = !mainItem.selected
-            Activity.verifyAnswer(barIndex, mainItem.selected)
+            Activity.userClickedAStar(barIndex, mainItem.selected)
         }
     }
 
@@ -65,18 +65,19 @@ Item {
     Image {
         id: starImg
         source: Activity.url + "star-clear.svg"
-        width: contour.width - 4
-        height: contour.height - 4
+        sourceSize.width: contour.width - 4
+        sourceSize.height: contour.height - 4
         anchors.centerIn: contour
         fillMode: Image.PreserveAspectFit
         opacity: 1
+        visible: false
+    }
 
-        ColorOverlay {
-            anchors.fill: starImg
-            source: starImg
-            color: mainItem.selected ?
-                       mainItem.wantedColor : mainItem.disabledColor
-        }
+    ColorOverlay {
+        anchors.fill: starImg
+        source: starImg
+        color: mainItem.selected ?
+                   mainItem.wantedColor : mainItem.disabledColor
     }
 
     states: [

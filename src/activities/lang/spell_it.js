@@ -35,7 +35,10 @@ var remainingWords
 function init(loadedItems_, wordList_, mode_) {
     spellItems = loadedItems_
     wordList = wordList_
-    spellItems.answer.forceActiveFocus()
+    // Do not set the focus on mobile or the mobile OS keyboard will pop up
+    // instead of ours.
+    if(!GCompris.ApplicationInfo.isMobile)
+        spellItems.answer.forceActiveFocus()
     initLevel()
     return true
 }
@@ -63,7 +66,7 @@ function initLevel() {
                 letters.push(currentWord.charAt(j));
         }
     }
-    letters.sort();
+    letters = GCompris.ApplicationInfo.localeSort(letters, spellItems.locale);
     // generate layout from letter map
     var layout = [];
     var row = 0;
@@ -87,8 +90,7 @@ function initLevel() {
 function initSubLevel() {
     spellItems.score.currentSubLevel++
     spellItems.goodWord = wordList[spellItems.score.currentSubLevel - 1]
-    spellItems.wordImage.changeSource("qrc:/gcompris/data/" +
-                                      spellItems.goodWord.image)
+    spellItems.wordImage.changeSource(spellItems.goodWord.image)
     spellItems.hintText.changeHint(spellItems.goodWord.translatedTxt[0])
     spellItems.hintText.visible = true
     spellItems.answer.text = ""

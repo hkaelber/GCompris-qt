@@ -21,7 +21,7 @@
 */
 var url = "qrc:/gcompris/src/activities/maze/resource/"
 var currentLevel = 0
-var numberOfLevel = 20
+var numberOfLevel = 25
 var items
 var relativeMode
 var invisibleMode
@@ -36,6 +36,8 @@ var mazeColumns = 0
 var mazeRows = 0
 var maze = 0
 
+var win = false
+
 function start(items_, relativeMode_, invisibleMode_) {
     items = items_
     relativeMode = relativeMode_
@@ -49,6 +51,8 @@ function stop() {}
 function initLevel() {
     items.wallVisible = !invisibleMode
     items.bar.level = currentLevel + 1
+
+    win = false
 
     /* Set main variables */
     if (currentLevel + 1 == 1) {
@@ -110,6 +114,21 @@ function initLevel() {
     } else if (currentLevel + 1 == 20) {
         mazeColumns = 19
         mazeRows = 19
+    } else if (currentLevel + 1 == 21) {
+        mazeColumns = 20
+        mazeRows = 19
+    } else if (currentLevel + 1 == 22) {
+        mazeColumns = 20
+        mazeRows = 20
+    } else if (currentLevel + 1 == 23) {
+        mazeColumns = 19
+        mazeRows = 21
+    } else if (currentLevel + 1 == 24) {
+        mazeColumns = 23
+        mazeRows = 21
+    } else if (currentLevel + 1 == 25) {
+        mazeColumns = 23
+        mazeRows = 23
     }
 
     items.mazeRows = mazeRows
@@ -313,6 +332,7 @@ function getPlayerRotation() {
 
 function checkSuccess() {
     if (items.playery === items.doory && items.playerx === mazeColumns - 1) {
+        win = true
         items.bonus.good("lion")
     }
 }
@@ -324,24 +344,26 @@ function processPressedKey(event) {
         items.message.visible = items.wallVisible
     }
 
-    /* Move the player */
-    switch (event.key) {
-    case Qt.Key_Right:
-        clickRight()
-        event.accepted = true
-        break
-    case Qt.Key_Left:
-        clickLeft()
-        event.accepted = true
-        break
-    case Qt.Key_Up:
-        clickUp()
-        event.accepted = true
-        break
-    case Qt.Key_Down:
-        clickDown()
-        event.accepted = true
-        break
+    if ( !win ) {
+        /* Move the player */
+        switch (event.key) {
+        case Qt.Key_Right:
+            clickRight()
+            event.accepted = true
+            break
+        case Qt.Key_Left:
+            clickLeft()
+            event.accepted = true
+            break
+        case Qt.Key_Up:
+            clickUp()
+            event.accepted = true
+            break
+        case Qt.Key_Down:
+            clickDown()
+            event.accepted = true
+            break
+        }
     }
 }
 

@@ -84,7 +84,7 @@ Item {
                 word['hasVoice'] = false
                 repeatItem.visible = false
             }
-            wordImage.changeSource("qrc:/gcompris/data/" + word.image)
+            wordImage.changeSource(word.image)
             wordText.changeText(word.translatedTxt)
         }
     }
@@ -226,9 +226,7 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 enabled: rootItem.opacity == 1
-                onClicked: {
-                    activity.audioVoices.append(ApplicationInfo.getAudioFilePath(word.voice))
-                }
+                onClicked: Activity.playWord(word.voice)
             }
         }
 

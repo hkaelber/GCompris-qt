@@ -130,13 +130,21 @@ function updateMessage(move) {
         return
     if((move.flags & (Engine.P4_MOVE_FLAG_CHECK | Engine.P4_MOVE_FLAG_MATE))
             == (Engine.P4_MOVE_FLAG_CHECK | Engine.P4_MOVE_FLAG_MATE)) {
-        items.message = items.blackTurn ? qsTr("Black mates") : qsTr("White mates")
+        items.message = items.blackTurn ? qsTr("White mates", "white wins") : qsTr("Black mates", "black wins")
         items.gameOver = true
+        if(!items.twoPlayer)
+            if(state.to_play != 0)
+                items.bonus.good('gnu')
+            else
+                items.bonus.good('tux')
+        else
+            items.bonus.good('flower')
     } else if((move.flags & Engine.P4_MOVE_FLAG_MATE) == Engine.P4_MOVE_FLAG_MATE) {
         items.message = qsTr("Drawn game")
         items.gameOver = true
+        items.bonus.good('flower')
     } else if((move.flags & Engine.P4_MOVE_FLAG_CHECK) == Engine.P4_MOVE_FLAG_CHECK) {
-        items.message = items.blackTurn ? qsTr("Black checks") : qsTr("White checks")
+        items.message = items.blackTurn ? qsTr("White checks", "black king is under attack") : qsTr("Black checks", "white king is under attack")
     } else if(move.flags == Engine.P4_MOVE_ILLEGAL) {
         items.message = qsTr("Invalid, your king may be in check")
     }
@@ -216,6 +224,7 @@ function moveTo(from, to) {
         // Probably a check makes the move is invalid
         updateMessage(move)
     }
+    return move.ok
 }
 
 function undo() {
@@ -236,6 +245,8 @@ function undo() {
 }
 
 function moveByEngine(engineMove) {
+    if(!engineMove)
+        return
     var move = state.move(engineMove[0], engineMove[1])
     visibleMove(move, engineToViewPos(engineMove[0]), engineToViewPos(engineMove[1]))
     refresh(move)
@@ -262,6 +273,16 @@ function randomMove() {
         computerMove()
         return
     }
+    // Disable random move if the situation is too bad for the user
+    // This avoid having the computer playing bad against a user
+    // with too few pieces making the game last too long
+    var score = getScore()
+    console.log(score[0] / score[1])
+    if(score[0] / score[1] < 0.7) {
+        computerMove()
+        return
+    }
+
     // At level 2 we let the computer play 20% of the time
     // and 80% of the time we make a random move.
     if(Math.random() < currentLevel / (numberOfLevel - 1)) {
@@ -297,5 +318,25 @@ function showPossibleMoves(from) {
             items.squares.getSquareAt(pos)['acceptMove'] = true
         }
     }
+}
+
+// Calculate the score for black and white
+// Count the number of pieces with each piece having a given weight
+// Piece pawn knight bishop rook queen
+// Value 1    3 	 3      5    9
+// @return [white, black]
+function getScore() {
+    var lut = {2: 1, 4: 5, 6: 3, 8: 3, 12: 9}
+    var white = 0
+    var black = 0
+    for(var i=0; i < state['board'].length; ++i) {
+        var score = lut[state['board'][i] & 0xFE]
+        if(score)
+            if(state['board'][i] & 0x01)
+                black += score
+            else
+                white += score
+    }
+    return [white, black]
 }
 

@@ -1,6 +1,6 @@
 /* GCompris - ApplicationSettingsDefault.cpp
  *
- * Copyright (C) 2014 Bruno Coudoin <bruno.coudoin@gcompris.net>
+ * Copyright (C) 2014-2015 Bruno Coudoin <bruno.coudoin@gcompris.net>
  *
  * Authors:
  *   Bruno Coudoin <bruno.coudoin@gcompris.net>
@@ -24,13 +24,16 @@
 
 #include "ApplicationInfo.h"
 
-#include <QtCore/QtMath>
-#include <QtCore/QUrl>
-#include <QtCore/QUrlQuery>
-#include <QtGui/QGuiApplication>
-#include <QtGui/QScreen>
-#include <QtCore/QLocale>
-#include <QtQuick/QQuickWindow>
+#include <QtQml>
+#include <QtMath>
+#include <QUrl>
+#include <QUrlQuery>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QLocale>
+#include <QQuickWindow>
+#include <QStandardPaths>
+#include <QSensor>
 
 #include <qmath.h>
 #include <QDebug>
@@ -81,7 +84,7 @@ ApplicationInfo::ApplicationInfo(QObject *parent): QObject(parent)
     m_applicationWidth = m_isMobile ? rect.width() : 1120;
 
     if (m_isMobile)
-        connect(qApp->primaryScreen(), SIGNAL(physicalSizeChanged(QSizeF)), this, SLOT(notifyPortraitMode()));
+        connect(qApp->primaryScreen(), &QScreen::physicalSizeChanged, this, &ApplicationInfo::notifyPortraitMode);
 
     // Get all symbol fonts to remove them
     QFontDatabase database;
@@ -96,6 +99,16 @@ ApplicationInfo::ApplicationInfo(QObject *parent): QObject(parent)
 ApplicationInfo::~ApplicationInfo()
 {
     m_instance = NULL;
+}
+
+bool ApplicationInfo::sensorIsSupported(const QString& sensorType)
+{
+    return QSensor::sensorTypes().contains(sensorType.toUtf8());
+}
+
+Qt::ScreenOrientation ApplicationInfo::getNativeOrientation()
+{
+    return QGuiApplication::primaryScreen()->nativeOrientation();
 }
 
 void ApplicationInfo::setApplicationWidth(const int newWidth)
@@ -116,7 +129,7 @@ QString ApplicationInfo::getFilePath(const QString &file)
 #if defined(Q_OS_ANDROID)
     return QString("assets:/%1").arg(file);
 #elif defined(Q_OS_MAC)
-    return QString("%1/rcc/%2").arg(QCoreApplication::applicationDirPath(), file);
+    return QString("%1/../Resources/rcc/%2").arg(QCoreApplication::applicationDirPath(), file);
 #else
     return QString("%1/%2/rcc/%3").arg(QCoreApplication::applicationDirPath(), GCOMPRIS_DATA_FOLDER, file);
 #endif
@@ -148,6 +161,12 @@ QString ApplicationInfo::getLocaleFilePath(const QString &file)
     QString filename = file;
     filename.replace("$LOCALE", localeShortName);
     return filename;
+}
+
+QString ApplicationInfo::getSharedWritablePath() const
+{
+    return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+            + QLatin1String("/GCompris");
 }
 
 QStringList ApplicationInfo::getSystemExcludedFonts()
@@ -213,6 +232,18 @@ QString ApplicationInfo::getVoicesLocale(const QString &locale)
     return localeShort(_locale);
 }
 
+QVariantList ApplicationInfo::localeSort(QVariantList list,
+                                         const QString& locale) const
+{
+    QElapsedTimer timer;
+    timer.start();
+    std::sort(list.begin(), list.end(),
+              [&locale,this](const QVariant& a, const QVariant& b) {
+        return (localeCompare(a.toString(), b.toString(), locale) < 0);
+    });
+    return list;
+}
+
 QObject *ApplicationInfo::systeminfoProvider(QQmlEngine *engine,
                                              QJSEngine *scriptEngine)
 {
@@ -223,8 +254,8 @@ QObject *ApplicationInfo::systeminfoProvider(QQmlEngine *engine,
      * the QQuickWindow value
      */
     ApplicationInfo* appInfo = getInstance();
-    connect(ApplicationSettings::getInstance(), SIGNAL(fullscreenChanged()), appInfo,
-            SLOT(notifyFullscreenChanged()));
+    connect(ApplicationSettings::getInstance(), &ApplicationSettings::fullscreenChanged, appInfo,
+            &ApplicationInfo::notifyFullscreenChanged);
     return appInfo;
 }
 

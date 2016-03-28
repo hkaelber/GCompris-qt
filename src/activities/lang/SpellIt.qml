@@ -153,12 +153,10 @@ Item {
 
             Image {
                 id: wordImage
-                sourceSize.width: Math.min(parent.width * 0.6, parent.height * 0.6)
-
-                anchors {
-                    centerIn: parent
-                    margins: 0.05 + parent.width
-                }
+                // Images are not svg
+                width: Math.min(parent.width, parent.height) * 0.9
+                height: width
+                anchors.centerIn: parent
                 property string nextSource
                 function changeSource(nextSource_) {
                     nextSource = nextSource_
@@ -217,7 +215,8 @@ Item {
                 height: hintTextbg.height
                 color: "white"
                 cursorVisible: true
-                focus: true
+                focus: false
+                activeFocusOnPress: !ApplicationInfo.isMobile
                 visible: true
                 horizontalAlignment: TextInput.AlignHCenter
                 verticalAlignment: TextInput.AlignVCenter
@@ -225,9 +224,9 @@ Item {
                 font.weight: Font.DemiBold
                 font.family: GCSingletonFontLoader.fontLoader.name
                 font.capitalization: ApplicationSettings.fontCapitalization
+                font.letterSpacing: ApplicationSettings.fontLetterSpacing
                 maximumLength: maximumLengthAnswer
                 onAccepted: {
-                    answer.forceActiveFocus()
                     okMouseArea.clicked(okMouseArea)
                 }
             }

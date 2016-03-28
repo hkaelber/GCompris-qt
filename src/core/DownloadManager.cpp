@@ -31,6 +31,8 @@
 #include <QNetworkConfiguration>
 #include <QDirIterator>
 
+#include <QtQml>
+
 const QString DownloadManager::contentsFilename = QString("Contents");
 DownloadManager* DownloadManager::_instance = 0;
 
@@ -291,12 +293,12 @@ bool DownloadManager::download(DownloadJob* job)
     QNetworkReply *reply = accessManager.get(request);
     job->reply = reply;
     connect(reply, SIGNAL(finished()), this, SLOT(downloadFinished()));
-    connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
+    connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::downloadReadyRead);
     connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(handleError(QNetworkReply::NetworkError)));
     if (job->url.fileName() != contentsFilename) {
-        connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
-                this, SIGNAL(downloadProgress(qint64,qint64)));
+        connect(reply, &QNetworkReply::downloadProgress,
+                this, &DownloadManager::downloadProgress);
         emit downloadStarted(job->url.toString().remove(0, serverUrl.toString().length()));
     }
 
@@ -347,8 +349,10 @@ inline QStringList DownloadManager::getSystemResourcePaths() const
             '/' + GCOMPRIS_APPLICATION_NAME
     });
 
+ #if QT_VERSION >= 0x050400
     // Append standard application directories (like /usr/share/KDE/gcompris-qt)
     results += QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+#endif
 
     return results;
 }

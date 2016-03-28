@@ -22,8 +22,7 @@
 #ifndef APPLICATIONSETTINGS_H
 #define APPLICATIONSETTINGS_H
 
-#include <qqml.h>
-#include <QtCore/QObject>
+#include <QObject>
 #include <QQmlEngine>
 #include <QUrl>
 #include <QtGlobal>
@@ -88,6 +87,16 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(bool isFullscreen READ isFullscreen WRITE setFullscreen NOTIFY fullscreenChanged)
 
     /**
+     * Window Height on Application's Startup
+     */
+    Q_PROPERTY(quint32 previousHeight READ previousHeight WRITE setPreviousHeight NOTIFY previousHeightChanged)
+
+    /**
+     * Window Width on Application's Startup
+     */
+    Q_PROPERTY(quint32 previousWidth READ previousWidth WRITE setPreviousWidth NOTIFY previousWidthChanged)
+
+    /**
      * Whether on-screen keyboard should be enabled per default in activities
      * that use it.
      */
@@ -120,6 +129,28 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(quint32 fontCapitalization READ fontCapitalization WRITE setFontCapitalization NOTIFY fontCapitalizationChanged)
 
     /**
+     * Font letter spacing
+     *
+     * Change the letter spacing of all the texts
+     * @sa font
+     */
+    Q_PROPERTY(qreal fontLetterSpacing READ fontLetterSpacing WRITE setFontLetterSpacing NOTIFY fontLetterSpacingChanged)
+
+    /**
+     * Minimum allowed value for font spacing letter.
+     *
+     * Constant value: +0.0
+     */
+    Q_PROPERTY(qreal fontLetterSpacingMin READ fontLetterSpacingMin CONSTANT)
+
+    /**
+     * Maximum allowed value for font spacing letter.
+     *
+     * Constant value: +8.0
+     */
+    Q_PROPERTY(qreal fontLetterSpacingMax READ fontLetterSpacingMax CONSTANT)
+
+    /**
      * Whether downloads/updates of resource files should be done automatically,
      * without user-interaction.
      *
@@ -144,6 +175,16 @@ class ApplicationSettings : public QObject
     Q_PROPERTY(bool isDemoMode READ isDemoMode WRITE setDemoMode NOTIFY demoModeChanged)
 
     /**
+     * Activation code key.
+     */
+    Q_PROPERTY(QString codeKey READ codeKey WRITE setCodeKey NOTIFY codeKeyChanged)
+
+    /**
+     * Activation mode.
+     */
+    Q_PROPERTY(quint32 activationMode READ activationMode CONSTANT)
+
+    /**
      * Whether kiosk mode is currently active.
      */
     Q_PROPERTY(bool isKioskMode READ isKioskMode WRITE setKioskMode NOTIFY kioskModeChanged)
@@ -152,6 +193,11 @@ class ApplicationSettings : public QObject
      * Whether the section selection row is visible in the menu view.
      */
     Q_PROPERTY(bool sectionVisible READ sectionVisible WRITE setSectionVisible NOTIFY sectionVisibleChanged)
+
+    /**
+     * The name of the default wordset to use. If empty then the internal sample wordset is used.
+     */
+    Q_PROPERTY(QString wordset READ wordset WRITE setWordset NOTIFY wordsetChanged)
 
     /**
      * Current base font-size used for font scaling.
@@ -191,8 +237,11 @@ class ApplicationSettings : public QObject
     // internal group
     Q_PROPERTY(quint32 exeCount READ exeCount WRITE setExeCount NOTIFY exeCountChanged)
 
-	// no group
-	Q_PROPERTY(bool isBarHidden READ isBarHidden WRITE setBarHidden NOTIFY barHiddenChanged)
+    // keep last version ran. If different than ApplicationInfo.GCVersionCode(), it means a new version is running
+    Q_PROPERTY(int lastGCVersionRan READ lastGCVersionRan WRITE setLastGCVersionRan NOTIFY lastGCVersionRanChanged)
+
+    // no group
+    Q_PROPERTY(bool isBarHidden READ isBarHidden WRITE setBarHidden NOTIFY barHiddenChanged)
 
 public:
 	/// @cond INTERNAL_DOCS
@@ -237,6 +286,22 @@ public:
         }
     }
 
+    qint32 previousHeight() const { return m_previousHeight; }
+    void setPreviousHeight(qint32 height) {
+        if(m_previousHeight != height) {
+            m_previousHeight = height;
+            emit previousHeightChanged();
+        }
+    }
+
+    qint32 previousWidth() const { return m_previousWidth; }
+    void setPreviousWidth(qint32 width) {
+        if(m_previousWidth != width) {
+            m_previousWidth = width;
+            emit previousWidthChanged();
+        }
+    }
+
     bool isVirtualKeyboard() const { return m_isVirtualKeyboard; }
     void setVirtualKeyboard(const bool newMode) {
         m_isVirtualKeyboard = newMode;
@@ -269,6 +334,15 @@ public:
         emit fontCapitalizationChanged();
     }
 
+    qreal fontLetterSpacing() const { return m_fontLetterSpacing; }
+    void setFontLetterSpacing(qreal newFontLetterSpacing) {
+        m_fontLetterSpacing = newFontLetterSpacing;
+        emit fontLetterSpacingChanged();
+    }
+
+    qreal fontLetterSpacingMin() const { return m_fontLetterSpacingMin; }
+    qreal fontLetterSpacingMax() const { return m_fontLetterSpacingMax; }
+
     bool isAutomaticDownloadsEnabled() const;
     void setIsAutomaticDownloadsEnabled(const bool newIsAutomaticDownloadsEnabled);
 
@@ -287,14 +361,37 @@ public:
     bool isDemoMode() const { return m_isDemoMode; }
     void setDemoMode(const bool newMode);
 
+    QString codeKey() const { return m_codeKey; }
+    void setCodeKey(const QString newCodeKey) {
+        m_codeKey = newCodeKey;
+        emit notifyCodeKeyChanged();
+    }
+
+    /**
+     * @brief activationMode
+     * @return 0: no, 1: inapp, 2: internal
+     */
+    quint32 activationMode() const { return m_activationMode; }
+
     bool isKioskMode() const { return m_isKioskMode; }
     void setKioskMode(const bool newMode) {
         m_isKioskMode = newMode;
         emit kioskModeChanged();
     }
 
-    // Payment API
-    // Call a payment system to sync our demoMode state with it
+    /**
+     * Check validity of the activation code
+     * @param code An activation code to check
+     * @returns  0 if the code is not valid or we don't know yet
+     *           1 if the code is valid but out of date
+     *           2 if the code is valid and under 2 years
+     */
+    Q_INVOKABLE uint checkActivationCode(const QString code);
+
+    /**
+     * Check Payment API
+     * Call a payment system to sync our demoMode state with it
+     */
     void checkPayment();
     // Called by the payment system
     void bought(const bool isBought) {
@@ -304,14 +401,20 @@ public:
         }
 	}
 
-	bool sectionVisible() const { return m_sectionVisible; }
-	void setSectionVisible(const bool newMode) {
+    bool sectionVisible() const { return m_sectionVisible; }
+    void setSectionVisible(const bool newMode) {
 		qDebug() << "c++ setSectionVisible=" << newMode;
 		m_sectionVisible = newMode;
 		emit sectionVisibleChanged();
 	}
 
-	QString downloadServerUrl() const { return m_downloadServerUrl; }
+    QString wordset() const { return m_wordset; }
+    void setWordset(const QString newWordset) {
+        m_wordset = newWordset;
+        emit wordsetChanged();
+    }
+
+    QString downloadServerUrl() const { return m_downloadServerUrl; }
     void setDownloadServerUrl(const QString newDownloadServerUrl) {
         m_downloadServerUrl = newDownloadServerUrl;
         emit downloadServerUrlChanged();
@@ -338,33 +441,46 @@ public:
     int baseFontSizeMin() const { return m_baseFontSizeMin; }
     int baseFontSizeMax() const { return m_baseFontSizeMax; }
 
+    int lastGCVersionRan() const { return m_lastGCVersionRan; }
+    void setLastGCVersionRan(const int newLastGCVersionRan) {
+        m_lastGCVersionRan = newLastGCVersionRan;
+        emit lastGCVersionRanChanged();
+    }
+
 protected slots:
 
     Q_INVOKABLE void notifyShowLockedActivitiesChanged();
-	Q_INVOKABLE void notifyAudioVoicesEnabledChanged();
-	Q_INVOKABLE void notifyAudioEffectsEnabledChanged();
+    Q_INVOKABLE void notifyAudioVoicesEnabledChanged();
+    Q_INVOKABLE void notifyAudioEffectsEnabledChanged();
     Q_INVOKABLE void notifyFullscreenChanged();
+    Q_INVOKABLE void notifyPreviousHeightChanged();
+    Q_INVOKABLE void notifyPreviousWidthChanged();
     Q_INVOKABLE void notifyVirtualKeyboardChanged();
     Q_INVOKABLE void notifyLocaleChanged();
     Q_INVOKABLE void notifyFontChanged();
     Q_INVOKABLE void notifyFontCapitalizationChanged();
+    Q_INVOKABLE void notifyFontLetterSpacingChanged();
     Q_INVOKABLE void notifyEmbeddedFontChanged();
     Q_INVOKABLE void notifyAutomaticDownloadsEnabledChanged();
     Q_INVOKABLE void notifyFilterLevelMinChanged();
     Q_INVOKABLE void notifyFilterLevelMaxChanged();
     Q_INVOKABLE void notifyDemoModeChanged();
+    Q_INVOKABLE void notifyCodeKeyChanged();
     Q_INVOKABLE void notifyKioskModeChanged();
     Q_INVOKABLE void notifySectionVisibleChanged();
+    Q_INVOKABLE void notifyWordsetChanged();
 
     Q_INVOKABLE void notifyDownloadServerUrlChanged();
 
     Q_INVOKABLE void notifyExeCountChanged();
 
+    Q_INVOKABLE void notifyLastGCVersionRanChanged();
+
     Q_INVOKABLE void notifyBarHiddenChanged();
 
 public slots:
-	Q_INVOKABLE bool isFavorite(const QString &activity);
-	Q_INVOKABLE void setFavorite(const QString &activity, bool favorite);
+    Q_INVOKABLE bool isFavorite(const QString &activity);
+    Q_INVOKABLE void setFavorite(const QString &activity, bool favorite);
     Q_INVOKABLE void saveBaseFontSize();
     /// @endcond
 
@@ -384,28 +500,50 @@ public slots:
      */
     Q_INVOKABLE QVariantMap loadActivityConfiguration(const QString &activity);
 
+    /**
+     * Loads per-activity progress using the default "progress" key.
+     *
+     * @param activity Name of the activity to load progress for.
+     * @returns Last started level of the activity, 0 if none saved.
+     */
+    Q_INVOKABLE int loadActivityProgress(const QString &activity);
+
+    /**
+     * Saves per-activity progress using the default "progress" key.
+     *
+     * @param activity Name of the activity that wants to persist settings.
+     * @param progress Last started level to save as progress value.
+     */
+    Q_INVOKABLE void saveActivityProgress(const QString &activity, int progress);
+
 signals:
     void showLockedActivitiesChanged();
-	void audioVoicesEnabledChanged();
-	void audioEffectsEnabledChanged();
+    void audioVoicesEnabledChanged();
+    void audioEffectsEnabledChanged();
     void fullscreenChanged();
+    void previousHeightChanged();
+    void previousWidthChanged();
     void virtualKeyboardChanged();
     void localeChanged();
     void fontChanged();
     void fontCapitalizationChanged();
+    void fontLetterSpacingChanged();
     void embeddedFontChanged();
     void automaticDownloadsEnabledChanged();
     void filterLevelMinChanged();
     void filterLevelMaxChanged();
     void demoModeChanged();
+    void codeKeyChanged();
     void kioskModeChanged();
     void sectionVisibleChanged();
+    void wordsetChanged();
     void baseFontSizeChanged();
 
     void downloadServerUrlChanged();
 
     void exeCountChanged();
 
+    void lastGCVersionRanChanged();
     void barHiddenChanged();
 
 private:
@@ -418,28 +556,38 @@ private:
 
     bool m_showLockedActivities;
     bool m_isAudioVoicesEnabled;
-	bool m_isAudioEffectsEnabled;
+    bool m_isAudioEffectsEnabled;
     bool m_isFullscreen;
+    quint32 m_previousHeight;
+    quint32 m_previousWidth;
     bool m_isVirtualKeyboard;
     bool m_isAutomaticDownloadsEnabled;
     bool m_isEmbeddedFont;
     quint32 m_fontCapitalization;
+    qreal m_fontLetterSpacing;
     quint32 m_filterLevelMin;
     quint32 m_filterLevelMax;
-	bool m_defaultCursor;
-	bool m_noCursor;
+    bool m_defaultCursor;
+    bool m_noCursor;
     QString m_locale;
     QString m_font;
     bool m_isDemoMode;
+    QString m_codeKey;
+    quint32 m_activationMode;
     bool m_isKioskMode;
     bool m_sectionVisible;
-	int m_baseFontSize;
-	const int m_baseFontSizeMin;
-	const int m_baseFontSizeMax;
+    QString m_wordset;
+    int m_baseFontSize;
+    const int m_baseFontSizeMin;
+    const int m_baseFontSizeMax;
+    const qreal m_fontLetterSpacingMin;
+    const qreal m_fontLetterSpacingMax;
 
     QString m_downloadServerUrl;
 
     quint32 m_exeCount;
+
+    int m_lastGCVersionRan;
 
     bool m_isBarHidden;
 

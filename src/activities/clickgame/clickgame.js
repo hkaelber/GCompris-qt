@@ -209,9 +209,14 @@ var levelProperty = [
                 "nbFish": 15,
                 "minDuration": 6000
             },
+            {
+                "nbFish": 18,
+                "minDuration": 4000
+            }
         ]
 var currentImageId = 0
 var currentLevel = 0
+var items
 var activity
 var background
 var bar
@@ -219,15 +224,16 @@ var bonus
 
 // The array of created fishes object
 var createdFishes
-var killedFishes
 
-function start(activity_, background_, bar_, bonus_) {
+function start(activity_, background_, bar_, bonus_, items_) {
     activity = activity_
     background = background_
     bar = bar_
     bonus = bonus_
+    items = items_
     currentLevel = 0
     initLevel()
+    items.killedFishes = 0
 }
 
 function stop() {
@@ -243,12 +249,14 @@ function initLevel() {
     for(var i = 0;  i < levelProperty[currentLevel].nbFish; ++i) {
          createdFishes[i] = createFish(levelProperty[currentLevel].minDuration)
     }
+    items.score.numberOfSubLevels = createdFishes.length
 }
 
 function nextLevel() {
     if(levelProperty.length <= ++currentLevel ) {
         currentLevel = 0
     }
+    
     initLevel();
 }
 
@@ -256,6 +264,7 @@ function previousLevel() {
     if(--currentLevel < 0) {
         currentLevel = levelProperty.length - 1
     }
+
     initLevel();
 }
 
@@ -293,11 +302,11 @@ function destroyFishes() {
         }
         createdFishes.length = 0
     }
-    killedFishes = 0
+    items.killedFishes = 0
 }
 
 function fishKilled() {
-    if(++killedFishes === createdFishes.length) {
+    if(++items.killedFishes === createdFishes.length) {
         bonus.good("flower")
     }
 }

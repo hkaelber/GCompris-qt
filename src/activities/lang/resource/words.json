@@ -1,11 +1,12 @@
 [
     {
         "type": "chapter",
-        "name": "other",
+        "name": "otherChapter",
+        "imgPrefix": "qrc:/gcompris/data/",
         "content": [
             {
                 "type": "lesson",
-                "name": "other",
+                "name": "otherLesson",
                 "content": [
                     {
                         "description": "alphabet",
@@ -999,17 +1000,17 @@
                     {
                         "description": "eleven",
                         "image": "words/eleven.png",
-                        "voice": "voices-$CA/$LOCALE/words/eleven.$CA"
+                        "voice": "voices-$CA/$LOCALE/alphabet/11.$CA"
                     },
                     {
                         "description": "twelve",
                         "image": "words/twelve.png",
-                        "voice": "voices-$CA/$LOCALE/words/twelve.$CA"
+                        "voice": "voices-$CA/$LOCALE/alphabet/12.$CA"
                     },
                     {
                         "description": "sixteen",
                         "image": "words/sixteen.png",
-                        "voice": "voices-$CA/$LOCALE/words/sixteen.$CA"
+                        "voice": "voices-$CA/$LOCALE/alphabet/16.$CA"
                     }
                 ]
             }
@@ -1018,6 +1019,7 @@
     {
         "type": "chapter",
         "name": "people",
+        "imgPrefix": "qrc:/gcompris/data/",
         "content": [
             {
                 "type": "lesson",
@@ -2464,9 +2466,10 @@
         ]
     },
     {
-	"type": "chapter",
+        "type": "chapter",
         "name": "nature",
-	"content": [
+        "imgPrefix": "qrc:/gcompris/data/",
+        "content": [
             {
                 "type": "lesson",
                 "name": "animal",
@@ -4127,6 +4130,7 @@
     {
         "type": "chapter",
         "name": "object",
+        "imgPrefix": "qrc:/gcompris/data/",
         "content": [
             {
                 "type": "lesson",

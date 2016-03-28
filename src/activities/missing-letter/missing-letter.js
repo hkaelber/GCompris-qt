@@ -37,23 +37,22 @@ var dataset
 var lessons
 
 // Do not propose these letter in the choices
-var ignoreLetters = '[ ,;:\u0027]'
+var ignoreLetters = '[ ,;:\\-\u0027]'
 
-function init(items_)
-{
+function init(items_) {
     items = items_
 }
 
-function start()
-{
+function start() {
     currentLevel = 0
 
-    var locale = GCompris.ApplicationInfo.getVoicesLocale(GCompris.ApplicationSettings.locale)
+    var locale = GCompris.ApplicationInfo.getVoicesLocale(items.locale)
 
     // register the voices for the locale
     GCompris.DownloadManager.updateResource(GCompris.DownloadManager.getVoicesResourceForLocale(locale))
 
-    dataset = Lang.load(items.parser, langUrl, "words.json",
+    dataset = Lang.load(items.parser, langUrl,
+                        GCompris.ApplicationSettings.wordset ? "words.json" : "words_sample.json",
                         "content-"+ locale +".json")
 
     // If dataset is empty, we try to load from short locale
@@ -67,7 +66,8 @@ function start()
         } else {
             localeShort = locale;
         }
-        dataset = Lang.load(items.parser, langUrl, "words.json",
+        dataset = Lang.load(items.parser, langUrl,
+                            GCompris.ApplicationSettings.wordset ? "words.json" : "words_sample.json",
                             "content-"+localeShort+ ".json")
     }
 
@@ -75,7 +75,9 @@ function start()
     if(!dataset) {
         // English fallback
         items.background.englishFallback = true
-        dataset = Lang.load(items.parser, langUrl, "words.json", "content-en.json")
+        dataset = Lang.load(items.parser, langUrl,
+                            GCompris.ApplicationSettings.wordset ? "words.json" : "words_sample.json",
+                            "content-en.json")
     } else {
         items.background.englishFallback = false
     }
@@ -166,7 +168,7 @@ function getRandomMaskedQuestion(clearQuestion, guessLetters, level) {
 }
 
 function sortUnique(arr) {
-    arr = arr.sort(function (a, b) { return a.localeCompare(b); });
+    arr = GCompris.ApplicationInfo.localeSort(arr, items.locale);
     var ret = [arr[0]];
     for (var i = 1; i < arr.length; i++) { // start loop at 1 as element 0 can never be a duplicate
         if (arr[i-1] !== arr[i]) {
@@ -175,12 +177,10 @@ function sortUnique(arr) {
     }
     return ret;
 }
-function stop()
-{
+function stop() {
 }
 
-function initLevel()
-{
+function initLevel() {
     items.bar.level = currentLevel + 1
     items.score.currentSubLevel = 1
     items.score.numberOfSubLevels = questions[currentLevel].length
@@ -191,21 +191,18 @@ function getCurrentQuestion() {
     return questions[currentLevel][items.score.currentSubLevel - 1]
 }
 
-function showQuestion()
-{
+function showQuestion() {
     var question = getCurrentQuestion()
 
     playWord(question.voice)
     items.answer = question.answer
     items.answers.model = question.choices
     items.questionText.text = question.maskedQuestion
-    items.questionImage.source = "qrc:/gcompris/data/" + question.image
+    items.questionImage.source = question.image
 }
 
-function nextLevel()
-{
-    if(numberOfLevel <= ++currentLevel )
-    {
+function nextLevel() {
+    if(numberOfLevel <= ++currentLevel) {
         currentLevel = 0
     }
     initLevel();
@@ -222,25 +219,23 @@ function nextSubLevel() {
     showQuestion()
 }
 
-function previousLevel()
-{
-    if(--currentLevel < 0)
-    {
+function previousLevel() {
+    if(--currentLevel < 0) {
         currentLevel = numberOfLevel - 1
     }
     initLevel();
 }
 
-function showAnswer()
-{
+function showAnswer() {
     var question = getCurrentQuestion()
     playLetter(question.answer)
     items.questionText.text = question.clearQuestion
 }
 
 function playLetter(letter) {
-    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices-$CA/$LOCALE/alphabet/"
-                                                                       + Core.getSoundFilenamForChar(letter)))
+    var locale = GCompris.ApplicationInfo.getVoicesLocale(items.locale)
+    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath("voices-$CA/"+locale+"/alphabet/" +
+                             Core.getSoundFilenamForChar(letter)))
 }
 
 function playCurrentWord() {
@@ -249,7 +244,9 @@ function playCurrentWord() {
 }
 
 function playWord(word) {
-    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath(word))
+    var locale = GCompris.ApplicationInfo.getVoicesLocale(items.locale)
+    var wordLocalized = word.replace("$LOCALE", locale)
+    items.audioVoices.append(GCompris.ApplicationInfo.getAudioFilePath(wordLocalized))
 }
 
 function focusTextInput() {
