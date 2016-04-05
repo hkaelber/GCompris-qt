@@ -49,7 +49,7 @@ ActivityBase {
     pageComponent: Image {
         id: background
         anchors.fill: parent
-        source: Activity.url + 'background.svg'
+        source: Activity.url + 'background-wood.svg'
         signal start
         signal stop
 
@@ -122,7 +122,7 @@ ActivityBase {
                                         (background.width - chessboard.width) / 2))
 
                 GCText {
-                    color: "black"
+                    color: "white"
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width
                     fontSize: smallSize
@@ -188,6 +188,16 @@ ActivityBase {
                 }
             }
 
+            
+            Rectangle {
+                id:boardBg
+                width: items.cellSize * 8.2
+                height: items.cellSize * 8.2
+                z: 09
+                color: "#3A1F0A"
+                
+            
+            
             // The chessboard
             GridView {
                 id: chessboard
@@ -201,12 +211,14 @@ ActivityBase {
                 layoutDirection: Qt.RightToLeft
                 delegate: square
                 rotation: 180
+                z: 10
+                anchors.centerIn: boardBg
 
                 Component {
                     id: square
-                    Rectangle {
-                        color: index % 2 + (Math.floor(index / 8) % 2) == 1 ?
-                                   "#FFFFFF99" : '#FF9999FF';
+                    Image {
+                        source: index % 2 + (Math.floor(index / 8) % 2) == 1 ?
+                                   Activity.url + 'chess-white.svg' : Activity.url + 'chess-black.svg';
                         width: items.cellSize
                         height: items.cellSize
                     }
@@ -222,6 +234,8 @@ ActivityBase {
                         chessboard.rotation = 180
                 }
             }
+            }
+            
         }
 
         Repeater {
@@ -244,9 +258,9 @@ ActivityBase {
                 Rectangle {
                     id: possibleMove
                     anchors.fill: parent
-                    color: parent.containsDrag ? 'green' : 'transparent'
+                    color: parent.containsDrag ? '#803ACAFF' : 'transparent'
                     border.width: parent.acceptMove ? 5 : 0
-                    border.color: "black"
+                    border.color: '#FF808080'
                     z: 1
                 }
             }
